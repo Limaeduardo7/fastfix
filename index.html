@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <title>Fastfix - Reparo de Placas Android</title>
+</head>
+
+<body class="bg-background text-white antialiased">
+  <div id="app">
+    <!-- Hero Section -->
+    <section id="hero"
+      class="relative min-h-screen py-10 px-6 lg:px-20 flex flex-col items-start justify-center overflow-hidden">
+      <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-bl from-primary/20 to-transparent -z-10"></div>
+
+      <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
+        <div class="reveal">
+          <h1 class="text-4xl lg:text-6xl font-extrabold mb-6 leading-tight">
+            Aprenda Reparo de <span class="text-primary italic">Placas Android</span> <br>
+            <span class="text-gradient">do Zero ao Profissional</span>
+          </h1>
+          <p class="text-gray-400 text-lg mb-8 max-w-lg">
+            Domine as técnicas práticas e torne-se um especialista em reparos avançados.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-primary/20 rounded-full">
+                <span data-icon="check" class="text-primary"></span>
+              </div>
+              <span class="text-sm">Especialização completa</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-primary/20 rounded-full">
+                <span data-icon="check" class="text-primary"></span>
+              </div>
+              <span class="text-sm">Suporte direto</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-primary/20 rounded-full">
+                <span data-icon="check" class="text-primary"></span>
+              </div>
+              <span class="text-sm">Aulas práticas</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-primary/20 rounded-full">
+                <span data-icon="check" class="text-primary"></span>
+              </div>
+              <span class="text-sm">Certificado de conclusão</span>
+            </div>
+          </div>
+
+          <div class="max-w-sm reveal" style="transition-delay: 200ms;">
+            <div class="bg-white p-6 rounded-2xl shadow-2xl space-y-4">
+              <p class="text-gray-500 font-semibold text-sm uppercase">Investimento</p>
+              <div class="flex items-baseline gap-2">
+                <span class="text-4xl font-bold text-gray-900">R$ 197,90</span>
+                <span class="text-gray-400 text-sm italic">ou em até 12x no cartão</span>
+              </div>
+              <button
+                class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary/25 cursor-pointer flex items-center justify-center gap-2">
+                <span data-icon="shoppingCart"></span>
+                PROMOÇÃO POR TEMPO LIMITADO
+              </button>
+              <button
+                class="w-full border-2 border-primary text-primary hover:bg-primary/5 font-bold py-3 rounded-xl transition-all cursor-pointer">
+                QUERO ME INSCREVER AGORA >
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative reveal" style="transition-delay: 400ms;">
+          <div class="absolute -inset-4 bg-primary/10 blur-3xl rounded-full -z-10"></div>
+          <img src="/images/hero.png" alt="Técnico Especialista"
+            class="w-full h-auto rounded-3xl border-4 border-surface shadow-2xl scale-110 lg:scale-125">
+        </div>
+      </div>
+    </section>
+
+    <!-- Steps Section -->
+    <section class="py-24 px-6 lg:px-20 bg-white text-gray-900">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-20 reveal">
+          <h2 class="text-3xl lg:text-5xl font-extrabold mb-4">
+            O que os técnicos profissionais <span class="text-primary">realmente fazem</span>
+          </h2>
+          <p class="text-gray-500 text-lg">Você não está sozinho. Aprenda do profissional que vive o dia a dia da
+            bancada.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="reveal space-y-3" style="transition-delay: 100ms;">
+              <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+                <span class="text-primary font-bold text-xl">1</span>
+              </div>
+              <h3 class="font-bold text-xl">Análise de Esquemas</h3>
+              <p class="text-gray-500 text-sm">Aprenda a ler e interpretar esquemas elétricos com precisão.</p>
+            </div>
+            <div class="reveal space-y-3" style="transition-delay: 200ms;">
+              <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+                <span class="text-primary font-bold text-xl">2</span>
+              </div>
+              <h3 class="font-bold text-xl">Micro Soldagem</h3>
+              <p class="text-gray-500 text-sm">Técnicas avançadas para componentes microscópicos.</p>
+            </div>
+            <div class="reveal space-y-3" style="transition-delay: 300ms;">
+              <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+                <span class="text-primary font-bold text-xl">3</span>
+              </div>
+              <h3 class="font-bold text-xl">Diagnóstico Avançado</h3>
+              <p class="text-gray-500 text-sm">Localize falhas complexas em poucos minutos.</p>
+            </div>
+            <div class="reveal space-y-3" style="transition-delay: 400ms;">
+              <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+                <span class="text-primary font-bold text-xl">4</span>
+              </div>
+              <h3 class="font-bold text-xl">Reparo de Trilhas</h3>
+              <p class="text-gray-500 text-sm">Recupere placas condenadas por trilhas rompidas.</p>
+            </div>
+            <div class="reveal space-y-3" style="transition-delay: 500ms;">
+              <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+                <span class="text-primary font-bold text-xl">5</span>
+              </div>
+              <h3 class="font-bold text-xl">Reballing Profissional</h3>
+              <p class="text-gray-500 text-sm">Domine a técnica de refazer as esferas de solda bga.</p>
+            </div>
+            <div class="reveal space-y-3" style="transition-delay: 600ms;">
+              <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+                <span class="text-primary font-bold text-xl">6</span>
+              </div>
+              <h3 class="font-bold text-xl">Limpeza Técnica</h3>
+              <p class="text-gray-500 text-sm">Processos profissionais de descontaminação.</p>
+            </div>
+          </div>
+
+          <div class="reveal" style="transition-delay: 300ms;">
+            <img src="/images/workbench.png" alt="Trabalho de Bancada"
+              class="rounded-3xl shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border-8 border-white">
+          </div>
+        </div>
+
+        <div class="mt-20 text-center reveal">
+          <button
+            class="bg-primary hover:bg-primary-hover text-white font-extrabold px-12 py-5 rounded-xl transition-all shadow-xl shadow-primary/25 cursor-pointer uppercase tracking-wider">
+            SAIBA MAIS AGORA >
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bench Practice -->
+    <section class="py-24 px-6 lg:px-20 bg-background overflow-hidden">
+      <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+        <div class="reveal">
+          <img src="/images/workbench.png" alt="Bancada Real" class="rounded-3xl shadow-2xl border-2 border-surface">
+        </div>
+        <div class="space-y-10">
+          <div class="reveal">
+            <h2 class="text-3xl lg:text-5xl font-extrabold mb-6">Não é teoria — é <span
+                class="text-primary italic">prática de bancada real</span></h2>
+          </div>
+
+          <div class="space-y-6">
+            <div class="reveal glass-card p-6 rounded-2xl flex items-start gap-4">
+              <div class="p-3 bg-primary rounded-xl shrink-0">
+                <span data-icon="cpu"></span>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg mb-1">Conteúdo 100% prático</h4>
+                <p class="text-gray-400 text-sm">Vídeo aulas de ferramentas reais utilizadas na bancada em alta
+                  definição.</p>
+              </div>
+            </div>
+
+            <div class="reveal glass-card p-6 rounded-2xl flex items-start gap-4" style="transition-delay: 100ms;">
+              <div class="p-3 bg-primary rounded-xl shrink-0">
+                <span data-icon="zap"></span>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg mb-1">Técnicas do laboratório real</h4>
+                <p class="text-gray-400 text-sm">Aprenda dicas e segredos de quem conserta dezenas de aparelhos
+                  diariamente.</p>
+              </div>
+            </div>
+
+            <div class="reveal glass-card p-6 rounded-2xl flex items-start gap-4" style="transition-delay: 200ms;">
+              <div class="p-3 bg-primary rounded-xl shrink-0">
+                <span data-icon="shieldCheck"></span>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg mb-1">Suporte e mentoria</h4>
+                <p class="text-gray-400 text-sm">Tire suas dúvidas diretamente com quem entende do assunto no grupo de
+                  alunos.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal pt-4" style="transition-delay: 300ms;">
+            <button
+              class="bg-primary hover:bg-primary-hover text-white font-bold px-12 py-4 rounded-xl transition-all cursor-pointer">
+              COMEÇAR AGORA >
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Target Audience -->
+    <section class="py-24 px-6 lg:px-20 bg-white text-gray-900">
+      <div class="max-w-7xl mx-auto">
+        <h2 class="text-3xl lg:text-4xl font-extrabold text-center mb-16 reveal">Para quem é o <span
+            class="text-primary italic">curso</span></h2>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <div
+            class="reveal bg-gray-50 p-8 rounded-3xl border border-gray-100 hover:shadow-2xl transition-all duration-300 group cursor-pointer">
+            <div
+              class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <span data-icon="users" class="text-white"></span>
+            </div>
+            <h3 class="text-xl font-bold mb-4">Técnicos iniciantes</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">Aprenda do jeito certo, economize tempo e evite erros
+              comuns no início da carreira.</p>
+          </div>
+
+          <div
+            class="reveal bg-gray-50 p-8 rounded-3xl border border-gray-100 hover:shadow-2xl transition-all duration-300 group cursor-pointer"
+            style="transition-delay: 100ms;">
+            <div
+              class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <span data-icon="trendingUp" class="text-white"></span>
+            </div>
+            <h3 class="text-xl font-bold mb-4">Profissionais em transição</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">Eleve seu ticket médio aprendendo reparos que a maioria das
+              assistências não faz.</p>
+          </div>
+
+          <div
+            class="reveal bg-gray-50 p-8 rounded-3xl border border-gray-100 hover:shadow-2xl transition-all duration-300 group cursor-pointer"
+            style="transition-delay: 200ms;">
+            <div
+              class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <span data-icon="briefcase" class="text-white"></span>
+            </div>
+            <h3 class="text-xl font-bold mb-4">Empreendedores</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">Entenda como montar e gerenciar seu próprio laboratório de
+              reparos avançados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="py-24 px-6 lg:px-20 bg-gray-50 text-gray-900 border-t border-gray-200">
+      <div class="max-w-7xl mx-auto">
+        <h2 class="text-2xl lg:text-3xl font-extrabold text-center mb-16 reveal">Você não aprende <span
+            class="text-primary italic">sozinho</span></h2>
+
+        <div class="grid md:grid-cols-3 gap-12 text-center">
+          <div class="reveal space-y-4">
+            <div class="mx-auto w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
+              <span data-icon="headset"></span>
+            </div>
+            <h3 class="font-bold text-xl uppercase tracking-tight">Suporte direto</h3>
+            <p class="text-gray-500 text-sm">Ficou com dúvida? Nossa equipe está pronta para te ajudar em cada etapa.
+            </p>
+          </div>
+
+          <div class="reveal space-y-4" style="transition-delay: 100ms;">
+            <div class="mx-auto w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
+              <span data-icon="refreshCw"></span>
+            </div>
+            <h3 class="font-bold text-xl uppercase tracking-tight">Atualizações vitalícias</h3>
+            <p class="text-gray-500 text-sm">O mercado mobile muda rápido. Você terá acesso a todas as novas aulas
+              grátis.</p>
+          </div>
+
+          <div class="reveal space-y-4" style="transition-delay: 200ms;">
+            <div class="mx-auto w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
+              <span data-icon="users"></span>
+            </div>
+            <h3 class="font-bold text-xl uppercase tracking-tight">Comunidade exclusiva</h3>
+            <p class="text-gray-500 text-sm">Troque experiências e parcerias com técnicos de todo o Brasil no Telegram.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="py-24 px-6 lg:px-20 bg-background relative overflow-hidden">
+      <div class="absolute inset-0 bg-primary/5 -z-10"></div>
+      <div class="max-w-4xl mx-auto text-center space-y-12">
+        <div class="reveal">
+          <h2 class="text-3xl lg:text-5xl font-extrabold mb-8">Sua evolução profissional <span
+              class="text-primary italic">começa agora</span></h2>
+        </div>
+
+        <div class="reveal glass-card p-10 rounded-3xl grid sm:grid-cols-2 gap-6 items-center">
+          <div class="flex items-center gap-4 text-left">
+            <span data-icon="checkCircle" class="text-primary"></span>
+            <span class="font-semibold">Acesso Vitalício</span>
+          </div>
+          <div class="flex items-center gap-4 text-left">
+            <span data-icon="checkCircle" class="text-primary"></span>
+            <span class="font-semibold">Certificado de Conclusão</span>
+          </div>
+          <div class="flex items-center gap-4 text-left">
+            <span data-icon="checkCircle" class="text-primary"></span>
+            <span class="font-semibold">Suporte VIP</span>
+          </div>
+          <div class="flex items-center gap-4 text-left">
+            <span data-icon="checkCircle" class="text-primary"></span>
+            <span class="font-semibold">Garantia de Satisfação</span>
+          </div>
+
+          <div class="sm:col-span-2 pt-6">
+            <button
+              class="w-full bg-primary hover:bg-primary-hover text-white font-extrabold py-5 rounded-xl transition-all shadow-2xl shadow-primary/40 cursor-pointer uppercase tracking-widest text-lg">
+              QUERO ME TORNAR UM ESPECIALISTA AGORA >
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 px-6 lg:px-20 bg-[#07090D] border-t border-white/5 text-gray-500">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12 reveal">
+          <h2 class="text-2xl font-bold text-white mb-6">Sua evolução profissional <span class="text-primary">começa
+              agora.</span></h2>
+          <button
+            class="bg-primary/20 text-primary border border-primary/30 px-8 py-3 rounded-lg font-bold hover:bg-primary hover:text-white transition-all cursor-pointer">
+            VALOR PROMOCIONAL AGORA >
+          </button>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-12 text-sm">
+          <div class="reveal">
+            <h4 class="text-white font-bold mb-4 italic">Fastfix Academy</h4>
+            <p>Formando os melhores especialistas em reparo de placas do Brasil.</p>
+          </div>
+          <div class="reveal" style="transition-delay: 100ms;">
+            <h4 class="text-white font-bold mb-4 italic">Links Úteis</h4>
+            <ul class="space-y-2">
+              <li><a href="#" class="hover:text-primary transition-colors">Política de Privacidade</a></li>
+              <li><a href="#" class="hover:text-primary transition-colors">Termos de Uso</a></li>
+              <li><a href="#" class="hover:text-primary transition-colors">Página de Suporte</a></li>
+            </ul>
+          </div>
+          <div class="reveal" style="transition-delay: 200ms;">
+            <h4 class="text-white font-bold mb-4 italic">Informações</h4>
+            <ul class="space-y-2">
+              <li>Certificado de conclusão</li>
+              <li>Acesso vitalício</li>
+              <li>Garantia 7 dias</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-16 pt-8 border-t border-white/5 text-center text-xs">
+          <p>© 2026 Fastfix Academy. Todos os direitos reservados.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
