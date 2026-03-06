@@ -1,6 +1,6 @@
 import './style.css';
 
-// SVG Icons (inline to avoid lucide resolution issues)
+// SVG Icons
 const icons = {
   check: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
   shoppingCart: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>`,
@@ -12,7 +12,10 @@ const icons = {
   briefcase: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>`,
   headset: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>`,
   refreshCw: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>`,
-  checkCircle: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`
+  checkCircle: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+  gift: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>`,
+  alertTriangle: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
+  messageCircle: `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>`
 };
 
 // Replace icon placeholders
@@ -23,7 +26,79 @@ document.querySelectorAll('[data-icon]').forEach(el => {
   }
 });
 
-// Scroll Reveal Observer
+// ========== COUNTDOWN TIMER ==========
+function initCountdown() {
+  const STORAGE_KEY = 'fastfix_timer_end';
+  const DURATION_MS = 15 * 60 * 1000; // 15 minutes
+
+  let endTime = localStorage.getItem(STORAGE_KEY);
+
+  if (!endTime || Number(endTime) < Date.now()) {
+    endTime = Date.now() + DURATION_MS;
+    localStorage.setItem(STORAGE_KEY, endTime);
+  } else {
+    endTime = Number(endTime);
+  }
+
+  const minutesEl = document.getElementById('timer-minutes');
+  const secondsEl = document.getElementById('timer-seconds');
+  const bar = document.getElementById('urgency-bar');
+
+  function tick() {
+    const remaining = endTime - Date.now();
+
+    if (remaining <= 0) {
+      minutesEl.textContent = '00';
+      secondsEl.textContent = '00';
+      bar.classList.add('timer-expired');
+      bar.querySelector('span:nth-child(2)').textContent = '🚨 ÚLTIMA CHANCE DE APROVEITAR A OFERTA!';
+      return;
+    }
+
+    const mins = Math.floor(remaining / 60000);
+    const secs = Math.floor((remaining % 60000) / 1000);
+
+    minutesEl.textContent = String(mins).padStart(2, '0');
+    secondsEl.textContent = String(secs).padStart(2, '0');
+
+    // Pulse effect when less than 2 minutes
+    if (mins < 2) {
+      bar.classList.add('timer-critical');
+    }
+
+    requestAnimationFrame(() => setTimeout(tick, 250));
+  }
+
+  tick();
+}
+
+initCountdown();
+
+// ========== FAQ ACCORDION ==========
+document.querySelectorAll('.faq-trigger').forEach(trigger => {
+  trigger.addEventListener('click', () => {
+    const item = trigger.closest('.faq-item');
+    const content = item.querySelector('.faq-content');
+    const icon = item.querySelector('.faq-icon');
+    const isOpen = !content.classList.contains('hidden');
+
+    // Close all
+    document.querySelectorAll('.faq-item').forEach(otherItem => {
+      otherItem.querySelector('.faq-content').classList.add('hidden');
+      otherItem.querySelector('.faq-icon').textContent = '+';
+      otherItem.querySelector('.faq-icon').classList.remove('rotate-45');
+    });
+
+    // Toggle current
+    if (!isOpen) {
+      content.classList.remove('hidden');
+      icon.textContent = '×';
+      icon.classList.add('rotate-45');
+    }
+  });
+});
+
+// ========== SCROLL REVEAL ==========
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -34,7 +109,18 @@ const revealObserver = new IntersectionObserver((entries) => {
   threshold: 0.1
 });
 
-// Observe all reveal elements
 document.querySelectorAll('.reveal').forEach(el => {
   revealObserver.observe(el);
+});
+
+// ========== PRELOADER HIDE ==========
+window.addEventListener('load', () => {
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
+    preloader.classList.add('hidden');
+    // Remove element from DOM after transition
+    setTimeout(() => {
+      preloader.style.display = 'none';
+    }, 500);
+  }
 });

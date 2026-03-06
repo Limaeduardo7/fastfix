@@ -38,14 +38,259 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-/* Scroll Reveal Initial States */
+/* Scroll Reveal */
 .reveal {
   opacity: 0;
   transform: translateY(30px);
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
 .reveal.active {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Urgency Timer */
+#urgency-bar {
+  animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.timer-critical {
+  animation: urgencyPulse 1s ease-in-out infinite;
+}
+
+@keyframes urgencyPulse {
+
+  0%,
+  100% {
+    background-image: linear-gradient(to right, #b91c1c, #dc2626, #ea580c);
+  }
+
+  50% {
+    background-image: linear-gradient(to right, #991b1b, #b91c1c, #c2410c);
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+  }
+}
+
+.timer-expired {
+  background-image: linear-gradient(to right, #374151, #4b5563, #374151) !important;
+  animation: none !important;
+}
+
+/* Hero Refinements */
+#hero {
+  background: var(--color-background);
+}
+
+.hero-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.hero-glow--1 {
+  width: 600px;
+  height: 600px;
+  top: -100px;
+  right: -100px;
+  background: rgba(255, 107, 0, 0.07);
+}
+
+.hero-glow--2 {
+  width: 400px;
+  height: 400px;
+  bottom: 10%;
+  left: -50px;
+  background: rgba(255, 107, 0, 0.04);
+}
+
+.hero-image-wrapper img {
+  animation: float 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+/* Hero CTA shimmer */
+.hero-cta {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-cta::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: 0;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+
+  0%,
+  100% {
+    transform: skewX(-20deg) translateX(-150%);
+  }
+
+  50% {
+    transform: skewX(-20deg) translateX(300%);
+  }
+}
+
+/* FAQ */
+.faq-icon {
+  transition: transform 0.3s ease;
+}
+
+.faq-content {
+  animation: faqOpen 0.3s ease-out;
+}
+
+@keyframes faqOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* WhatsApp Floating Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 60px;
+  height: 60px;
+  background-color: #25d366;
+  color: #fff;
+  border-radius: 50px;
+  text-align: center;
+  font-size: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease-in-out;
+  text-decoration: none;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+  background-color: #20b858;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
+
+.whatsapp-float::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #25d366;
+  border-radius: 50%;
+  z-index: -1;
+  animation: whatsapp-pulse 2s infinite;
+}
+
+@keyframes whatsapp-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .whatsapp-float {
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    font-size: 25px;
+  }
+
+  /* Thinner urgency bar on mobile */
+  #urgency-bar {
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+  }
+
+  #urgency-bar span,
+  #urgency-bar button {
+    font-size: 0.75rem;
+  }
+
+  #countdown-timer {
+    font-size: 1rem !important;
+  }
+
+  /* Prevent hero overlap on mobile - more top padding */
+  #hero {
+    padding-top: 7.5rem !important;
+    /* Increased slightly for safety */
+  }
+
+  /* Urgency bar extra mobile refinements */
+  #urgency-bar .container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  #urgency-bar .flex.items-center.gap-2 {
+    gap: 0.25rem;
+  }
+
+  /* Hide decorative icons on very small screens to save space */
+  @media (max-width: 380px) {
+
+    #urgency-bar .text-xl,
+    #urgency-bar .text-lg {
+      display: none;
+    }
+
+    #urgency-bar span:first-child {
+      font-size: 0.7rem;
+    }
+
+    #urgency-bar button {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+      font-size: 0.7rem;
+    }
+  }
 }

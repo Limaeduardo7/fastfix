@@ -3,95 +3,361 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="icon" type="image/png" href="/images/Logo-Vertical---Branco e Azul.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO -->
+  <meta name="description"
+    content="Aprenda reparo de placas Android do zero ao profissional. O treinamento prático que leva técnicos ao faturamento de R$ 8.000+/mês. Acesso vitalício + certificado + suporte." />
+
+  <!-- Open Graph (Facebook, WhatsApp, Telegram) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="FastFix Academy | Domine o Reparo de Placas Android" />
+  <meta property="og:description"
+    content="Aprenda a reparar placas que outros técnicos recusam. Transforme sua bancada em um negócio lucrativo faturando R$ 8.000+/mês com João Mattoso." />
+  <meta property="og:image" content="/images/Logo-Vertical---Branco e Azul.png" />
+  <meta property="og:url" content="https://fastfixacademy.com" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="FastFix Academy | Domine o Reparo de Placas Android" />
+  <meta name="twitter:description"
+    content="Treinamento prático do zero ao avançado. Comece a faturar com os reparos mais lucrativos da assistência técnica." />
+  <meta name="twitter:image" content="/images/Logo-Vertical---Branco e Azul.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <title>Fastfix - Reparo de Placas Android</title>
+  <title>FastFix Academy. Reparo de Placas Android</title>
+
+  <!-- SE0 Additional -->
+  <link rel="canonical" href="https://fastfixacademy.com" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Structured Data: Course Schema -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": "Curso de Reparo de Placas Android - FastFix Academy",
+      "description": "Treinamento prático de eletrônica aplicada a smartphones Android, do zero ao avançado.",
+      "provider": {
+        "@type": "Organization",
+        "name": "FastFix Academy",
+        "sameAs": "https://fastfixacademy.com"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "497.00",
+        "priceCurrency": "BRL",
+        "availability": "https://schema.org/InStock",
+        "url": "https://fastfixacademy.com"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "1247"
+      }
+    }
+  </script>
+
+  <!-- Preloader Styles (Critical CSS) -->
+  <style>
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #0B0E14;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease-out, visibility 0.5s;
+    }
+
+    .loader-content {
+      text-align: center;
+    }
+
+    .loader-circle {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #FF5C00;
+      /* Primary color */
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    #preloader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+  </style>
 </head>
 
-<body class="bg-background text-white antialiased">
-  <div id="app">
-    <!-- Hero Section -->
-    <section id="hero"
-      class="relative min-h-screen py-10 px-6 lg:px-20 flex flex-col items-start justify-center overflow-hidden">
-      <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-bl from-primary/20 to-transparent -z-10"></div>
+<!-- Premium Preloader -->
+<div id="preloader">
+  <div class="loader-content">
+    <div class="loader-circle"></div>
+    <p
+      style="color: #FF5C00; font-weight: 800; font-family: 'Inter', sans-serif; letter-spacing: 2px; font-size: 10px; text-transform: uppercase;">
+      Iniciando Bancada...</p>
+  </div>
+</div>
 
-      <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
-        <div class="reveal">
-          <h1 class="text-4xl lg:text-6xl font-extrabold mb-6 leading-tight">
-            Aprenda Reparo de <span class="text-primary italic">Placas Android</span> <br>
-            <span class="text-gradient">do Zero ao Profissional</span>
+<div id="app">
+
+  <!-- ========== URGENCY TIMER BAR ========== -->
+  <div id="urgency-bar"
+    class="fixed top-0 left-0 right-0 z-[999] bg-gradient-to-r from-red-700 via-red-600 to-orange-600 text-white py-2.5 px-4 text-center shadow-lg">
+    <div class="flex items-center justify-center gap-3 text-sm sm:text-base font-bold tracking-wide">
+      <span data-icon="alertTriangle"></span>
+      <span>🔥 OFERTA EXPIRA EM:</span>
+      <div id="countdown-timer" class="flex items-center gap-1 font-mono text-lg sm:text-xl">
+        <span id="timer-minutes" class="bg-white/20 px-2 py-0.5 rounded font-extrabold">15</span>
+        <span class="animate-pulse">:</span>
+        <span id="timer-seconds" class="bg-white/20 px-2 py-0.5 rounded font-extrabold">00</span>
+      </div>
+      <span class="hidden sm:inline">Depois volta para <s>R$ 497,00</s></span>
+      <button
+        onclick="window.open('https://pay.hotmart.com/R103290726F?sck=HOTMART_PRODUCT_PAGE&off=m6oz9c5d&hotfeature=32&bid=1772048437290','_blank')"
+        class="ml-2 bg-white text-red-700 font-extrabold px-4 py-1 rounded-full text-xs hover:scale-105 transition-transform cursor-pointer">
+        GARANTIR AGORA
+      </button>
+    </div>
+  </div>
+
+  <main id="main-content">
+
+    <!-- ========== HERO SECTION ========== -->
+    <section id="hero"
+      class="relative min-h-screen pt-24 pb-16 px-6 lg:px-20 flex items-center justify-center overflow-hidden">
+
+      <!-- Ambient background glows -->
+      <div class="hero-glow hero-glow--1"></div>
+      <div class="hero-glow hero-glow--2"></div>
+
+      <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-[1fr_0.9fr] gap-12 lg:gap-16 items-center py-8">
+
+        <!-- Left: Copy -->
+        <div class="reveal space-y-6">
+
+          <!-- Category badge -->
+          <div
+            class="inline-flex items-center gap-2 bg-primary/10 border border-primary/25 text-orange-300 text-xs font-bold px-4 py-2 rounded-full uppercase tracking-widest">
+            <span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+            Formação Profissional em Reparo de Placas
+          </div>
+
+          <!-- Headline -->
+          <h1
+            class="text-4xl sm:text-5xl lg:text-[3.25rem] xl:text-[3.75rem] font-extrabold leading-[1.08] tracking-tight">
+            Pare de devolver<br>
+            placas que você<br>
+            <span class="text-primary">poderia lucrar.</span>
           </h1>
-          <p class="text-gray-400 text-lg mb-8 max-w-lg">
-            Domine as técnicas práticas e torne-se um especialista em reparos avançados.
+
+          <!-- Subtitle -->
+          <p class="text-gray-300 text-lg lg:text-xl max-w-lg leading-relaxed">
+            Aprenda a reparar placas que outros técnicos recusam. e comece a faturar
+            <strong class="text-white font-bold">R$ 8.000+/mês</strong> com o serviço mais lucrativo da assistência
+            técnica.
           </p>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-primary/20 rounded-full">
-                <span data-icon="check" class="text-primary"></span>
-              </div>
-              <span class="text-sm">Especialização completa</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-primary/20 rounded-full">
-                <span data-icon="check" class="text-primary"></span>
-              </div>
-              <span class="text-sm">Suporte direto</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-primary/20 rounded-full">
-                <span data-icon="check" class="text-primary"></span>
-              </div>
-              <span class="text-sm">Aulas práticas</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-primary/20 rounded-full">
-                <span data-icon="check" class="text-primary"></span>
-              </div>
-              <span class="text-sm">Certificado de conclusão</span>
+          <!-- CTA -->
+          <div class="flex flex-col gap-4 pt-2">
+            <button
+              onclick="window.open('https://pay.hotmart.com/R103290726F?sck=HOTMART_PRODUCT_PAGE&off=m6oz9c5d&hotfeature=32&bid=1772048437290','_blank')"
+              class="hero-cta w-full sm:w-auto sm:self-start bg-primary hover:bg-primary-hover text-white font-bold px-10 py-4 rounded-xl transition-all shadow-2xl shadow-primary/30 cursor-pointer flex items-center justify-center gap-3 text-base hover:scale-[1.03] active:scale-[0.98]">
+              <span data-icon="zap" class="[&_svg]:w-5 [&_svg]:h-5"></span>
+              Quero começar agora
+            </button>
+
+            <!-- Trust badges -->
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+              <span class="flex items-center gap-2 text-gray-300 text-sm">
+                <span
+                  class="flex items-center justify-center w-5 h-5 bg-green-500/20 border border-green-500/30 rounded-full shrink-0">
+                  <span data-icon="check" class="text-green-400 [&_svg]:w-3 [&_svg]:h-3"></span>
+                </span>
+                Acesso vitalício
+              </span>
+              <span class="flex items-center gap-2 text-gray-300 text-sm">
+                <span
+                  class="flex items-center justify-center w-5 h-5 bg-green-500/20 border border-green-500/30 rounded-full shrink-0">
+                  <span data-icon="check" class="text-green-400 [&_svg]:w-3 [&_svg]:h-3"></span>
+                </span>
+                Garantia 7 dias
+              </span>
+              <span class="flex items-center gap-2 text-gray-300 text-sm">
+                <span
+                  class="flex items-center justify-center w-5 h-5 bg-green-500/20 border border-green-500/30 rounded-full shrink-0">
+                  <span data-icon="check" class="text-green-400 [&_svg]:w-3 [&_svg]:h-3"></span>
+                </span>
+                Certificado incluso
+              </span>
             </div>
           </div>
 
-          <div class="max-w-sm reveal" style="transition-delay: 200ms;">
-            <div class="bg-white p-6 rounded-2xl shadow-2xl space-y-4">
-              <p class="text-gray-500 font-semibold text-sm uppercase">Investimento</p>
-              <div class="flex items-baseline gap-2">
-                <span class="text-4xl font-bold text-gray-900">R$ 197,90</span>
-                <span class="text-gray-400 text-sm italic">ou em até 12x no cartão</span>
+          <!-- Social proof strip -->
+          <div class="flex items-center gap-4 pt-3 border-t border-white/10">
+            <div class="flex -space-x-2.5 shrink-0">
+              <div
+                class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 border-2 border-[#0B0E14] flex items-center justify-center text-white text-xs font-bold">
+                R</div>
+              <div
+                class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-[#0B0E14] flex items-center justify-center text-white text-xs font-bold">
+                A</div>
+              <div
+                class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 border-2 border-[#0B0E14] flex items-center justify-center text-white text-xs font-bold">
+                L</div>
+              <div
+                class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border-2 border-[#0B0E14] flex items-center justify-center text-white text-xs font-bold">
+                J</div>
+            </div>
+            <div>
+              <div class="flex items-center gap-0.5">
+                <span class="text-yellow-400 text-sm leading-none">★★★★★</span>
               </div>
-              <button
-                class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary/25 cursor-pointer flex items-center justify-center gap-2">
-                <span data-icon="shoppingCart"></span>
-                PROMOÇÃO POR TEMPO LIMITADO
-              </button>
-              <button
-                class="w-full border-2 border-primary text-primary hover:bg-primary/5 font-bold py-3 rounded-xl transition-all cursor-pointer">
-                QUERO ME INSCREVER AGORA >
-              </button>
+              <p class="text-gray-300 text-xs mt-0.5"><strong class="text-white font-semibold">+1.200
+                  técnicos</strong> já faturando mais</p>
             </div>
           </div>
         </div>
 
-        <div class="relative reveal" style="transition-delay: 400ms;">
-          <div class="absolute -inset-4 bg-primary/10 blur-3xl rounded-full -z-10"></div>
-          <img src="/images/hero.png" alt="Técnico Especialista"
-            class="w-full h-auto rounded-3xl border-4 border-surface shadow-2xl scale-110 lg:scale-125">
+        <!-- Right: Image -->
+        <div class="relative reveal" style="transition-delay: 300ms;">
+          <div class="hero-image-wrapper relative">
+            <!-- Glow ring behind image -->
+            <div
+              class="absolute -inset-4 bg-gradient-to-br from-primary/25 via-transparent to-primary/10 rounded-3xl blur-2xl -z-10">
+            </div>
+            <img src="/images/01.jpg" alt="Técnico João Mattoso realizando reparo avançado em placa Android"
+              class="w-full max-h-[560px] lg:max-h-[640px] object-cover object-top rounded-2xl shadow-2xl relative z-10"
+              fetchpriority="high" width="1600" height="2400">
+          </div>
+          <!-- Floating stat card -->
+          <div class="absolute bottom-4 left-4 bg-surface border border-white/10 rounded-2xl p-4 shadow-2xl z-20">
+            <p class="text-gray-400 text-[10px] uppercase tracking-wider font-bold mb-1">Faturamento médio</p>
+            <p class="text-xl font-extrabold text-white leading-none">R$ 8.000<span class="text-primary">+</span></p>
+            <p class="text-gray-400 text-xs mt-1">/mês após o treinamento</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div
+        class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-500 text-xs reveal"
+        style="transition-delay: 800ms;">
+        <span>Role para baixo</span>
+        <div class="w-5 h-8 border-2 border-gray-600 rounded-full flex justify-center pt-1.5">
+          <div class="w-1 h-2 bg-gray-500 rounded-full animate-bounce"></div>
         </div>
       </div>
     </section>
 
-    <!-- Steps Section -->
+    <!-- ========== BEFORE vs AFTER ========== -->
+    <section class="py-24 px-6 lg:px-20 bg-background border-t border-white/5">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-16 reveal">
+          <span class="text-primary font-bold text-sm uppercase tracking-widest">A transformação</span>
+          <h2 class="text-3xl lg:text-5xl font-extrabold mt-2 mb-4">
+            O que muda quando você domina <span class="text-primary italic">reparo de placas</span>
+          </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 reveal">
+          <!-- Before -->
+          <div class="glass-card rounded-3xl p-8 space-y-5 border-red-500/20">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center">
+                <span class="text-red-400 text-lg">✕</span>
+              </div>
+              <h3 class="text-xl font-bold text-red-400">Sem o treinamento</h3>
+            </div>
+            <div class="space-y-4 text-gray-400 text-sm">
+              <div class="flex items-start gap-3">
+                <span class="text-red-400/60 mt-0.5">✕</span>
+                <span>Devolve placas "sem conserto" e perde o lucro mais alto da bancada</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="text-red-400/60 mt-0.5">✕</span>
+                <span>Cobra R$ 50~80 por troca de tela e vive espremido no preço</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="text-red-400/60 mt-0.5">✕</span>
+                <span>Depende de emprego CLT ou loja com salário fixo baixo</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="text-red-400/60 mt-0.5">✕</span>
+                <span>Fica para trás enquanto o mercado exige cada vez mais especialização</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- After -->
+          <div class="glass-card rounded-3xl p-8 space-y-5 border-green-500/20 bg-green-500/5">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
+                <span class="text-green-400 text-lg">✓</span>
+              </div>
+              <h3 class="text-xl font-bold text-green-400">Com o FastFix</h3>
+            </div>
+            <div class="space-y-4 text-gray-300 text-sm">
+              <div class="flex items-start gap-3">
+                <span class="text-green-400 mt-0.5">✓</span>
+                <span>Repara placas que <strong class="text-white">outros técnicos recusaram</strong>. e cobra caro
+                  por
+                  isso</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="text-green-400 mt-0.5">✓</span>
+                <span>Cobra <strong class="text-white">R$ 300 a R$ 800 por reparo</strong> de placa com margem
+                  altíssima</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="text-green-400 mt-0.5">✓</span>
+                <span>Tem seu próprio lab lucrativo ou <strong class="text-white">dobra o faturamento</strong> da
+                  loja</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="text-green-400 mt-0.5">✓</span>
+                <span>Vira a <strong class="text-white">referência da região</strong>. clientes e lojas te
+                  procuram</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-12 reveal">
+          <button
+            onclick="window.open('https://pay.hotmart.com/R103290726F?sck=HOTMART_PRODUCT_PAGE&off=m6oz9c5d&hotfeature=32&bid=1772048437290','_blank')"
+            class="bg-primary hover:bg-primary-hover text-white font-bold px-10 py-4 rounded-xl transition-all cursor-pointer hover:scale-[1.02]">
+            Quero essa transformação →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== STEPS SECTION ========== -->
     <section class="py-24 px-6 lg:px-20 bg-white text-gray-900">
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-20 reveal">
           <h2 class="text-3xl lg:text-5xl font-extrabold mb-4">
-            O que os técnicos profissionais <span class="text-primary">realmente fazem</span>
+            Em 6 módulos, você aprende a resolver placas com <span class="text-orange-600">consumo travado</span>
           </h2>
-          <p class="text-gray-500 text-lg">Você não está sozinho. Aprenda do profissional que vive o dia a dia da
-            bancada.</p>
+          <p class="text-gray-500 text-lg max-w-2xl mx-auto">Um treinamento desenhado para quem já tem noção básica de
+            bancada e quer dominar diagnósticos avançados de forma prática e direta.</p>
         </div>
 
         <div class="grid lg:grid-cols-2 gap-16 items-center">
@@ -101,70 +367,83 @@
                 <span class="text-primary font-bold text-xl">1</span>
               </div>
               <h3 class="font-bold text-xl">Análise de Esquemas</h3>
-              <p class="text-gray-500 text-sm">Aprenda a ler e interpretar esquemas elétricos com precisão.</p>
+              <p class="text-gray-500 text-sm">Leia qualquer esquema elétrico e saiba exatamente onde está o defeito,
+                sem ficar chutando.</p>
             </div>
             <div class="reveal space-y-3" style="transition-delay: 200ms;">
               <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
                 <span class="text-primary font-bold text-xl">2</span>
               </div>
               <h3 class="font-bold text-xl">Micro Soldagem</h3>
-              <p class="text-gray-500 text-sm">Técnicas avançadas para componentes microscópicos.</p>
+              <p class="text-gray-500 text-sm">Solde componentes microscópicos com precisão. a habilidade mais
+                valorizada do mercado.</p>
             </div>
             <div class="reveal space-y-3" style="transition-delay: 300ms;">
               <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
                 <span class="text-primary font-bold text-xl">3</span>
               </div>
               <h3 class="font-bold text-xl">Diagnóstico Avançado</h3>
-              <p class="text-gray-500 text-sm">Localize falhas complexas em poucos minutos.</p>
+              <p class="text-gray-500 text-sm">Localize falhas que outros técnicos não encontram. em minutos, não em
+                horas.</p>
             </div>
             <div class="reveal space-y-3" style="transition-delay: 400ms;">
               <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
                 <span class="text-primary font-bold text-xl">4</span>
               </div>
               <h3 class="font-bold text-xl">Reparo de Trilhas</h3>
-              <p class="text-gray-500 text-sm">Recupere placas condenadas por trilhas rompidas.</p>
+              <p class="text-gray-500 text-sm">Recupere placas que seriam jogadas fora. e cobre R$ 500+ por cada uma.
+              </p>
             </div>
             <div class="reveal space-y-3" style="transition-delay: 500ms;">
               <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
                 <span class="text-primary font-bold text-xl">5</span>
               </div>
               <h3 class="font-bold text-xl">Reballing Profissional</h3>
-              <p class="text-gray-500 text-sm">Domine a técnica de refazer as esferas de solda bga.</p>
+              <p class="text-gray-500 text-sm">Domine a técnica de BGA que separa amadores de profissionais. e cobra à
+                altura.</p>
             </div>
             <div class="reveal space-y-3" style="transition-delay: 600ms;">
               <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
                 <span class="text-primary font-bold text-xl">6</span>
               </div>
               <h3 class="font-bold text-xl">Limpeza Técnica</h3>
-              <p class="text-gray-500 text-sm">Processos profissionais de descontaminação.</p>
+              <p class="text-gray-500 text-sm">A etapa invisível que previne 30% dos defeitos. e que quase ninguém
+                ensina direito.</p>
             </div>
           </div>
 
           <div class="reveal" style="transition-delay: 300ms;">
-            <img src="/images/workbench.png" alt="Trabalho de Bancada"
-              class="rounded-3xl shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border-8 border-white">
+            <img src="/images/04.jpeg" alt="Bancada de ferramentas e multímetro para reparo de smartphones"
+              class="rounded-3xl shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border-8 border-white"
+              loading="lazy" width="6000" height="4000">
           </div>
         </div>
 
         <div class="mt-20 text-center reveal">
           <button
-            class="bg-primary hover:bg-primary-hover text-white font-extrabold px-12 py-5 rounded-xl transition-all shadow-xl shadow-primary/25 cursor-pointer uppercase tracking-wider">
-            SAIBA MAIS AGORA >
+            onclick="window.open('https://pay.hotmart.com/R103290726F?sck=HOTMART_PRODUCT_PAGE&off=m6oz9c5d&hotfeature=32&bid=1772048437290','_blank')"
+            class="bg-primary hover:bg-primary-hover text-white font-extrabold px-12 py-5 rounded-xl transition-all shadow-xl shadow-primary/25 cursor-pointer uppercase tracking-wider hover:scale-[1.02]">
+            Ver o que está incluso →
           </button>
         </div>
       </div>
     </section>
 
-    <!-- Bench Practice -->
+    <!-- ========== BENCH PRACTICE ========== -->
     <section class="py-24 px-6 lg:px-20 bg-background overflow-hidden">
       <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
         <div class="reveal">
-          <img src="/images/workbench.png" alt="Bancada Real" class="rounded-3xl shadow-2xl border-2 border-surface">
+          <img src="/images/Imagem-Bancada.png" alt="Processo prático de micro soldagem em placa de celular"
+            class="rounded-3xl shadow-2xl border-2 border-surface" loading="lazy">
         </div>
         <div class="space-y-10">
           <div class="reveal">
-            <h2 class="text-3xl lg:text-5xl font-extrabold mb-6">Não é teoria — é <span
+            <h2 class="text-3xl lg:text-5xl font-extrabold mb-4">Não é teoria. é <span
                 class="text-primary italic">prática de bancada real</span></h2>
+            <p class="text-gray-400 text-base leading-relaxed">O tipo de conteúdo que assistências técnicas cobram
+              <strong class="text-white">R$ 3.000+ em treinamentos presenciais</strong>. Aqui você tem por uma fração
+              e pode rever quantas vezes quiser.
+            </p>
           </div>
 
           <div class="space-y-6">
@@ -173,9 +452,9 @@
                 <span data-icon="cpu"></span>
               </div>
               <div>
-                <h4 class="font-bold text-lg mb-1">Conteúdo 100% prático</h4>
-                <p class="text-gray-400 text-sm">Vídeo aulas de ferramentas reais utilizadas na bancada em alta
-                  definição.</p>
+                <h3 class="font-bold text-lg mb-1">Filmado na bancada, não no PowerPoint</h3>
+                <p class="text-gray-400 text-sm">Cada aula mostra o reparo real acontecendo. com zoom em componentes
+                  microscópicos em alta definição.</p>
               </div>
             </div>
 
@@ -184,9 +463,9 @@
                 <span data-icon="zap"></span>
               </div>
               <div>
-                <h4 class="font-bold text-lg mb-1">Técnicas do laboratório real</h4>
-                <p class="text-gray-400 text-sm">Aprenda dicas e segredos de quem conserta dezenas de aparelhos
-                  diariamente.</p>
+                <h3 class="font-bold text-lg mb-1">Segredos que você não acha no YouTube</h3>
+                <p class="text-gray-400 text-sm">Macetes, atalhos e técnicas de quem conserta dezenas de aparelhos por
+                  dia. sem enrolação.</p>
               </div>
             </div>
 
@@ -195,73 +474,331 @@
                 <span data-icon="shieldCheck"></span>
               </div>
               <div>
-                <h4 class="font-bold text-lg mb-1">Suporte e mentoria</h4>
-                <p class="text-gray-400 text-sm">Tire suas dúvidas diretamente com quem entende do assunto no grupo de
-                  alunos.</p>
+                <h3 class="font-bold text-lg mb-1">Suporte VIP Direto</h3>
+                <p class="text-gray-400 text-sm">Suporte direto com o João através do WhatsApp ou grupo no Discord com
+                  encontros semanais para tirar dúvidas.</p>
               </div>
             </div>
           </div>
 
           <div class="reveal pt-4" style="transition-delay: 300ms;">
             <button
-              class="bg-primary hover:bg-primary-hover text-white font-bold px-12 py-4 rounded-xl transition-all cursor-pointer">
-              COMEÇAR AGORA >
+              onclick="window.open('https://pay.hotmart.com/R103290726F?sck=HOTMART_PRODUCT_PAGE&off=m6oz9c5d&hotfeature=32&bid=1772048437290','_blank')"
+              class="bg-primary hover:bg-primary-hover text-white font-bold px-12 py-4 rounded-xl transition-all cursor-pointer hover:scale-[1.02]">
+              Quero esse nível de conteúdo →
             </button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Target Audience -->
+    <!-- ========== ABOUT THE PROFESSOR ========== -->
     <section class="py-24 px-6 lg:px-20 bg-white text-gray-900">
+      <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+        <div class="reveal">
+          <div class="relative">
+            <div class="absolute -inset-4 bg-primary/10 blur-3xl rounded-full -z-10"></div>
+            <img src="/images/02.jpg" alt="João Mattoso, instrutor da FastFix Academy"
+              class="rounded-3xl shadow-2xl border-4 border-gray-100 w-full" loading="lazy" width="1600" height="2400">
+          </div>
+        </div>
+
+        <div class="reveal space-y-6">
+          <span class="text-orange-700 font-bold text-sm uppercase tracking-widest">Seu instrutor</span>
+          <h2 class="text-3xl lg:text-5xl font-extrabold leading-tight">
+            João Mattoso já consertou o que <span class="text-orange-600 italic">ninguém mais conserta</span>
+          </h2>
+          <p class="text-gray-500 text-lg leading-relaxed">
+            São mais de <strong class="text-gray-900">10 anos vivendo de bancada</strong>. Mais de
+            <strong class="text-gray-900">5.000 aparelhos</strong> passaram pelas mãos dele. incluindo os que chegaram
+            como "sem conserto" de outras assistências.
+          </p>
+          <p class="text-gray-500 text-base leading-relaxed">
+            O João não é professor de cursinho. Ele <strong class="text-gray-900">vive de reparo de placas até
+              hoje</strong>. E decidiu abrir o jogo sobre tudo que aprendeu nesses anos. sem guardar segredo.
+          </p>
+
+          <div class="grid grid-cols-2 gap-4 py-4">
+            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center">
+              <p class="text-3xl font-extrabold text-orange-600">10+</p>
+              <p class="text-gray-500 text-sm font-semibold">Anos na bancada</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center">
+              <p class="text-3xl font-extrabold text-orange-600">5.000+</p>
+              <p class="text-gray-500 text-sm font-semibold">Aparelhos reparados</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center">
+              <p class="text-3xl font-extrabold text-orange-600">1.247+</p>
+              <p class="text-gray-500 text-sm font-semibold">Alunos treinados</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center">
+              <p class="text-3xl font-extrabold text-orange-600">98%</p>
+              <p class="text-gray-500 text-sm font-semibold">Aprovação dos alunos</p>
+            </div>
+          </div>
+
+          <button
+            onclick="window.open('https://pay.hotmart.com/R103290726F?sck=HOTMART_PRODUCT_PAGE&off=m6oz9c5d&hotfeature=32&bid=1772048437290','_blank')"
+            class="bg-primary hover:bg-primary-hover text-white font-bold px-10 py-4 rounded-xl transition-all cursor-pointer hover:scale-[1.02]">
+            Aprender com quem faz →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== TARGET AUDIENCE ========== -->
+    <section class="py-24 px-6 lg:px-20 bg-background">
       <div class="max-w-7xl mx-auto">
-        <h2 class="text-3xl lg:text-4xl font-extrabold text-center mb-16 reveal">Para quem é o <span
-            class="text-primary italic">curso</span></h2>
+        <h2 class="text-3xl lg:text-4xl font-extrabold text-center mb-4 reveal">Isso é pra você se…</h2>
+        <p class="text-gray-500 text-center text-lg mb-16 reveal">Se você se identifica com algum desses perfis, o
+          FastFix foi feito sob medida.</p>
 
         <div class="grid md:grid-cols-3 gap-8">
           <div
-            class="reveal bg-gray-50 p-8 rounded-3xl border border-gray-100 hover:shadow-2xl transition-all duration-300 group cursor-pointer">
+            class="reveal glass-card p-8 rounded-3xl hover:border-primary/40 transition-all duration-300 group cursor-pointer">
             <div
               class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <span data-icon="users" class="text-white"></span>
             </div>
-            <h3 class="text-xl font-bold mb-4">Técnicos iniciantes</h3>
-            <p class="text-gray-500 text-sm leading-relaxed">Aprenda do jeito certo, economize tempo e evite erros
-              comuns no início da carreira.</p>
+            <h3 class="text-xl font-bold mb-4">Destrave seu progresso</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">Já faz reparo mas está travado no progresso de bancada?
+              Aprenda a interpretar uma placa de um aparelho defeituoso independente da marca ou modelo.</p>
           </div>
 
           <div
-            class="reveal bg-gray-50 p-8 rounded-3xl border border-gray-100 hover:shadow-2xl transition-all duration-300 group cursor-pointer"
+            class="reveal glass-card p-8 rounded-3xl hover:border-primary/40 transition-all duration-300 group cursor-pointer"
             style="transition-delay: 100ms;">
             <div
               class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <span data-icon="trendingUp" class="text-white"></span>
             </div>
-            <h3 class="text-xl font-bold mb-4">Profissionais em transição</h3>
-            <p class="text-gray-500 text-sm leading-relaxed">Eleve seu ticket médio aprendendo reparos que a maioria das
-              assistências não faz.</p>
+            <h3 class="text-xl font-bold mb-4">Já trabalha mas quer lucrar mais</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">Você troca tela e conector, mas devolve placa. Aprenda o
+              reparo que a maioria das assistências não faz. e cobre 5x mais.</p>
           </div>
 
           <div
-            class="reveal bg-gray-50 p-8 rounded-3xl border border-gray-100 hover:shadow-2xl transition-all duration-300 group cursor-pointer"
+            class="reveal glass-card p-8 rounded-3xl hover:border-primary/40 transition-all duration-300 group cursor-pointer"
             style="transition-delay: 200ms;">
             <div
               class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <span data-icon="briefcase" class="text-white"></span>
             </div>
-            <h3 class="text-xl font-bold mb-4">Empreendedores</h3>
-            <p class="text-gray-500 text-sm leading-relaxed">Entenda como montar e gerenciar seu próprio laboratório de
-              reparos avançados.</p>
+            <h3 class="text-xl font-bold mb-4">Quer montar seu lab</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">Quer sair do emprego e ser dono do próprio negócio?
+              Reparo
+              de placas tem margem alta e demanda crescente. O curso te prepara pra isso.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Features -->
+    <!-- ========== SOCIAL PROOF / TESTIMONIALS ========== -->
+    <section class="py-24 px-6 lg:px-20 bg-white text-gray-900">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16 reveal">
+          <span class="text-orange-700 font-bold text-sm uppercase tracking-widest">Resultados reais</span>
+          <h2 class="text-3xl lg:text-5xl font-extrabold mt-2 mb-4">
+            Não acredite em mim. <span class="text-orange-600 italic">veja os números</span>
+          </h2>
+          <p class="text-gray-500 text-lg">Quem passa pelo treinamento não volta ao serviço básico. Os resultados
+            falam.
+          </p>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16 reveal">
+          <div class="text-center p-6 bg-primary/5 rounded-2xl border border-primary/10">
+            <p class="text-4xl font-extrabold text-orange-600">1.247+</p>
+            <p class="text-gray-500 text-sm font-semibold mt-1">Técnicos treinados</p>
+          </div>
+          <div class="text-center p-6 bg-primary/5 rounded-2xl border border-primary/10">
+            <p class="text-4xl font-extrabold text-orange-600">4.9</p>
+            <p class="text-gray-500 text-sm font-semibold mt-1">⭐ Nota média</p>
+          </div>
+          <div class="text-center p-6 bg-primary/5 rounded-2xl border border-primary/10">
+            <p class="text-4xl font-extrabold text-orange-600">98%</p>
+            <p class="text-gray-500 text-sm font-semibold mt-1">Indicariam a um amigo</p>
+          </div>
+          <div class="text-center p-6 bg-primary/5 rounded-2xl border border-primary/10">
+            <p class="text-4xl font-extrabold text-orange-600">R$ 8k+</p>
+            <p class="text-gray-500 text-sm font-semibold mt-1">Faturamento médio/mês</p>
+          </div>
+        </div>
+
+        <!-- Testimonial Cards -->
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="reveal bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-4">
+            <div class="flex text-yellow-400 text-lg">⭐⭐⭐⭐⭐</div>
+            <p class="text-gray-600 text-sm leading-relaxed italic">
+              "Cara, eu achei que ia ser mais um cursinho genérico. Mas na segunda semana já consertei uma placa que a
+              assistência tinha devolvido pro cliente. Faturei R$ 350 nesse reparo.
+              <strong class="text-gray-900">Hoje tiro R$ 9.000/mês</strong> só com placa."
+            </p>
+            <div class="flex items-center gap-3 pt-2">
+              <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                <span class="text-primary font-bold text-sm">RM</span>
+              </div>
+              <div>
+                <p class="font-bold text-sm text-gray-900">Rafael M.</p>
+                <p class="text-gray-500 text-xs">@rafael.tech. São Paulo, SP</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-4"
+            style="transition-delay: 100ms;">
+            <div class="flex text-yellow-400 text-lg">⭐⭐⭐⭐⭐</div>
+            <p class="text-gray-600 text-sm leading-relaxed italic">
+              "A parada é que o João responde rápido. Travei numa placa de um Redmi, mandei foto no grupo e em 20 min
+              já
+              tinha a solução. Nenhum curso que fiz antes tinha esse suporte.
+              <strong class="text-gray-900">Valeu cada centavo.</strong>"
+            </p>
+            <div class="flex items-center gap-3 pt-2">
+              <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                <span class="text-primary font-bold text-sm">JC</span>
+              </div>
+              <div>
+                <p class="font-bold text-sm text-gray-900">João C.</p>
+                <p class="text-gray-500 text-xs">@joaocell.bh. Belo Horizonte, MG</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-4"
+            style="transition-delay: 200ms;">
+            <div class="flex text-yellow-400 text-lg">⭐⭐⭐⭐⭐</div>
+            <p class="text-gray-600 text-sm leading-relaxed italic">
+              "Trabalhava para uma assistência técnica e hoje tenho o meu próprio laboratório.
+              <strong class="text-gray-900">Recusei proposta CLT de R$ 4.500</strong> porque ganho o dobro por conta
+              própria."
+            </p>
+            <div class="flex items-center gap-3 pt-2">
+              <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                <span class="text-primary font-bold text-sm">LS</span>
+              </div>
+              <div>
+                <p class="font-bold text-sm text-gray-900">Lucas S.</p>
+                <p class="text-gray-500 text-xs">@lucasfix.cwb. Curitiba, PR</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== BONUS + VALUE STACK ========== -->
+    <section class="py-24 px-6 lg:px-20 bg-background">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-16 reveal">
+          <span class="text-primary font-bold text-sm uppercase tracking-widest">Tudo que está incluso</span>
+          <h2 class="text-3xl lg:text-5xl font-extrabold mt-2">
+            Mais que um curso. um <span class="text-primary italic">arsenal completo</span>
+          </h2>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Main course -->
+          <div class="reveal glass-card p-6 rounded-2xl flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="p-3 bg-primary rounded-xl shrink-0">
+                <span data-icon="cpu"></span>
+              </div>
+              <div>
+                <h3 class="font-bold text-lg">Treinamento Completo. 6 Módulos Práticos</h3>
+                <p class="text-gray-400 text-sm">Do esquema elétrico ao reballing. Tudo filmado na bancada real em
+                  alta
+                  definição.</p>
+              </div>
+            </div>
+            <span class="text-gray-500 font-semibold text-sm line-through whitespace-nowrap">R$ 297,00</span>
+          </div>
+
+          <!-- Bonus 1 -->
+          <div class="reveal glass-card p-6 rounded-2xl flex items-center justify-between border-primary/30"
+            style="transition-delay: 100ms;">
+            <div class="flex items-center gap-4">
+              <div class="p-3 bg-green-600 rounded-xl shrink-0">
+                <span data-icon="gift"></span>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="bg-green-500/20 text-green-400 text-xs font-bold px-2 py-0.5 rounded-full">BÔNUS
+                    1</span>
+                </div>
+                <h3 class="font-bold text-lg mt-1">Kit Montagem de Lab</h3>
+                <p class="text-gray-400 text-sm">A lista exata de ferramentas + fornecedores com desconto que o João
+                  usa no lab dele</p>
+              </div>
+            </div>
+            <span class="text-gray-500 font-semibold text-sm line-through whitespace-nowrap">R$ 47,00</span>
+          </div>
+
+          <!-- Bonus 2 -->
+          <div class="reveal glass-card p-6 rounded-2xl flex items-center justify-between border-primary/30"
+            style="transition-delay: 200ms;">
+            <div class="flex items-center gap-4">
+              <div class="p-3 bg-green-600 rounded-xl shrink-0">
+                <span data-icon="gift"></span>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="bg-green-500/20 text-green-400 text-xs font-bold px-2 py-0.5 rounded-full">BÔNUS
+                    2</span>
+                </div>
+                <h3 class="font-bold text-lg mt-1">Rede de Técnicos FastFix (Telegram VIP)</h3>
+                <p class="text-gray-400 text-sm">Tire dúvidas ao vivo com +1.200 profissionais ativos. Nunca fique
+                  travado numa placa.</p>
+              </div>
+            </div>
+            <span class="text-gray-500 font-semibold text-sm line-through whitespace-nowrap">R$ 97,00</span>
+          </div>
+
+          <!-- Bonus 3 -->
+          <div class="reveal glass-card p-6 rounded-2xl flex items-center justify-between border-primary/30"
+            style="transition-delay: 300ms;">
+            <div class="flex items-center gap-4">
+              <div class="p-3 bg-green-600 rounded-xl shrink-0">
+                <span data-icon="gift"></span>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="bg-green-500/20 text-green-400 text-xs font-bold px-2 py-0.5 rounded-full">BÔNUS
+                    3</span>
+                </div>
+                <h3 class="font-bold text-lg mt-1">Módulo Extra: Diagnóstico por Software</h3>
+                <p class="text-gray-400 text-sm">Debug via software que complementa o hardware. encontre defeitos
+                  invisíveis ao multímetro</p>
+              </div>
+            </div>
+            <span class="text-gray-500 font-semibold text-sm line-through whitespace-nowrap">R$ 97,00</span>
+          </div>
+
+          <!-- Total value -->
+          <div id="pricing-anchor"
+            class="reveal glass-card p-8 rounded-2xl text-center space-y-4 border-2 border-primary/40"
+            style="transition-delay: 400ms;">
+            <p class="text-gray-400 text-sm uppercase font-bold tracking-wide">Valor total de tudo:</p>
+            <p class="text-3xl font-extrabold text-gray-400 line-through">R$ 1.297,00</p>
+            <p class="text-gray-400">Hoje, você leva tudo por apenas:</p>
+            <p class="text-5xl font-extrabold text-primary">R$ 497,00</p>
+            <p class="text-gray-500 text-sm">ou 12x de R$ 49,60</p>
+            <button
+              class="w-full max-w-md mx-auto bg-primary hover:bg-primary-hover text-white font-extrabold py-5 rounded-xl transition-all shadow-2xl shadow-primary/40 cursor-pointer uppercase tracking-wider text-lg hover:scale-[1.02]">
+              Garantir por R$ 497,00 →
+            </button>
+            <p class="text-gray-500 text-xs">Um único reparo de placa já paga o curso inteiro.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FEATURES ========== -->
     <section class="py-24 px-6 lg:px-20 bg-gray-50 text-gray-900 border-t border-gray-200">
       <div class="max-w-7xl mx-auto">
         <h2 class="text-2xl lg:text-3xl font-extrabold text-center mb-16 reveal">Você não aprende <span
-            class="text-primary italic">sozinho</span></h2>
+            class="text-orange-600 italic">sozinho</span></h2>
 
         <div class="grid md:grid-cols-3 gap-12 text-center">
           <div class="reveal space-y-4">
@@ -269,8 +806,8 @@
               <span data-icon="headset"></span>
             </div>
             <h3 class="font-bold text-xl uppercase tracking-tight">Suporte direto</h3>
-            <p class="text-gray-500 text-sm">Ficou com dúvida? Nossa equipe está pronta para te ajudar em cada etapa.
-            </p>
+            <p class="text-gray-500 text-sm">Suporte direto com o João através do WhatsApp ou grupo no Discord com
+              encontros semanais para garantir sua evolução.</p>
           </div>
 
           <div class="reveal space-y-4" style="transition-delay: 100ms;">
@@ -278,29 +815,176 @@
               <span data-icon="refreshCw"></span>
             </div>
             <h3 class="font-bold text-xl uppercase tracking-tight">Atualizações vitalícias</h3>
-            <p class="text-gray-500 text-sm">O mercado mobile muda rápido. Você terá acesso a todas as novas aulas
-              grátis.</p>
+            <p class="text-gray-500 text-sm">Novos celulares, novas placas, novas aulas. Você tem acesso a todas as
+              atualizações. pra sempre, sem pagar mais.</p>
           </div>
 
           <div class="reveal space-y-4" style="transition-delay: 200ms;">
             <div class="mx-auto w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
               <span data-icon="users"></span>
             </div>
-            <h3 class="font-bold text-xl uppercase tracking-tight">Comunidade exclusiva</h3>
-            <p class="text-gray-500 text-sm">Troque experiências e parcerias com técnicos de todo o Brasil no Telegram.
+            <h3 class="font-bold text-xl uppercase tracking-tight">Comunidade ativa</h3>
+            <p class="text-gray-500 text-sm">Comunidade de técnicos trocando diagnósticos, dicas e oportunidades.
+              Networking
+              que gera dinheiro real.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== GUARANTEE SECTION ========== -->
+    <section class="py-24 px-6 lg:px-20 bg-white text-gray-900">
+      <div class="max-w-4xl mx-auto reveal">
+        <div
+          class="bg-green-50 border-2 border-green-200 rounded-3xl p-10 md:p-16 flex flex-col md:flex-row items-center gap-10">
+          <!-- Shield icon -->
+          <div class="shrink-0">
+            <div class="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center border-4 border-green-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+                stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <polyline points="9 12 12 15 16 10"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="text-center md:text-left space-y-4">
+            <h2 class="text-2xl lg:text-3xl font-extrabold text-green-800">7 dias pra decidir. Risco zero.</h2>
+            <p class="text-green-700 text-lg leading-relaxed">
+              Assista às aulas, entre no grupo, teste as técnicas. Se em até 7 dias você sentir que não é pra você,
+              basta um e-mail. Devolvemos <strong>100% do valor</strong>. Sem pergunta, sem burocracia, sem letra
+              miúda.
+            </p>
+            <p class="text-green-600 text-sm font-semibold">
+              O risco é todo nosso. Você só ganha.
             </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Final CTA -->
+    <!-- ========== FAQ SECTION ========== -->
+    <section class="py-24 px-6 lg:px-20 bg-gray-50 text-gray-900 border-t border-gray-200">
+      <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-16 reveal">
+          <h2 class="text-3xl lg:text-4xl font-extrabold mb-4">Perguntas <span
+              class="text-orange-600 italic">frequentes</span></h2>
+          <p class="text-gray-500">Ainda tem dúvidas? Veja as respostas abaixo.</p>
+        </div>
+
+        <div class="space-y-4" id="faq-container">
+          <div class="reveal faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <button
+              class="faq-trigger w-full flex items-center justify-between p-6 text-left cursor-pointer hover:bg-gray-50 transition-colors">
+              <span class="font-bold text-lg pr-4">Preciso ter experiência para fazer o curso?</span>
+              <span class="faq-icon text-primary text-2xl font-bold shrink-0 transition-transform duration-300">+</span>
+            </button>
+            <div class="faq-content hidden px-6 pb-6">
+              <p class="text-gray-500 leading-relaxed">Sim, precisa ter. O curso foi desenvolvido para quem já
+                trabalha com aparelhos, mas está com dificuldades em análise de aparelhos que não ligam e queira
+                aprender sobre reparos avançados em CPUs.</p>
+            </div>
+          </div>
+
+          <div class="reveal faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden"
+            style="transition-delay: 50ms;">
+            <button
+              class="faq-trigger w-full flex items-center justify-between p-6 text-left cursor-pointer hover:bg-gray-50 transition-colors">
+              <span class="font-bold text-lg pr-4">Por quanto tempo tenho acesso ao curso?</span>
+              <span class="faq-icon text-primary text-2xl font-bold shrink-0 transition-transform duration-300">+</span>
+            </button>
+            <div class="faq-content hidden px-6 pb-6">
+              <p class="text-gray-500 leading-relaxed">O acesso é <strong>vitalício</strong>. Pode assistir quando
+                quiser, quantas vezes quiser, no seu ritmo. E todas as atualizações futuras estão inclusas. sem pagar
+                nada a mais.</p>
+            </div>
+          </div>
+
+          <div class="reveal faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden"
+            style="transition-delay: 100ms;">
+            <button
+              class="faq-trigger w-full flex items-center justify-between p-6 text-left cursor-pointer hover:bg-gray-50 transition-colors">
+              <span class="font-bold text-lg pr-4">R$ 497 é muito pra mim agora. Vale a pena?</span>
+              <span class="faq-icon text-primary text-2xl font-bold shrink-0 transition-transform duration-300">+</span>
+            </button>
+            <div class="faq-content hidden px-6 pb-6">
+              <p class="text-gray-500 leading-relaxed">Um único reparo de placa rende entre <strong>R$ 300 e R$
+                  800</strong>. Ou seja, o primeiro conserto que você fizer já paga o curso inteiro. e sobra. É o
+                investimento com retorno mais rápido que você vai fazer na carreira. E ainda pode parcelar em até 12x
+                de
+                R$ 49,60.</p>
+            </div>
+          </div>
+
+          <div class="reveal faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden"
+            style="transition-delay: 150ms;">
+            <button
+              class="faq-trigger w-full flex items-center justify-between p-6 text-left cursor-pointer hover:bg-gray-50 transition-colors">
+              <span class="font-bold text-lg pr-4">Posso pagar no Pix ou boleto?</span>
+              <span class="faq-icon text-primary text-2xl font-bold shrink-0 transition-transform duration-300">+</span>
+            </button>
+            <div class="faq-content hidden px-6 pb-6">
+              <p class="text-gray-500 leading-relaxed">Sim! Aceitamos Pix, boleto bancário e cartão de crédito em até
+                12x. O acesso pelo Pix e cartão é imediato. Pelo boleto, após a compensação (1-3 dias úteis).</p>
+            </div>
+          </div>
+
+          <div class="reveal faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden"
+            style="transition-delay: 200ms;">
+            <button
+              class="faq-trigger w-full flex items-center justify-between p-6 text-left cursor-pointer hover:bg-gray-50 transition-colors">
+              <span class="font-bold text-lg pr-4">E se eu não gostar do curso?</span>
+              <span class="faq-icon text-primary text-2xl font-bold shrink-0 transition-transform duration-300">+</span>
+            </button>
+            <div class="faq-content hidden px-6 pb-6">
+              <p class="text-gray-500 leading-relaxed">Sem problema! Você tem <strong>7 dias de garantia
+                  incondicional</strong>. Se não ficar satisfeito por qualquer motivo, devolvemos 100% do seu
+                dinheiro.
+                Um e-mail e pronto. Sem burocracia.</p>
+            </div>
+          </div>
+
+          <div class="reveal faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden"
+            style="transition-delay: 250ms;">
+            <button
+              class="faq-trigger w-full flex items-center justify-between p-6 text-left cursor-pointer hover:bg-gray-50 transition-colors">
+              <span class="font-bold text-lg pr-4">Tem certificado?</span>
+              <span class="faq-icon text-primary text-2xl font-bold shrink-0 transition-transform duration-300">+</span>
+            </button>
+            <div class="faq-content hidden px-6 pb-6">
+              <p class="text-gray-500 leading-relaxed">Sim! Ao concluir todos os módulos, você recebe um
+                <strong>certificado digital de conclusão</strong> que pode adicionar ao currículo ou perfil
+                profissional.
+              </p>
+            </div>
+          </div>
+
+          <div class="reveal faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden"
+            style="transition-delay: 300ms;">
+            <button
+              class="faq-trigger w-full flex items-center justify-between p-6 text-left cursor-pointer hover:bg-gray-50 transition-colors">
+              <span class="font-bold text-lg pr-4">Que ferramentas vou precisar?</span>
+              <span class="faq-icon text-primary text-2xl font-bold shrink-0 transition-transform duration-300">+</span>
+            </button>
+            <div class="faq-content hidden px-6 pb-6">
+              <p class="text-gray-500 leading-relaxed">No bônus "Kit Montagem de Lab" você recebe a lista completa com
+                fornecedores.
+                Para começar, o básico (ferro de solda, multímetro e lupa) já é suficiente. O João indica os
+                melhores equipamentos custo-benefício conforme você avança.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FINAL CTA ========== -->
     <section class="py-24 px-6 lg:px-20 bg-background relative overflow-hidden">
       <div class="absolute inset-0 bg-primary/5 -z-10"></div>
       <div class="max-w-4xl mx-auto text-center space-y-12">
         <div class="reveal">
-          <h2 class="text-3xl lg:text-5xl font-extrabold mb-8">Sua evolução profissional <span
-              class="text-primary italic">começa agora</span></h2>
+          <h2 class="text-3xl lg:text-5xl font-extrabold mb-4">A decisão é simples:</h2>
+          <p class="text-gray-400 text-lg max-w-2xl mx-auto">Continuar devolvendo placas e perdendo dinheiro. ou
+            dominar o reparo mais lucrativo da assistência técnica. <strong class="text-white">Que futuro você
+              escolhe?</strong></p>
         </div>
 
         <div class="reveal glass-card p-10 rounded-3xl grid sm:grid-cols-2 gap-6 items-center">
@@ -314,65 +998,91 @@
           </div>
           <div class="flex items-center gap-4 text-left">
             <span data-icon="checkCircle" class="text-primary"></span>
-            <span class="font-semibold">Suporte VIP</span>
+            <span class="font-semibold">Suporte com o João</span>
           </div>
           <div class="flex items-center gap-4 text-left">
             <span data-icon="checkCircle" class="text-primary"></span>
-            <span class="font-semibold">Garantia de Satisfação</span>
+            <span class="font-semibold">Garantia de 7 Dias</span>
+          </div>
+          <div class="flex items-center gap-4 text-left">
+            <span data-icon="checkCircle" class="text-primary"></span>
+            <span class="font-semibold">3 Bônus Exclusivos</span>
+          </div>
+          <div class="flex items-center gap-4 text-left">
+            <span data-icon="checkCircle" class="text-primary"></span>
+            <span class="font-semibold">Lista de Fornecedores</span>
           </div>
 
-          <div class="sm:col-span-2 pt-6">
+          <div class="sm:col-span-2 pt-6 space-y-4">
+            <div class="flex items-center justify-center gap-4">
+              <span class="text-gray-400 text-xl line-through">R$ 1.297,00</span>
+              <span class="text-4xl font-extrabold text-primary">R$ 497,00</span>
+            </div>
             <button
-              class="w-full bg-primary hover:bg-primary-hover text-white font-extrabold py-5 rounded-xl transition-all shadow-2xl shadow-primary/40 cursor-pointer uppercase tracking-widest text-lg">
-              QUERO ME TORNAR UM ESPECIALISTA AGORA >
+              onclick="window.open('https://pay.hotmart.com/R103290726F?sck=HOTMART_PRODUCT_PAGE&off=m6oz9c5d&hotfeature=32&bid=1772048437290','_blank')"
+              class="w-full bg-primary hover:bg-primary-hover text-white font-extrabold py-5 rounded-xl transition-all shadow-2xl shadow-primary/40 cursor-pointer uppercase tracking-widest text-lg hover:scale-[1.02] active:scale-[0.98]">
+              Entrar agora. acesso imediato →
             </button>
+            <p class="text-gray-500 text-xs text-center">
+              🔒 Pagamento 100% seguro • Acesso imediato após a confirmação
+            </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-20 px-6 lg:px-20 bg-[#07090D] border-t border-white/5 text-gray-500">
-      <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-12 reveal">
-          <h2 class="text-2xl font-bold text-white mb-6">Sua evolução profissional <span class="text-primary">começa
-              agora.</span></h2>
-          <button
-            class="bg-primary/20 text-primary border border-primary/30 px-8 py-3 rounded-lg font-bold hover:bg-primary hover:text-white transition-all cursor-pointer">
-            VALOR PROMOCIONAL AGORA >
-          </button>
-        </div>
+  </main>
 
-        <div class="grid md:grid-cols-3 gap-12 text-sm">
-          <div class="reveal">
-            <h4 class="text-white font-bold mb-4 italic">Fastfix Academy</h4>
-            <p>Formando os melhores especialistas em reparo de placas do Brasil.</p>
-          </div>
-          <div class="reveal" style="transition-delay: 100ms;">
-            <h4 class="text-white font-bold mb-4 italic">Links Úteis</h4>
-            <ul class="space-y-2">
-              <li><a href="#" class="hover:text-primary transition-colors">Política de Privacidade</a></li>
-              <li><a href="#" class="hover:text-primary transition-colors">Termos de Uso</a></li>
-              <li><a href="#" class="hover:text-primary transition-colors">Página de Suporte</a></li>
-            </ul>
-          </div>
-          <div class="reveal" style="transition-delay: 200ms;">
-            <h4 class="text-white font-bold mb-4 italic">Informações</h4>
-            <ul class="space-y-2">
-              <li>Certificado de conclusão</li>
-              <li>Acesso vitalício</li>
-              <li>Garantia 7 dias</li>
-            </ul>
-          </div>
-        </div>
+  <!-- ========== FOOTER ========== -->
+  <footer class="py-20 px-6 lg:px-20 bg-[#07090D] border-t border-white/5 text-gray-500">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-12 reveal">
+        <h2 class="text-2xl font-bold text-white mb-6">Sua carreira não vai esperar. <span class="text-primary">E essa
+            oferta também não.</span></h2>
+        <button
+          onclick="window.open('https://pay.hotmart.com/R103290726F?sck=HOTMART_PRODUCT_PAGE&off=m6oz9c5d&hotfeature=32&bid=1772048437290','_blank')"
+          class="bg-primary/20 text-primary border border-primary/30 px-8 py-3 rounded-lg font-bold hover:bg-primary hover:text-white transition-all cursor-pointer">
+          Última chance. garantir vaga →
+        </button>
+      </div>
 
-        <div class="mt-16 pt-8 border-t border-white/5 text-center text-xs">
-          <p>© 2026 Fastfix Academy. Todos os direitos reservados.</p>
+      <div class="grid md:grid-cols-3 gap-12 text-sm">
+        <div class="reveal">
+          <img src="/images/Logo-Horizontal---Branco-e-Azul.png" alt="Fastfix Academy" class="h-10 w-auto mb-4"
+            width="1080" height="313">
+          <p>Formando os melhores especialistas em reparo de placas do Brasil.</p>
+        </div>
+        <div class="reveal" style="transition-delay: 100ms;">
+          <h3 class="text-white font-bold mb-4 italic">Links Úteis</h3>
+          <ul class="space-y-2">
+            <li><a href="#" class="hover:text-primary transition-colors">Política de Privacidade</a></li>
+            <li><a href="#" class="hover:text-primary transition-colors">Termos de Uso</a></li>
+            <li><a href="#" class="hover:text-primary transition-colors">Página de Suporte</a></li>
+          </ul>
+        </div>
+        <div class="reveal" style="transition-delay: 200ms;">
+          <h3 class="text-white font-bold mb-4 italic">Informações</h3>
+          <ul class="space-y-2">
+            <li>Certificado de conclusão</li>
+            <li>Acesso vitalício</li>
+            <li>Garantia 7 dias</li>
+          </ul>
         </div>
       </div>
-    </footer>
-  </div>
-  <script type="module" src="/src/main.js"></script>
+
+      <div class="mt-16 pt-8 border-t border-white/5 text-center text-xs">
+        <p class="text-gray-400">© 2026 Fastfix Academy. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+</div>
+<!-- WhatsApp Floating Button -->
+<a href="https://wa.me/5554981673607?text=Olá! Gostaria de tirar algumas dúvidas sobre o FastFix Academy."
+  class="whatsapp-float reveal" target="_blank" rel="noopener noreferrer" title="Falar com o suporte no WhatsApp">
+  <span data-icon="messageCircle"></span>
+</a>
+
+<script type="module" src="/src/main.js"></script>
 </body>
 
 </html>
