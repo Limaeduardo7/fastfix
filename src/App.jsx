@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import UrgencyBar from './components/UrgencyBar'
 import HeroSection from './components/HeroSection'
 import BeforeAfterSection from './components/BeforeAfterSection'
@@ -15,14 +14,8 @@ import FinalCTASection from './components/FinalCTASection'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
 import PurchaseNotifications from './components/PurchaseNotifications'
-import { initMetaPixel, trackPageView } from './lib/metaTracking'
 
 export default function App() {
-    useEffect(() => {
-        initMetaPixel()
-        trackPageView()
-    }, [])
-
     return (
         <>
             <UrgencyBar />
