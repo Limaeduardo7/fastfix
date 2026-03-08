@@ -127,6 +127,26 @@ export function trackEvent(eventName, customData = {}) {
   return id;
 }
 
+export function buildCheckoutUrl(baseUrl) {
+  const url = new URL(baseUrl);
+  const tracking = getTrackingContext();
+  const leadId = ensureLeadId();
+
+  const paramsToAppend = {
+    ...tracking,
+    lead_id: leadId,
+    external_id: leadId,
+    src: tracking.utm_source,
+    sck: tracking.utm_campaign,
+  };
+
+  Object.entries(paramsToAppend).forEach(([key, value]) => {
+    if (value) url.searchParams.set(key, value);
+  });
+
+  return url.toString();
+}
+
 export function trackPageView() {
   return trackEvent('PageView');
 }

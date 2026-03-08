@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Reveal } from './ScrollReveal';
-import { Icon, scrollToOffer } from './shared';
-import { trackEvent } from '../lib/metaTracking';
+import { Icon } from './shared';
+import { buildCheckoutUrl, trackEvent } from '../lib/metaTracking';
+
+const HOTMART_URL = "https://pay.hotmart.com/R103290726F?checkoutMode=10";
 
 export default function UrgencyBar() {
     const [minutes, setMinutes] = useState('15');
@@ -59,7 +61,7 @@ export default function UrgencyBar() {
                     type="button"
                     onClick={() => {
                         trackEvent('InitiateCheckout', { currency: 'BRL', value: 197, placement: 'urgency_bar' });
-                        scrollToOffer();
+                        window.open(buildCheckoutUrl(HOTMART_URL), '_blank');
                     }}
                     className="ml-2 bg-white text-red-700 font-extrabold px-4 py-1 rounded-full text-xs hover:scale-105 transition-transform cursor-pointer"
                 >
