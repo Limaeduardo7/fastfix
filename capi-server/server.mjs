@@ -18,6 +18,8 @@ const EVOLUTION_API_KEY = process.env.EVOLUTION_API_KEY;
 const EVOLUTION_INSTANCE = process.env.EVOLUTION_INSTANCE || 'default';
 const EVOLUTION_SEND_PATH = process.env.EVOLUTION_SEND_PATH || '/message/sendText/{instance}';
 const AUTOMATION_JOBS_PATH = process.env.AUTOMATION_JOBS_PATH || '/root/fastfixx/capi-server/data/automation-jobs.json';
+const AGENT_ENABLED = String(process.env.WHATSAPP_AGENT_ENABLED || 'true') === 'true';
+const AGENT_NAME = process.env.WHATSAPP_AGENT_NAME || 'Assistente FastFix';
 
 if (!PIXEL_ID || !ACCESS_TOKEN) {
   console.error('Faltando META_PIXEL_ID ou META_ACCESS_TOKEN no ambiente.');
@@ -203,6 +205,28 @@ function cancelLeadAutomations(leadId) {
 
   persistJobs().catch(() => {});
   return canceled;
+}
+
+function generateAgentReply(message = '') {
+  const text = String(message || '').toLowerCase();
+
+  if (/\b(oi|olá|ola|bom dia|boa tarde|boa noite)\b/.test(text)) {
+    return `Oi! 👋 Eu sou o ${AGENT_NAME}. Posso te ajudar com dúvidas sobre o treinamento FastFix, valores, formas de pagamento e matrícula.`;
+  }
+
+  if (/\b(preço|preco|valor|quanto|custa)\b/.test(text)) {
+    return 'Hoje a condição ativa é promocional. Se quiser, te envio agora o link direto para garantir sua vaga com segurança.';
+  }
+
+  if (/\b(link|comprar|checkout|inscri|matr[ií]cula)\b/.test(text)) {
+    return 'Perfeito! Aqui está o link direto para finalizar sua inscrição: https://pay.hotmart.com/R103290726F?checkoutMode=10';
+  }
+
+  if (/\b(suporte|ajuda|d[uú]vida|atendente|humano)\b/.test(text)) {
+    return 'Claro! Vou te ajudar por aqui. Se preferir atendimento humano, me diga seu nome e a dúvida principal que eu priorizo seu caso.';
+  }
+
+  return 'Entendi 🙌 Me diz em uma frase o que você precisa agora (valor, conteúdo, acesso, pagamento ou link de inscrição) que eu te respondo direto.';
 }
 
 async function sendMetaEvent({
@@ -418,6 +442,49 @@ app.post('/api/automation/checkout-abandon', async (req, res) => {
   ];
 
   return res.json({ ok: true, jobs: jobs.map((j) => ({ ...j, timeoutId: undefined })) });
+});
+
+app.post('/api/evolution/inbound', async (req, res) => {
+  try {
+    if (!AGENT_ENABLED) {
+      return res.json({ ok: true, ignored: true, reason: 'agent desativado' });
+    }
+
+    const payload = req.body || {};
+    const data = payload.data || payload;
+
+    const phone = normalizePhone(
+      data.key?.remoteJid?.replace('@s.whatsapp.net', '') ||
+      data.from ||
+      data.sender ||
+      data.phone
+    );
+
+    const text =
+      data.message?.conversation ||
+      data.message?.extendedTextMessage?.text ||
+      data.text ||
+      '';
+
+    if (!phone || !text) {
+      return res.json({ ok: true, ignored: true, reason: 'sem phone/text' });
+    }
+
+    const reply = generateAgentReply(text);
+    const evolution = await sendWhatsAppText(phone, reply);
+
+    await appendEventLog({
+      ts: new Date().toISOString(),
+      source: 'whatsapp_agent',
+      phone,
+      inbound: text,
+      reply,
+    });
+
+    return res.json({ ok: true, phone, reply, evolution });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: error.message });
+  }
 });
 
 app.post('/api/meta/events', async (req, res) => {
