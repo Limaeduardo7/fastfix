@@ -2,8 +2,10 @@ import express from 'express';
 import crypto from 'crypto';
 import fs from 'fs/promises';
 import path from 'path';
+import net from 'net';
 
 const app = express();
+app.set('trust proxy', true);
 app.use(express.json({ limit: '512kb' }));
 
 const PORT = process.env.PORT || 3100;
@@ -39,9 +41,71 @@ function normalizePhone(phone) {
   return normalized;
 }
 
-function getClientMeta(req) {
+function normalizeIp(rawIp) {
+  if (!rawIp) return undefined;
+  let ip = String(rawIp).trim();
+
+  // Remove formatos como: "for=1.2.3.4" ou "[2001:db8::1]:443"
+  ip = ip.replace(/^for=/i, '').replace(/^"|"$/g, '');
+
+  if (ip.startsWith('[') && ip.includes(']')) {
+    ip = ip.slice(1, ip.indexOf(']'));
+  } else if (/^\d+\.\d+\.\d+\.\d+:\d+$/.test(ip)) {
+    ip = ip.split(':')[0];
+  }
+
+  // Remove zone id de IPv6 (ex.: fe80::1%eth0)
+  ip = ip.split('%')[0];
+
+  // IPv4-mapeado em IPv6 (::ffff:1.2.3.4)
+  if (ip.startsWith('::ffff:')) {
+    ip = ip.replace('::ffff:', '');
+  }
+
+  return net.isIP(ip) ? ip : undefined;
+}
+
+function isPublicIp(ip) {
+  if (!ip) return false;
+
+  if (net.isIPv4(ip)) {
+    if (ip.startsWith('10.') || ip.startsWith('127.') || ip.startsWith('192.168.')) return false;
+    const secondOctet = Number(ip.split('.')[1]);
+    if (ip.startsWith('172.') && secondOctet >= 16 && secondOctet <= 31) return false;
+    if (ip.startsWith('169.254.')) return false;
+    return true;
+  }
+
+  if (net.isIPv6(ip)) {
+    const normalized = ip.toLowerCase();
+    if (normalized === '::1') return false;
+    if (normalized.startsWith('fe80:')) return false; // link-local
+    if (normalized.startsWith('fc') || normalized.startsWith('fd')) return false; // ULA
+    return true;
+  }
+
+  return false;
+}
+
+function getClientMeta(req, bodyUserData = {}, eventName = '') {
+  const xForwardedFor = String(req.headers['x-forwarded-for'] || '');
+  const xffCandidates = xForwardedFor
+    .split(',')
+    .map((v) => normalizeIp(v))
+    .filter(Boolean);
+
+  const socketIp = normalizeIp(req.socket?.remoteAddress);
+  const payloadIp = normalizeIp(bodyUserData?.client_ip_address);
+
+  // Para InitiateCheckout, prioriza IP vindo da interação do cliente (quando válido).
+  const candidates = eventName === 'InitiateCheckout'
+    ? [payloadIp, ...xffCandidates, socketIp]
+    : [...xffCandidates, socketIp, payloadIp];
+
+  const publicIp = candidates.find((ip) => isPublicIp(ip));
+
   return {
-    ip: req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress,
+    ip: publicIp || candidates.find(Boolean),
     ua: req.headers['user-agent'],
   };
 }
@@ -489,7 +553,6 @@ app.post('/api/evolution/inbound', async (req, res) => {
 
 app.post('/api/meta/events', async (req, res) => {
   try {
-    const { ip, ua } = getClientMeta(req);
     const {
       event_name,
       event_time,
@@ -499,6 +562,8 @@ app.post('/api/meta/events', async (req, res) => {
       custom_data = {},
       user_data = {},
     } = req.body || {};
+
+    const { ip, ua } = getClientMeta(req, user_data, event_name);
 
     if (!event_name) {
       return res.status(400).json({ ok: false, error: 'event_name é obrigatório' });
@@ -526,6 +591,7 @@ app.post('/api/meta/events', async (req, res) => {
       has_fbc: Boolean(user_data?.fbc),
       has_fbp: Boolean(user_data?.fbp),
       has_external_id: Boolean(user_data?.external_id),
+      has_client_ip_address: Boolean(ip),
       meta: fbData,
     });
 
