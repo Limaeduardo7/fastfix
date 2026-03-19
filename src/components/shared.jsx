@@ -1,4 +1,6 @@
-import { trackEvent } from '../lib/metaTracking';
+import { buildCheckoutUrl, trackEvent } from '../lib/metaTracking';
+
+const HOTMART_URL = "https://pay.hotmart.com/R103290726F?checkoutMode=10";
 
 export const icons = {
     check: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
@@ -37,7 +39,7 @@ export function scrollToOffer() {
     });
 }
 
-export function CTAButton({ children, className = '', variant = 'primary' }) {
+export function CTAButton({ children, className = '', variant = 'primary', action = 'scroll', placement = 'cta_button' }) {
     const baseClasses = variant === 'primary'
         ? 'bg-primary hover:bg-primary-hover text-white font-bold px-10 py-4 rounded-xl transition-all cursor-pointer hover:scale-[1.02]'
         : 'bg-primary/20 text-primary border border-primary/30 px-8 py-3 rounded-lg font-bold hover:bg-primary hover:text-white transition-all cursor-pointer';
@@ -46,7 +48,13 @@ export function CTAButton({ children, className = '', variant = 'primary' }) {
         <button
             type="button"
             onClick={() => {
-                trackEvent('InitiateCheckout', { currency: 'BRL', value: 347, placement: 'cta_button' });
+                trackEvent('InitiateCheckout', { currency: 'BRL', value: 347, placement });
+
+                if (action === 'checkout') {
+                    window.open(buildCheckoutUrl(HOTMART_URL), '_blank');
+                    return;
+                }
+
                 scrollToOffer();
             }}
             className={`${baseClasses} ${className}`}

@@ -21,7 +21,7 @@ export function useScrollReveal(threshold = 0.1) {
     return [ref, isVisible];
 }
 
-export function Reveal({ children, className = '', delay = 0, style = {} }) {
+export function Reveal({ children, className = '', delay = 0, style = {}, ...props }) {
     const [ref, isVisible] = useScrollReveal();
 
     return (
@@ -29,6 +29,7 @@ export function Reveal({ children, className = '', delay = 0, style = {} }) {
             ref={ref}
             className={`reveal ${isVisible ? 'active' : ''} ${className}`}
             style={{ transitionDelay: `${delay}ms`, ...style }}
+            {...props}
         >
             {children}
         </div>
