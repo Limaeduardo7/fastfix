@@ -58,8 +58,8 @@ export default function PurchaseNotifications() {
         const runCycle = () => {
             setIsVisible(true);
 
-            const visibleFor = 3600 + Math.floor(Math.random() * 2200);
-            const nextDelay = 4000 + Math.floor(Math.random() * 7000);
+            const visibleFor = 4200 + Math.floor(Math.random() * 2400);
+            const nextDelay = 9000 + Math.floor(Math.random() * 10000);
 
             hideTimeout = window.setTimeout(() => {
                 setIsVisible(false);
@@ -92,7 +92,7 @@ export default function PurchaseNotifications() {
             </div>
             <div className="purchase-toast__content">
                 <div className="purchase-toast__eyebrow">
-                    <span className="purchase-toast__badge">Nova matricula</span>
+                    <span className="purchase-toast__badge">Nova matrícula</span>
                     <span className="purchase-toast__region">{item.region}</span>
                 </div>
                 <p className="purchase-toast__title">
