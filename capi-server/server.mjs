@@ -109,15 +109,33 @@ function getClientMeta(req, bodyUserData = {}, eventName = '') {
   const payloadIp = normalizeIp(bodyUserData?.client_ip_address);
 
   // Para InitiateCheckout, prioriza IP vindo da interação do cliente (quando válido).
-  const candidates = eventName === 'InitiateCheckout'
+  const ordered = eventName === 'InitiateCheckout'
     ? [payloadIp, ...xffCandidates, socketIp]
     : [...xffCandidates, socketIp, payloadIp];
 
-  const publicIp = candidates.find((ip) => isPublicIp(ip));
+  let ip;
+  let ip_source;
+
+  if (payloadIp && isPublicIp(payloadIp)) {
+    ip = payloadIp;
+    ip_source = 'payload_client_ip_address';
+  } else {
+    const firstPublicFromProxy = xffCandidates.find((candidate) => isPublicIp(candidate));
+    if (firstPublicFromProxy) {
+      ip = firstPublicFromProxy;
+      ip_source = 'x_forwarded_for';
+    } else if (socketIp && isPublicIp(socketIp)) {
+      ip = socketIp;
+      ip_source = 'socket_remote_address';
+    }
+  }
 
   return {
-    ip: publicIp || candidates.find(Boolean),
+    ip: ip || undefined,
+    ip_source: ip_source || 'none',
     ua: req.headers['user-agent'],
+    ua_source: req.headers['user-agent'] ? 'request_header' : 'none',
+    ip_candidates: ordered,
   };
 }
 
@@ -384,7 +402,11 @@ function generateAgentReply(message = '') {
   return 'Entendi 🙌 Me diz em uma frase o que você precisa agora (valor, conteúdo, acesso, pagamento ou link de inscrição) que eu te respondo direto.';
 }
 
-async function sendMetaEvent({
+function compactObject(obj = {}) {
+  return Object.fromEntries(Object.entries(obj).filter(([, value]) => value !== undefined && value !== null && value !== ''));
+}
+
+function buildMetaPayload({
   event_name,
   event_time,
   event_id,
@@ -394,36 +416,78 @@ async function sendMetaEvent({
   user_data = {},
   ip,
   ua,
+  data_processing_options,
+  data_processing_options_country,
+  data_processing_options_state,
+  opt_out,
+  partner_agent,
+  test_event_code,
 }) {
+  const normalizedUserData = compactObject({
+    client_ip_address: ip,
+    client_user_agent: ua,
+    fbc: user_data.fbc,
+    fbp: user_data.fbp,
+    em: hashPII(user_data.email, 'email'),
+    ph: hashPII(user_data.phone, 'phone'),
+    fn: hashPII(user_data.first_name, 'first_name'),
+    ln: hashPII(user_data.last_name, 'last_name'),
+    external_id: hashPII(user_data.external_id, 'external_id'),
+  });
+
+  const dataItem = compactObject({
+    event_name,
+    event_time: event_time || Math.floor(Date.now() / 1000),
+    event_id,
+    event_source_url,
+    action_source,
+    custom_data: compactObject(custom_data),
+    user_data: normalizedUserData,
+    data_processing_options,
+    data_processing_options_country,
+    data_processing_options_state,
+    opt_out,
+  });
+
+  const payload = {
+    data: [dataItem],
+  };
+
+  if (partner_agent) payload.partner_agent = partner_agent;
+  if (test_event_code || TEST_EVENT_CODE) payload.test_event_code = test_event_code || TEST_EVENT_CODE;
+
+  return payload;
+}
+
+function validatePayloadLikeMetaHelper(payload = {}) {
+  const issues = [];
+  const event = payload?.data?.[0] || {};
+  const user = event.user_data || {};
+
+  if (!event.event_name) issues.push('event_name ausente');
+  if (!event.action_source) issues.push('action_source ausente');
+  if (!event.event_time) issues.push('event_time ausente');
+  if (event.action_source === 'website' && !event.event_source_url) {
+    issues.push('event_source_url recomendado para action_source=website');
+  }
+
+  if (!user.fbc && !user.fbp) issues.push('fbc/fbp ausentes (recomendado ter pelo menos um)');
+  if (!user.client_ip_address) issues.push('client_ip_address ausente');
+  if (!user.client_user_agent) issues.push('client_user_agent ausente');
+
+  return {
+    ok: issues.length === 0,
+    issues,
+  };
+}
+
+async function sendMetaEvent(input) {
   if (!PIXEL_ID || !ACCESS_TOKEN) {
     throw new Error('Servidor CAPI sem configuração de credenciais');
   }
 
-  const payload = {
-    data: [
-      {
-        event_name,
-        event_time: event_time || Math.floor(Date.now() / 1000),
-        event_id,
-        event_source_url,
-        action_source,
-        custom_data,
-        user_data: {
-          client_ip_address: ip,
-          client_user_agent: ua,
-          fbc: user_data.fbc,
-          fbp: user_data.fbp,
-          em: hashPII(user_data.email, 'email'),
-          ph: hashPII(user_data.phone, 'phone'),
-          fn: hashPII(user_data.first_name, 'first_name'),
-          ln: hashPII(user_data.last_name, 'last_name'),
-          external_id: hashPII(user_data.external_id, 'external_id'),
-        },
-      },
-    ],
-  };
-
-  if (TEST_EVENT_CODE) payload.test_event_code = TEST_EVENT_CODE;
+  const payload = buildMetaPayload(input);
+  const validation = validatePayloadLikeMetaHelper(payload);
 
   const url = `https://graph.facebook.com/v21.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`;
   const fbRes = await fetch(url, {
@@ -437,10 +501,11 @@ async function sendMetaEvent({
   if (!fbRes.ok) {
     const err = new Error('Erro ao enviar evento para Meta');
     err.meta = fbData;
+    err.payloadValidation = validation;
     throw err;
   }
 
-  return fbData;
+  return { fbData, payload, payloadValidation: validation };
 }
 
 function parseEventTime(value) {
@@ -731,7 +796,7 @@ app.post('/api/evolution/inbound', async (req, res) => {
   }
 });
 
-app.post('/api/meta/events', async (req, res) => {
+app.post('/api/meta/payload-helper', async (req, res) => {
   try {
     const {
       event_name,
@@ -741,6 +806,12 @@ app.post('/api/meta/events', async (req, res) => {
       action_source = 'website',
       custom_data = {},
       user_data = {},
+      data_processing_options,
+      data_processing_options_country,
+      data_processing_options_state,
+      opt_out,
+      partner_agent,
+      test_event_code,
     } = req.body || {};
 
     const builderCtx = getBuilderContext(req, res);
@@ -751,13 +822,11 @@ app.post('/api/meta/events', async (req, res) => {
       client_ip_address: pickFirst(user_data?.client_ip_address, builderCtx.client_ip_address),
     };
 
-    const { ip, ua } = getClientMeta(req, enrichedUserData, event_name);
+    const clientMeta = getClientMeta(req, enrichedUserData, event_name);
+    const finalIp = pickFirst(clientMeta.ip, normalizeIp(enrichedUserData.client_ip_address));
+    const finalUa = pickFirst(req.headers['user-agent'], enrichedUserData.client_user_agent);
 
-    if (!event_name) {
-      return res.status(400).json({ ok: false, error: 'event_name é obrigatório' });
-    }
-
-    const fbData = await sendMetaEvent({
+    const payload = buildMetaPayload({
       event_name,
       event_time,
       event_id,
@@ -765,8 +834,82 @@ app.post('/api/meta/events', async (req, res) => {
       action_source,
       custom_data,
       user_data: enrichedUserData,
-      ip,
-      ua,
+      ip: finalIp,
+      ua: finalUa,
+      data_processing_options,
+      data_processing_options_country,
+      data_processing_options_state,
+      opt_out,
+      partner_agent,
+      test_event_code,
+    });
+
+    const validation = validatePayloadLikeMetaHelper(payload);
+
+    return res.json({
+      ok: true,
+      payload,
+      validation,
+      hints: {
+        ip_source: clientMeta.ip_source,
+        ua_source: clientMeta.ua_source,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: error.message });
+  }
+});
+
+app.post('/api/meta/events', async (req, res) => {
+  try {
+    const {
+      event_name,
+      event_time,
+      event_id,
+      event_source_url,
+      action_source = 'website',
+      custom_data = {},
+      user_data = {},
+      data_processing_options,
+      data_processing_options_country,
+      data_processing_options_state,
+      opt_out,
+      partner_agent,
+      test_event_code,
+    } = req.body || {};
+
+    const builderCtx = getBuilderContext(req, res);
+    const enrichedUserData = {
+      ...user_data,
+      fbc: pickFirst(user_data?.fbc, builderCtx.fbc),
+      fbp: pickFirst(user_data?.fbp, builderCtx.fbp),
+      client_ip_address: pickFirst(user_data?.client_ip_address, builderCtx.client_ip_address),
+    };
+
+    const clientMeta = getClientMeta(req, enrichedUserData, event_name);
+    const finalIp = pickFirst(clientMeta.ip, normalizeIp(enrichedUserData.client_ip_address));
+    const finalUa = pickFirst(req.headers['user-agent'], enrichedUserData.client_user_agent);
+
+    if (!event_name) {
+      return res.status(400).json({ ok: false, error: 'event_name é obrigatório' });
+    }
+
+    const { fbData, payload, payloadValidation } = await sendMetaEvent({
+      event_name,
+      event_time,
+      event_id,
+      event_source_url,
+      action_source,
+      custom_data,
+      user_data: enrichedUserData,
+      ip: finalIp,
+      ua: finalUa,
+      data_processing_options,
+      data_processing_options_country,
+      data_processing_options_state,
+      opt_out,
+      partner_agent,
+      test_event_code,
     });
 
     await appendEventLog({
@@ -779,13 +922,17 @@ app.post('/api/meta/events', async (req, res) => {
       has_fbc: Boolean(enrichedUserData?.fbc),
       has_fbp: Boolean(enrichedUserData?.fbp),
       has_external_id: Boolean(enrichedUserData?.external_id),
-      has_client_ip_address: Boolean(ip),
+      has_client_ip_address: Boolean(finalIp),
+      ip_source: clientMeta.ip_source,
+      has_client_user_agent: Boolean(finalUa),
+      payload_validation_ok: payloadValidation.ok,
+      payload_validation_issues: payloadValidation.issues,
       meta: fbData,
     });
 
-    res.json({ ok: true, meta: fbData });
+    res.json({ ok: true, meta: fbData, payload_validation: payloadValidation, sent_payload_preview: payload });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.meta || error.message });
+    res.status(500).json({ ok: false, error: error.meta || error.message, payload_validation: error.payloadValidation });
   }
 });
 
@@ -795,7 +942,7 @@ app.post('/api/hotmart/webhook', async (req, res) => {
       return res.status(401).json({ ok: false, error: 'Token do webhook Hotmart inválido' });
     }
 
-    const { ip, ua } = getClientMeta(req);
+    const clientMeta = getClientMeta(req);
     const parsed = parseHotmartPayload(req.body || {});
 
     lastHotmartWebhook = {
@@ -827,7 +974,7 @@ app.post('/api/hotmart/webhook', async (req, res) => {
 
     const externalId = pickFirst(parsed.tracking.external_id, parsed.orderId);
 
-    const fbData = await sendMetaEvent({
+    const { fbData, payloadValidation } = await sendMetaEvent({
       event_name: parsed.mappedEvent,
       event_time: parsed.eventTime || Math.floor(Date.now() / 1000),
       event_id: parsed.eventId,
@@ -847,8 +994,8 @@ app.post('/api/hotmart/webhook', async (req, res) => {
         fbc: parsed.tracking.fbc,
         fbp: parsed.tracking.fbp,
       },
-      ip,
-      ua,
+      ip: clientMeta.ip,
+      ua: clientMeta.ua,
     });
 
     if (parsed.mappedEvent === 'Purchase') {
@@ -901,6 +1048,10 @@ app.post('/api/hotmart/webhook', async (req, res) => {
       has_fbc: Boolean(parsed.tracking?.fbc),
       has_fbp: Boolean(parsed.tracking?.fbp),
       has_external_id: Boolean(externalId),
+      has_client_ip_address: Boolean(clientMeta.ip),
+      ip_source: clientMeta.ip_source,
+      payload_validation_ok: payloadValidation.ok,
+      payload_validation_issues: payloadValidation.issues,
       meta: fbData,
     });
 

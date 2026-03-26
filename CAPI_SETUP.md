@@ -89,6 +89,8 @@ O backend agora usa **Meta Parameter Builder (NodeJS)** para:
 
 Também envia `user_data.client_ip_address` com IP válido (IPv4/IPv6) priorizando o valor vindo da interação do cliente em `InitiateCheckout`, com fallback para `X-Forwarded-For` / socket remoto.
 
+**Regra adicional aplicada:** somente IP público válido é enviado para `client_ip_address` (sem hash), conforme recomendação da Meta.
+
 Estrutura esperada:
 
 ```json
@@ -114,6 +116,25 @@ npm run build
 - Clique nos botões de compra (evento `InitiateCheckout`).
 - Clique no WhatsApp (evento `Contact`).
 - Conferir deduplicação: Pixel + CAPI com o mesmo `event_id`.
+
+### Payload Helper (pré-validação)
+
+Endpoint para montar e validar payload no mesmo formato enviado ao Graph API:
+
+```bash
+curl -X POST http://127.0.0.1:3100/api/meta/payload-helper \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "event_name":"InitiateCheckout",
+    "event_source_url":"https://fastfixacademy.com/",
+    "action_source":"website",
+    "user_data": {"email":"lead@exemplo.com"}
+  }'
+```
+
+O retorno inclui:
+- `payload` final (com hashing e enriquecimento);
+- `validation.ok` e `validation.issues` (checagens estilo Meta Payload Helper).
 
 ## Eventos configurados
 
