@@ -24,8 +24,19 @@
   [headers.values]
     Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
 
-# SPA fallback for ebook page
+# SPA fallback for flash64 page
 [[redirects]]
   from = "/flash64"
+  to = "/flash64/"
+  status = 301
+
+[[redirects]]
+  from = "/flash64/*"
   to = "/flash64/index.html"
   status = 200
+
+# Redirect old /ebook slug to new /flash64
+[[redirects]]
+  from = "/ebook"
+  to = "/flash64/"
+  status = 301
