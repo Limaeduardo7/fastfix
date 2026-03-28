@@ -26,6 +26,6 @@
 
 # SPA fallback for ebook page
 [[redirects]]
-  from = "/ebook"
-  to = "/ebook/index.html"
+  from = "/flash64"
+  to = "/flash64/index.html"
   status = 200

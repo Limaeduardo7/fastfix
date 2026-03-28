@@ -1,4 +1,4 @@
-import { Zap, ArrowDown, Check } from 'lucide-react';
+import { Zap, ArrowDown, Check, FileText, BookOpen, Target } from 'lucide-react';
 import { Reveal } from '../components/ScrollReveal';
 import { Badge } from '../components/ui/badge';
 import DecryptedText from '../components/reactbits/DecryptedText';
@@ -15,9 +15,19 @@ function scrollToSection(id) {
 }
 
 const trustItems = [
-  'PDF imediato',
-  'Leitura objetiva',
-  'Sem enrolação',
+  { text: 'PDF imediato', Icon: FileText, color: 'text-cyan-400', bg: 'bg-cyan-500/15', border: 'border-cyan-500/25' },
+  { text: 'Leitura objetiva', Icon: BookOpen, color: 'text-violet-400', bg: 'bg-violet-500/15', border: 'border-violet-500/25' },
+  { text: 'Sem enrolação', Icon: Target, color: 'text-emerald-400', bg: 'bg-emerald-500/15', border: 'border-emerald-500/25' },
+];
+
+/* Floating particle positions */
+const particles = [
+  { top: '12%', left: '8%', size: 'w-1.5 h-1.5', color: 'bg-cyan-400/30', duration: '6s', delay: '0s' },
+  { top: '25%', right: '12%', size: 'w-1 h-1', color: 'bg-violet-400/30', duration: '8s', delay: '1s' },
+  { top: '55%', left: '5%', size: 'w-1.5 h-1.5', color: 'bg-violet-400/25', duration: '7s', delay: '2s' },
+  { top: '70%', right: '8%', size: 'w-1 h-1', color: 'bg-cyan-400/25', duration: '9s', delay: '0.5s' },
+  { top: '85%', left: '15%', size: 'w-1.5 h-1.5', color: 'bg-orange-400/20', duration: '7.5s', delay: '3s' },
+  { top: '40%', right: '20%', size: 'w-1 h-1', color: 'bg-emerald-400/20', duration: '6.5s', delay: '1.5s' },
 ];
 
 export default function EbookHero() {
@@ -26,9 +36,39 @@ export default function EbookHero() {
       id="hero"
       className="relative min-h-screen pt-24 pb-16 px-6 lg:px-20 flex items-center justify-center overflow-hidden"
     >
-      {/* Ambient glow effects */}
+      {/* ---- Ambient glow orbs (3) ---- */}
+      <div className="ebook-glow-orange absolute -top-20 -right-32 w-[420px] h-[420px] pointer-events-none" />
+      <div className="ebook-glow-cyan absolute -bottom-28 -left-28 w-[380px] h-[380px] pointer-events-none" />
+      <div className="ebook-glow-purple absolute top-1/3 -left-16 w-[340px] h-[340px] pointer-events-none" />
+
+      {/* Original hero glows */}
       <div className="hero-glow hero-glow--1" />
       <div className="hero-glow hero-glow--2" />
+
+      {/* Floating tech particles */}
+      {particles.map((p, i) => (
+        <div
+          key={i}
+          className={`absolute rounded-full ${p.size} ${p.color} pointer-events-none`}
+          style={{
+            top: p.top,
+            left: p.left,
+            right: p.right,
+            animation: `particleFloat ${p.duration} ease-in-out infinite`,
+            animationDelay: p.delay,
+          }}
+        />
+      ))}
+
+      {/* Inline keyframes for particle float */}
+      <style>{`
+        @keyframes particleFloat {
+          0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+          25% { transform: translateY(-18px) translateX(8px); opacity: 0.7; }
+          50% { transform: translateY(-8px) translateX(-6px); opacity: 0.5; }
+          75% { transform: translateY(-22px) translateX(4px); opacity: 0.8; }
+        }
+      `}</style>
 
       {/* Circuit pattern background */}
       <div
@@ -37,27 +77,27 @@ export default function EbookHero() {
           backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(`
             <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
               <circle cx="20" cy="20" r="2" fill="rgba(255,107,0,0.5)"/>
-              <circle cx="60" cy="20" r="2" fill="rgba(255,107,0,0.5)"/>
-              <circle cx="100" cy="20" r="2" fill="rgba(255,107,0,0.5)"/>
+              <circle cx="60" cy="20" r="2" fill="rgba(6,182,212,0.5)"/>
+              <circle cx="100" cy="20" r="2" fill="rgba(139,92,246,0.5)"/>
               <circle cx="20" cy="60" r="2" fill="rgba(255,107,0,0.5)"/>
-              <circle cx="60" cy="60" r="2" fill="rgba(255,107,0,0.5)"/>
+              <circle cx="60" cy="60" r="2" fill="rgba(6,182,212,0.5)"/>
               <circle cx="100" cy="60" r="2" fill="rgba(255,107,0,0.5)"/>
-              <circle cx="20" cy="100" r="2" fill="rgba(255,107,0,0.5)"/>
+              <circle cx="20" cy="100" r="2" fill="rgba(139,92,246,0.5)"/>
               <circle cx="60" cy="100" r="2" fill="rgba(255,107,0,0.5)"/>
-              <circle cx="100" cy="100" r="2" fill="rgba(255,107,0,0.5)"/>
+              <circle cx="100" cy="100" r="2" fill="rgba(6,182,212,0.5)"/>
               <line x1="20" y1="20" x2="60" y2="20" stroke="rgba(255,107,0,0.3)" stroke-width="0.5"/>
-              <line x1="60" y1="20" x2="60" y2="60" stroke="rgba(255,107,0,0.3)" stroke-width="0.5"/>
-              <line x1="60" y1="60" x2="100" y2="60" stroke="rgba(255,107,0,0.3)" stroke-width="0.5"/>
+              <line x1="60" y1="20" x2="60" y2="60" stroke="rgba(6,182,212,0.3)" stroke-width="0.5"/>
+              <line x1="60" y1="60" x2="100" y2="60" stroke="rgba(139,92,246,0.3)" stroke-width="0.5"/>
               <line x1="20" y1="60" x2="20" y2="100" stroke="rgba(255,107,0,0.3)" stroke-width="0.5"/>
-              <line x1="20" y1="100" x2="60" y2="100" stroke="rgba(255,107,0,0.3)" stroke-width="0.5"/>
-              <line x1="100" y1="60" x2="100" y2="100" stroke="rgba(255,107,0,0.3)" stroke-width="0.5"/>
+              <line x1="20" y1="100" x2="60" y2="100" stroke="rgba(6,182,212,0.3)" stroke-width="0.5"/>
+              <line x1="100" y1="60" x2="100" y2="100" stroke="rgba(139,92,246,0.3)" stroke-width="0.5"/>
             </svg>
           `)}")`,
           backgroundSize: '120px 120px',
         }}
       />
 
-      <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-[1fr_0.9fr] gap-12 lg:gap-16 items-center py-8">
+      <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-[1fr_0.9fr] gap-12 lg:gap-16 items-center py-8 relative">
         {/* Left: Copy */}
         <Reveal className="space-y-6">
           <Badge>
@@ -73,10 +113,10 @@ export default function EbookHero() {
               sequential={true}
               revealDirection="start"
               animateOn="view"
-              className="text-white"
+              className="text-gradient-multi"
             />
             <br />
-            <span className="text-primary">
+            <span className="text-gradient-fire">
               <DecryptedText
                 text="Flash64"
                 speed={30}
@@ -84,14 +124,21 @@ export default function EbookHero() {
                 sequential={true}
                 revealDirection="start"
                 animateOn="view"
-                className="text-primary"
+                className="text-gradient-fire"
               />
             </span>
           </h1>
 
+          {/* Gradient line under headline */}
+          <div className="section-divider max-w-[200px]" />
+
           <p className="text-gray-300 text-lg lg:text-xl max-w-lg leading-relaxed">
             Aprenda em horas o que muitos tecnicos demoram dias para descobrir sobre
-            conexao <strong className="text-white font-bold">ISP, UFS, eMMC, chip off</strong> e
+            conexao{' '}
+            <span className="text-cyan-400 font-bold">ISP</span>,{' '}
+            <span className="text-violet-400 font-bold">UFS</span>,{' '}
+            <span className="text-blue-400 font-bold">eMMC</span>,{' '}
+            <span className="text-emerald-400 font-bold">chip off</span> e
             estabilidade de bancada.
           </p>
 
@@ -99,7 +146,7 @@ export default function EbookHero() {
           <div className="flex flex-col sm:flex-row gap-4 pt-2">
             <a
               href={CHECKOUT_URL}
-              className="hero-cta bg-primary hover:bg-primary-hover text-white font-bold px-10 py-4 rounded-xl transition-all cursor-pointer hover:scale-[1.03] active:scale-[0.98] shadow-2xl shadow-primary/30 flex items-center justify-center gap-3 text-base"
+              className="hero-cta bg-gradient-to-r from-primary via-orange-500 to-amber-500 hover:brightness-110 text-white font-bold px-10 py-4 rounded-xl transition-all cursor-pointer hover:scale-[1.03] active:scale-[0.98] shadow-2xl shadow-primary/30 flex items-center justify-center gap-3 text-base"
             >
               <Zap className="w-5 h-5" />
               Quero o eBook
@@ -108,19 +155,19 @@ export default function EbookHero() {
             <button
               type="button"
               onClick={() => scrollToSection('topics')}
-              className="flex items-center justify-center gap-3 text-base font-bold px-8 py-4 rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-sm text-gray-200 hover:bg-white/[0.07] hover:border-white/20 transition-all cursor-pointer"
+              className="flex items-center justify-center gap-3 text-base font-bold px-8 py-4 rounded-xl border border-cyan-500/30 bg-white/[0.03] backdrop-blur-sm text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-500/50 transition-all cursor-pointer"
             >
               <ArrowDown className="w-5 h-5" />
               Ver o que voce vai aprender
             </button>
           </div>
 
-          {/* Micro-trust */}
+          {/* Micro-trust - colored badges */}
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
-            {trustItems.map((text) => (
+            {trustItems.map(({ text, Icon, color, bg, border }) => (
               <span key={text} className="flex items-center gap-1.5 text-gray-400 text-sm">
-                <span className="flex items-center justify-center w-4 h-4 bg-green-500/15 border border-green-500/25 rounded-full shrink-0">
-                  <Check className="w-2.5 h-2.5 text-green-400" />
+                <span className={`flex items-center justify-center w-4 h-4 ${bg} border ${border} rounded-full shrink-0`}>
+                  <Icon className={`w-2.5 h-2.5 ${color}`} />
                 </span>
                 {text}
               </span>
@@ -128,13 +175,43 @@ export default function EbookHero() {
           </div>
         </Reveal>
 
+        {/* ---- Decorative circuit line between columns (desktop only) ---- */}
+        <div className="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
+          <svg width="40" height="320" viewBox="0 0 40 320" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-20">
+            {/* Main vertical line */}
+            <line x1="20" y1="0" x2="20" y2="320" stroke="url(#circuitGrad)" strokeWidth="1" strokeDasharray="6 4" />
+            {/* Horizontal branches */}
+            <line x1="0" y1="60" x2="20" y2="60" stroke="#06B6D4" strokeWidth="0.8" />
+            <circle cx="0" cy="60" r="2.5" fill="#06B6D4" opacity="0.6" />
+            <line x1="20" y1="130" x2="40" y2="130" stroke="#8B5CF6" strokeWidth="0.8" />
+            <circle cx="40" cy="130" r="2.5" fill="#8B5CF6" opacity="0.6" />
+            <line x1="0" y1="200" x2="20" y2="200" stroke="#FF6B00" strokeWidth="0.8" />
+            <circle cx="0" cy="200" r="2.5" fill="#FF6B00" opacity="0.6" />
+            <line x1="20" y1="270" x2="40" y2="270" stroke="#10B981" strokeWidth="0.8" />
+            <circle cx="40" cy="270" r="2.5" fill="#10B981" opacity="0.6" />
+            {/* Node dots on main line */}
+            <circle cx="20" cy="60" r="3" fill="#06B6D4" opacity="0.5" />
+            <circle cx="20" cy="130" r="3" fill="#8B5CF6" opacity="0.5" />
+            <circle cx="20" cy="200" r="3" fill="#FF6B00" opacity="0.5" />
+            <circle cx="20" cy="270" r="3" fill="#10B981" opacity="0.5" />
+            <defs>
+              <linearGradient id="circuitGrad" x1="20" y1="0" x2="20" y2="320" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#06B6D4" stopOpacity="0.6" />
+                <stop offset="33%" stopColor="#8B5CF6" stopOpacity="0.6" />
+                <stop offset="66%" stopColor="#FF6B00" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#10B981" stopOpacity="0.6" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
         {/* Right: Mockup */}
         <Reveal delay={300} className="relative flex items-center justify-center">
           {/* Glow ring behind mockup */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div
               className="w-[320px] h-[320px] sm:w-[400px] sm:h-[400px] rounded-full blur-3xl"
-              style={{ background: 'radial-gradient(circle, rgba(255,107,0,0.12) 0%, transparent 70%)' }}
+              style={{ background: 'radial-gradient(circle, rgba(255,107,0,0.12) 0%, rgba(139,92,246,0.06) 40%, transparent 70%)' }}
             />
           </div>
 

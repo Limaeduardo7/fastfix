@@ -1,6 +1,7 @@
+import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { Reveal } from '../components/ScrollReveal';
 import { Badge } from '../components/ui/badge';
-import { Accordion, AccordionItem } from '../components/ui/accordion';
 
 const faqs = [
   {
@@ -35,29 +36,88 @@ const faqs = [
   },
 ];
 
+const itemColors = [
+  { accent: 'card-accent-cyan', border: 'border-cyan-400', bg: 'bg-cyan-400', text: 'text-cyan-400' },
+  { accent: 'card-accent-violet', border: 'border-violet-500', bg: 'bg-violet-500', text: 'text-violet-500' },
+  { accent: 'card-accent-orange', border: 'border-primary', bg: 'bg-primary', text: 'text-primary' },
+  { accent: 'card-accent-blue', border: 'border-blue-500', bg: 'bg-blue-500', text: 'text-blue-500' },
+  { accent: 'card-accent-emerald', border: 'border-emerald-500', bg: 'bg-emerald-500', text: 'text-emerald-500' },
+  { accent: 'card-accent-pink', border: 'border-pink-500', bg: 'bg-pink-500', text: 'text-pink-500' },
+];
+
 export default function EbookFAQ() {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const toggle = (i) => {
+    setOpenIndex(openIndex === i ? null : i);
+  };
+
   return (
-    <section className="py-24 px-6 lg:px-20 border-t border-white/5">
+    <section className="py-24 px-6 lg:px-20">
+      {/* Section divider */}
+      <div className="section-divider mb-24" />
+
       <div className="max-w-3xl mx-auto">
         <Reveal>
           <div className="text-center mb-16">
             <Badge className="mb-4">Dúvidas</Badge>
             <h2 className="text-3xl lg:text-4xl font-extrabold text-white">
-              Perguntas frequentes
+              Perguntas <span className="text-gradient-cyan">frequentes</span>
             </h2>
           </div>
         </Reveal>
 
-        <Accordion>
-          {faqs.map((faq, i) => (
-            <Reveal key={faq.question} delay={i * 80}>
-              <AccordionItem
-                question={faq.question}
-                answer={faq.answer}
-              />
-            </Reveal>
-          ))}
-        </Accordion>
+        <div className="space-y-4">
+          {faqs.map((faq, i) => {
+            const color = itemColors[i];
+            const isOpen = openIndex === i;
+
+            return (
+              <Reveal key={faq.question} delay={i * 80}>
+                <div
+                  className={`${color.accent} rounded-xl bg-white/[0.03] border border-white/5 overflow-hidden transition-all duration-300`}
+                >
+                  <button
+                    onClick={() => toggle(i)}
+                    className="w-full flex items-center gap-4 p-5 text-left"
+                  >
+                    {/* Numbered circle */}
+                    <span
+                      className={`flex-shrink-0 w-8 h-8 rounded-full ${color.bg}/20 flex items-center justify-center text-sm font-bold ${color.text}`}
+                      style={{
+                        backgroundColor: `color-mix(in srgb, currentColor 15%, transparent)`,
+                      }}
+                    >
+                      {i + 1}
+                    </span>
+
+                    <span className="flex-1 text-white font-semibold text-sm md:text-base">
+                      {faq.question}
+                    </span>
+
+                    <ChevronDown
+                      className={`w-5 h-5 text-gray-400 transition-transform duration-300 flex-shrink-0 ${
+                        isOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <div className="px-5 pb-5 pl-[4.25rem]">
+                      <p className="text-gray-300 text-sm leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

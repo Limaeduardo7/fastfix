@@ -14,7 +14,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'index.html'),
-                ebook: resolve(__dirname, 'ebook/index.html'),
+                flash64: resolve(__dirname, 'flash64/index.html'),
             },
             output: {
                 manualChunks: {
@@ -23,9 +23,6 @@ export default defineConfig({
             },
         },
         cssCodeSplit: true,
-        minify: 'terser',
-        terserOptions: {
-            compress: { drop_console: true },
-        },
+        minify: 'esbuild',
     },
 })
