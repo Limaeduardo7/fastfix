@@ -12,7 +12,7 @@ export default function EbookFooter() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
             {/* Column 1 - Brand */}
             <div className="space-y-4">
-              <img
+              <img loading="lazy" decoding="async"
                 src="/images/Logo-Horizontal---Branco-e-Azul.png"
                 alt="FastFix Academy"
                 className="h-10"

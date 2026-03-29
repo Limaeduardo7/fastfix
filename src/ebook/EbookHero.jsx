@@ -207,7 +207,10 @@ export default function EbookHero() {
           <div className="hero-image-wrapper relative w-full flex justify-center">
             <img
               src="/images/ebook-mockup.png"
-              alt="eBook Flash64 Na Prática - Mockup"
+              alt="eBook Flash 64 na Prática - Mockup"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="w-[70vw] max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] drop-shadow-2xl"
               style={{ filter: 'drop-shadow(0 0 40px rgba(255,107,0,0.25)) drop-shadow(0 0 80px rgba(139,92,246,0.15))' }}
             />

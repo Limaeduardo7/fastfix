@@ -43,6 +43,8 @@ function PageCard({ page, isFanout = false }) {
       <img
         src={page.src}
         alt={page.alt}
+        loading="lazy"
+        decoding="async"
         className="w-full h-full object-cover object-top"
       />
       <div
