@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { trackEvent } from '../lib/metaTracking';
 
 export default function EbookUrgencyBar() {
     const [minutes, setMinutes] = useState('15');
@@ -63,7 +64,10 @@ export default function EbookUrgencyBar() {
                         </div>
                         <button
                             type="button"
-                            onClick={scrollToOffer}
+                            onClick={() => {
+                                trackEvent('InitiateCheckout', { currency: 'BRL', value: 47, placement: 'ebook_urgency_bar' });
+                                scrollToOffer();
+                            }}
                             className="bg-white text-red-700 font-extrabold px-3 sm:px-4 py-1 rounded-full text-[11px] sm:text-xs hover:scale-105 transition-transform cursor-pointer"
                         >
                             GARANTIR AGORA

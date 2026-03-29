@@ -1,6 +1,7 @@
 import { Check, Zap, Shield, Lock } from 'lucide-react';
 import { Reveal } from '../components/ScrollReveal';
 import { Badge } from '../components/ui/badge';
+import { buildCheckoutUrl, trackEvent } from '../lib/metaTracking';
 
 const CHECKOUT_URL = 'https://pay.hotmart.com/B105126454X?checkoutMode=10';
 
@@ -82,7 +83,13 @@ export default function OfferSection() {
                     <p className="text-gray-400 text-sm">Acesso imediato após o pagamento</p>
                   </div>
 
-                  <a href={CHECKOUT_URL} className="block">
+                  <a
+                    href={buildCheckoutUrl(CHECKOUT_URL)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackEvent('InitiateCheckout', { currency: 'BRL', value: 47, placement: 'ebook_offer_cta' })}
+                    className="block"
+                  >
                     <button className="hero-cta w-full bg-gradient-to-r from-primary via-orange-500 to-amber-500 hover:from-orange-500 hover:to-primary text-white text-base sm:text-lg font-bold py-4 sm:py-5 px-6 sm:px-8 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-primary/30">
                       <Zap className="w-5 h-5" />
                       Garantir meu eBook agora

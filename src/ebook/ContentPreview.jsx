@@ -1,5 +1,6 @@
 import { Reveal } from '../components/ScrollReveal';
 import { Badge } from '../components/ui/badge';
+import { trackEvent } from '../lib/metaTracking';
 
 const pages = [
   {
@@ -114,7 +115,7 @@ export default function ContentPreview() {
 
         <Reveal delay={500}>
           <div className="mt-8 text-center">
-            <a href="#offer" className="hero-cta inline-flex items-center justify-center bg-gradient-to-r from-primary via-orange-500 to-amber-500 text-white font-bold px-8 py-3 rounded-xl">
+            <a href="#offer" onClick={() => trackEvent('InitiateCheckout', { currency: 'BRL', value: 47, placement: 'ebook_preview_cta' })} className="hero-cta inline-flex items-center justify-center bg-gradient-to-r from-primary via-orange-500 to-amber-500 text-white font-bold px-8 py-3 rounded-xl">
               Ver oferta completa
             </a>
           </div>
