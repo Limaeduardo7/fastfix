@@ -4,7 +4,7 @@ import { Badge } from '../components/ui/badge';
 import DecryptedText from '../components/reactbits/DecryptedText';
 import EbookUrgencyBar from './EbookUrgencyBar';
 
-const CHECKOUT_URL = '#checkout'; // Replace with actual checkout URL
+const CHECKOUT_URL = '#offer';
 
 function scrollToSection(id) {
   const el = document.getElementById(id);
