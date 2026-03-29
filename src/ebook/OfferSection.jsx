@@ -45,7 +45,6 @@ export default function OfferSection() {
                 <div className="text-center space-y-4">
                   <Badge className="mb-2">Oferta Especial</Badge>
                   <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white">
-                    <span className="text-gradient-multi">Dominando</span>{' '}
                     <span className="text-gradient-fire">Flash 64 na Prática</span>
                   </h2>
                   <p className="text-gray-300">

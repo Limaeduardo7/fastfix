@@ -105,16 +105,6 @@ export default function EbookHero() {
           </Badge>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-6xl font-extrabold leading-[1.08] tracking-tight">
-            <DecryptedText
-              text="Dominando a"
-              speed={30}
-              maxIterations={15}
-              sequential={true}
-              revealDirection="start"
-              animateOn="view"
-              className="text-gradient-multi"
-            />
-            <br />
             <span className="text-gradient-fire">
               <DecryptedText
                 text="Flash 64 na Prática"
