@@ -17,7 +17,7 @@ export default function EbookApp() {
   return (
     <>
       <EbookUrgencyBar />
-      <main className="pt-10">
+      <main className="pt-16 overflow-x-hidden">
         <EbookHero />
         <PainSection />
         <PromiseSection />
