@@ -101,6 +101,14 @@ export default function PainSection() {
             <span className="text-gradient-cyan font-semibold">clareza operacional</span>.
           </p>
         </Reveal>
+
+        <Reveal delay={700}>
+          <div className="mt-8 text-center">
+            <a href="#offer" className="hero-cta inline-flex items-center justify-center bg-gradient-to-r from-primary via-orange-500 to-amber-500 text-white font-bold px-8 py-3 rounded-xl">
+              Ver oferta agora
+            </a>
+          </div>
+        </Reveal>
       </div>
     </section>
   )

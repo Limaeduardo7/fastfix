@@ -109,6 +109,14 @@ export default function ContentPreview() {
             Páginas reais do eBook — Chip Off (p.6), Parâmetros UFS (p.9), Aba eMMC (p.11).
           </p>
         </Reveal>
+
+        <Reveal delay={500}>
+          <div className="mt-8 text-center">
+            <a href="#offer" className="hero-cta inline-flex items-center justify-center bg-gradient-to-r from-primary via-orange-500 to-amber-500 text-white font-bold px-8 py-3 rounded-xl">
+              Ver oferta completa
+            </a>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

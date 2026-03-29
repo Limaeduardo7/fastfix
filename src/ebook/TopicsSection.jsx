@@ -127,6 +127,14 @@ export default function TopicsSection() {
             )
           })}
         </div>
+
+        <Reveal delay={500}>
+          <div className="mt-10 text-center">
+            <a href="#offer" className="hero-cta inline-flex items-center justify-center bg-gradient-to-r from-primary via-orange-500 to-amber-500 text-white font-bold px-8 py-3 rounded-xl">
+              Quero ver a oferta
+            </a>
+          </div>
+        </Reveal>
       </div>
     </section>
   )
