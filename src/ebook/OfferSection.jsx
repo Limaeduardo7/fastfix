@@ -2,7 +2,7 @@ import { Check, Zap, Shield, Lock } from 'lucide-react';
 import { Reveal } from '../components/ScrollReveal';
 import { Badge } from '../components/ui/badge';
 
-const CHECKOUT_URL = '#checkout'; // Replace with actual checkout URL
+const CHECKOUT_URL = 'https://pay.hotmart.com/B105126454X?checkoutMode=10';
 
 const features = [
   'Conexão ISP com critério técnico',
