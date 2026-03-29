@@ -41,13 +41,6 @@ export default function OfferSection() {
         <Reveal>
           <div className="offer-card-glow gradient-border rounded-3xl relative overflow-hidden">
             <div className="bg-gradient-to-br from-white/[0.04] to-white/[0.01] rounded-3xl p-5 sm:p-8 md:p-12 relative">
-              {/* Best seller badge */}
-              <div className="absolute top-4 right-4 z-20">
-                <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-primary via-orange-500 to-amber-500 text-white shadow-lg shadow-primary/30">
-                  MAIS VENDIDO
-                </span>
-              </div>
-
               <div className="relative z-10 space-y-8">
                 <div className="text-center space-y-4">
                   <Badge className="mb-2">Oferta Especial</Badge>
