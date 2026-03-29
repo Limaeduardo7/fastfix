@@ -15,7 +15,7 @@ import EbookNotifications from './ebook/EbookNotifications'
 
 export default function EbookApp() {
   return (
-    <>
+    <div className="overflow-x-hidden">
       <EbookUrgencyBar />
       <main className="pt-16 overflow-x-hidden">
         <EbookHero />
@@ -32,6 +32,6 @@ export default function EbookApp() {
       <EbookFooter />
       <EbookWhatsApp />
       <EbookNotifications />
-    </>
+    </div>
   )
 }
