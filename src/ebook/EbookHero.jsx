@@ -117,7 +117,7 @@ export default function EbookHero() {
             <br />
             <span className="text-gradient-fire">
               <DecryptedText
-                text="Flash64"
+                text="Flash 64 na Prática"
                 speed={30}
                 maxIterations={15}
                 sequential={true}
