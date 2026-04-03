@@ -64,19 +64,23 @@ export default function AudienceSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 relative">
           {/* Positive side */}
           <Reveal>
-            <div className="gradient-border h-full rounded-2xl">
-              <div className="h-full rounded-[15px] p-5 sm:p-8" style={{ background: 'rgba(16,24,40,0.85)' }}>
+            <div className="h-full rounded-2xl border border-white/10 bg-white/[0.03]">
+              <div className="p-5 sm:p-8">
                 <Badge variant="success" className="mb-6">Para quem é</Badge>
                 <h3 className="text-2xl font-bold text-white mb-8">
                   Este eBook foi feito para você se...
                 </h3>
                 <div className="flex flex-col gap-6">
                   {positiveItems.map((item, i) => (
-                    <div key={i} className="flex items-start gap-3">
+                    <div key={item.text || i} className="flex items-start gap-3">
                       <CheckCircle className={`w-5 h-5 ${item.iconColor} shrink-0 mt-0.5`} />
                       <div>
-                        <p className="text-gray-300 text-sm leading-relaxed">{item.text}</p>
-                        <p className="text-gray-500 text-xs mt-1">{item.desc}</p>
+                        <p className="text-gray-300 text-sm leading-relaxed">
+                          {item.text || 'Técnicos iniciantes que querem acelerar o aprendizado'}
+                        </p>
+                        <p className="text-gray-500 text-xs mt-1">
+                          {item.desc || 'Fundamentos sólidos para começar com o pé direito.'}
+                        </p>
                       </div>
                     </div>
                   ))}

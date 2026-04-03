@@ -3,6 +3,10 @@ import crypto from 'crypto';
 import fs from 'fs/promises';
 import path from 'path';
 import net from 'net';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+const { ParamBuilder } = require('capi-param-builder-nodejs');
 
 const app = express();
 app.set('trust proxy', true);
@@ -22,12 +26,19 @@ const EVOLUTION_SEND_PATH = process.env.EVOLUTION_SEND_PATH || '/message/sendTex
 const AUTOMATION_JOBS_PATH = process.env.AUTOMATION_JOBS_PATH || '/root/fastfixx/capi-server/data/automation-jobs.json';
 const AGENT_ENABLED = String(process.env.WHATSAPP_AGENT_ENABLED || 'true') === 'true';
 const AGENT_NAME = process.env.WHATSAPP_AGENT_NAME || 'Assistente FastFix';
+const PARAM_BUILDER_DOMAINS = (process.env.PARAM_BUILDER_DOMAINS || '').split(',').map((d) => d.trim()).filter(Boolean);
+
+function createParamBuilder() {
+  return PARAM_BUILDER_DOMAINS.length ? new ParamBuilder(PARAM_BUILDER_DOMAINS) : new ParamBuilder();
+}
 
 if (!PIXEL_ID || !ACCESS_TOKEN) {
   console.error('Faltando META_PIXEL_ID ou META_ACCESS_TOKEN no ambiente.');
 }
 
 const scheduledJobs = new Map();
+const processedHotmartEvents = new Map();
+let lastHotmartWebhook = null;
 
 function sha256(value) {
   if (!value) return undefined;
@@ -98,20 +109,118 @@ function getClientMeta(req, bodyUserData = {}, eventName = '') {
   const payloadIp = normalizeIp(bodyUserData?.client_ip_address);
 
   // Para InitiateCheckout, prioriza IP vindo da interação do cliente (quando válido).
-  const candidates = eventName === 'InitiateCheckout'
+  const ordered = eventName === 'InitiateCheckout'
     ? [payloadIp, ...xffCandidates, socketIp]
     : [...xffCandidates, socketIp, payloadIp];
 
-  const publicIp = candidates.find((ip) => isPublicIp(ip));
+  let ip;
+  let ip_source;
+
+  if (payloadIp && isPublicIp(payloadIp)) {
+    ip = payloadIp;
+    ip_source = 'payload_client_ip_address';
+  } else {
+    const firstPublicFromProxy = xffCandidates.find((candidate) => isPublicIp(candidate));
+    if (firstPublicFromProxy) {
+      ip = firstPublicFromProxy;
+      ip_source = 'x_forwarded_for';
+    } else if (socketIp && isPublicIp(socketIp)) {
+      ip = socketIp;
+      ip_source = 'socket_remote_address';
+    }
+  }
 
   return {
-    ip: publicIp || candidates.find(Boolean),
+    ip: ip || undefined,
+    ip_source: ip_source || 'none',
     ua: req.headers['user-agent'],
+    ua_source: req.headers['user-agent'] ? 'request_header' : 'none',
+    ip_candidates: ordered,
   };
 }
 
 function pickFirst(...values) {
   return values.find((v) => v !== undefined && v !== null && String(v).trim() !== '');
+}
+
+function parseCookies(rawCookie = '') {
+  const cookies = {};
+  for (const part of String(rawCookie || '').split(';')) {
+    const [key, ...rest] = part.trim().split('=');
+    if (!key) continue;
+    cookies[key] = decodeURIComponent(rest.join('=') || '');
+  }
+  return cookies;
+}
+
+function applyParamBuilderCookies(res, req, cookiesToSet = []) {
+  if (!Array.isArray(cookiesToSet) || !cookiesToSet.length) return;
+
+  const isSecure = String(req.headers['x-forwarded-proto'] || '').includes('https') || req.secure;
+  for (const cookie of cookiesToSet) {
+    if (!cookie?.name || !cookie?.value) continue;
+
+    const parts = [
+      `${cookie.name}=${encodeURIComponent(cookie.value)}`,
+      'Path=/',
+      `Max-Age=${cookie.maxAge || 90 * 24 * 60 * 60}`,
+      'SameSite=Lax',
+    ];
+
+    if (cookie.domain) parts.push(`Domain=${cookie.domain}`);
+    if (isSecure) parts.push('Secure');
+
+    res.append('Set-Cookie', parts.join('; '));
+  }
+}
+
+function getBuilderContext(req, res) {
+  try {
+    const builder = createParamBuilder();
+    const cookies = parseCookies(req.headers.cookie || '');
+    const cookiesToSet = builder.processRequest(
+      req.headers.host,
+      req.query || {},
+      cookies,
+      req.headers.referer,
+      req.headers['x-forwarded-for'] ?? null,
+      req.socket?.remoteAddress ?? null
+    );
+
+    applyParamBuilderCookies(res, req, cookiesToSet);
+
+    return {
+      fbc: builder.getFbc(),
+      fbp: builder.getFbp(),
+      client_ip_address: builder.getClientIpAddress(),
+    };
+  } catch {
+    return {};
+  }
+}
+
+function normalizeForType(value, type) {
+  if (!value) return undefined;
+  const str = String(value).trim();
+  if (!str) return undefined;
+
+  if (type === 'phone') return normalizePhone(str);
+  if (type === 'email' || type === 'external_id' || type === 'first_name' || type === 'last_name' || type === 'city' || type === 'state') {
+    return str.toLowerCase();
+  }
+
+  return str.toLowerCase();
+}
+
+function hashPII(value, type) {
+  if (!value) return undefined;
+  try {
+    const hashed = createParamBuilder().getNormalizedAndHashedPII(value, type);
+    if (hashed) return hashed;
+  } catch {
+    // fallback abaixo
+  }
+  return sha256(normalizeForType(value, type));
 }
 
 function extractTracking(payload = {}) {
@@ -293,7 +402,11 @@ function generateAgentReply(message = '') {
   return 'Entendi 🙌 Me diz em uma frase o que você precisa agora (valor, conteúdo, acesso, pagamento ou link de inscrição) que eu te respondo direto.';
 }
 
-async function sendMetaEvent({
+function compactObject(obj = {}) {
+  return Object.fromEntries(Object.entries(obj).filter(([, value]) => value !== undefined && value !== null && value !== ''));
+}
+
+function buildMetaPayload({
   event_name,
   event_time,
   event_id,
@@ -303,36 +416,78 @@ async function sendMetaEvent({
   user_data = {},
   ip,
   ua,
+  data_processing_options,
+  data_processing_options_country,
+  data_processing_options_state,
+  opt_out,
+  partner_agent,
+  test_event_code,
 }) {
+  const normalizedUserData = compactObject({
+    client_ip_address: ip,
+    client_user_agent: ua,
+    fbc: user_data.fbc,
+    fbp: user_data.fbp,
+    em: hashPII(user_data.email, 'email'),
+    ph: hashPII(user_data.phone, 'phone'),
+    fn: hashPII(user_data.first_name, 'first_name'),
+    ln: hashPII(user_data.last_name, 'last_name'),
+    external_id: hashPII(user_data.external_id, 'external_id'),
+  });
+
+  const dataItem = compactObject({
+    event_name,
+    event_time: event_time || Math.floor(Date.now() / 1000),
+    event_id,
+    event_source_url,
+    action_source,
+    custom_data: compactObject(custom_data),
+    user_data: normalizedUserData,
+    data_processing_options,
+    data_processing_options_country,
+    data_processing_options_state,
+    opt_out,
+  });
+
+  const payload = {
+    data: [dataItem],
+  };
+
+  if (partner_agent) payload.partner_agent = partner_agent;
+  if (test_event_code || TEST_EVENT_CODE) payload.test_event_code = test_event_code || TEST_EVENT_CODE;
+
+  return payload;
+}
+
+function validatePayloadLikeMetaHelper(payload = {}) {
+  const issues = [];
+  const event = payload?.data?.[0] || {};
+  const user = event.user_data || {};
+
+  if (!event.event_name) issues.push('event_name ausente');
+  if (!event.action_source) issues.push('action_source ausente');
+  if (!event.event_time) issues.push('event_time ausente');
+  if (event.action_source === 'website' && !event.event_source_url) {
+    issues.push('event_source_url recomendado para action_source=website');
+  }
+
+  if (!user.fbc && !user.fbp) issues.push('fbc/fbp ausentes (recomendado ter pelo menos um)');
+  if (!user.client_ip_address) issues.push('client_ip_address ausente');
+  if (!user.client_user_agent) issues.push('client_user_agent ausente');
+
+  return {
+    ok: issues.length === 0,
+    issues,
+  };
+}
+
+async function sendMetaEvent(input) {
   if (!PIXEL_ID || !ACCESS_TOKEN) {
     throw new Error('Servidor CAPI sem configuração de credenciais');
   }
 
-  const payload = {
-    data: [
-      {
-        event_name,
-        event_time: event_time || Math.floor(Date.now() / 1000),
-        event_id,
-        event_source_url,
-        action_source,
-        custom_data,
-        user_data: {
-          client_ip_address: ip,
-          client_user_agent: ua,
-          fbc: user_data.fbc,
-          fbp: user_data.fbp,
-          em: sha256(user_data.email),
-          ph: sha256(normalizePhone(user_data.phone)),
-          fn: sha256(user_data.first_name),
-          ln: sha256(user_data.last_name),
-          external_id: sha256(user_data.external_id),
-        },
-      },
-    ],
-  };
-
-  if (TEST_EVENT_CODE) payload.test_event_code = TEST_EVENT_CODE;
+  const payload = buildMetaPayload(input);
+  const validation = validatePayloadLikeMetaHelper(payload);
 
   const url = `https://graph.facebook.com/v21.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`;
   const fbRes = await fetch(url, {
@@ -346,10 +501,50 @@ async function sendMetaEvent({
   if (!fbRes.ok) {
     const err = new Error('Erro ao enviar evento para Meta');
     err.meta = fbData;
+    err.payloadValidation = validation;
     throw err;
   }
 
-  return fbData;
+  return { fbData, payload, payloadValidation: validation };
+}
+
+function parseEventTime(value) {
+  if (value === undefined || value === null || value === '') return undefined;
+
+  if (typeof value === 'number') {
+    // Se vier em milissegundos
+    if (value > 1e12) return Math.floor(value / 1000);
+    // Se vier em segundos unix
+    if (value > 1e9) return Math.floor(value);
+  }
+
+  const str = String(value).trim();
+  if (!str) return undefined;
+
+  // Numérico em string
+  if (/^\d+$/.test(str)) {
+    const num = Number(str);
+    if (num > 1e12) return Math.floor(num / 1000);
+    if (num > 1e9) return Math.floor(num);
+  }
+
+  const parsed = Date.parse(str);
+  if (!Number.isNaN(parsed)) return Math.floor(parsed / 1000);
+  return undefined;
+}
+
+function normalizeCurrencyValue(raw) {
+  const num = Number(raw);
+  if (!Number.isFinite(num) || num <= 0) return 0;
+
+  // Hotmart costuma enviar em unidades monetárias (347.00),
+  // mas alguns payloads podem vir em centavos (34700).
+  // Heurística conservadora para ticket baixo/médio de infoproduto.
+  if (Number.isInteger(num) && num >= 1000) {
+    return Number((num / 100).toFixed(2));
+  }
+
+  return Number(num.toFixed(2));
 }
 
 function parseHotmartPayload(payload = {}) {
@@ -375,16 +570,28 @@ function parseHotmartPayload(payload = {}) {
   }
 
   const valueRaw = purchase.price?.value || purchase.value || transaction.value || data.price || payload.price || 0;
-  const value = Number(valueRaw) || 0;
+  const value = normalizeCurrencyValue(valueRaw);
   const currency = purchase.price?.currency_code || purchase.currency || data.currency || payload.currency || 'BRL';
   const baseId = String(transaction.id || purchase.order_id || purchase.transaction || data.id || payload.id || crypto.randomUUID());
   const tracking = extractTracking(payload);
+  const eventTime =
+    parseEventTime(data.event_date) ||
+    parseEventTime(data.purchase_date) ||
+    parseEventTime(transaction.date_approved) ||
+    parseEventTime(transaction.approved_date) ||
+    parseEventTime(transaction.created_at) ||
+    parseEventTime(purchase.approved_date) ||
+    parseEventTime(purchase.created_at) ||
+    parseEventTime(payload.event_date) ||
+    parseEventTime(payload.created_at);
+
   const eventId = `${baseId}_${mappedEvent || 'unknown'}`;
 
   return {
     mappedEvent,
     statusRaw,
     eventId,
+    eventTime,
     value,
     currency,
     orderId: purchase.order_id || transaction.id,
@@ -399,6 +606,19 @@ function validateHotmartToken(req) {
   if (!HOTMART_WEBHOOK_TOKEN) return false;
   const token = req.headers['x-hotmart-hottok'] || req.headers['hottok'] || req.query?.hottok || req.body?.hottok || req.body?.token;
   return String(token || '') === String(HOTMART_WEBHOOK_TOKEN);
+}
+
+function isDuplicateHotmartEvent(eventId) {
+  const now = Date.now();
+  const ttlMs = 72 * 60 * 60 * 1000; // 72h
+
+  for (const [id, ts] of processedHotmartEvents.entries()) {
+    if (now - ts > ttlMs) processedHotmartEvents.delete(id);
+  }
+
+  if (processedHotmartEvents.has(eventId)) return true;
+  processedHotmartEvents.set(eventId, now);
+  return false;
 }
 
 app.get('/health', (_req, res) => {
@@ -420,6 +640,10 @@ app.get('/api/events/recent', async (req, res) => {
 app.get('/api/automation/jobs', async (_req, res) => {
   const jobs = Array.from(scheduledJobs.values()).map((j) => ({ ...j, timeoutId: undefined }));
   return res.json({ ok: true, count: jobs.length, jobs });
+});
+
+app.get('/api/hotmart/last', async (_req, res) => {
+  return res.json({ ok: true, last: lastHotmartWebhook });
 });
 
 app.post('/api/automation/lead-magnet', async (req, res) => {
@@ -474,36 +698,57 @@ app.post('/api/automation/waitlist', async (req, res) => {
   return res.json({ ok: true, jobs: jobs.map((j) => ({ ...j, timeoutId: undefined })) });
 });
 
-app.post('/api/automation/checkout-abandon', async (req, res) => {
-  const { phone, name = 'Tudo bem?', lead_id } = req.body || {};
-  if (!phone || !lead_id) return res.status(400).json({ ok: false, error: 'phone e lead_id são obrigatórios' });
+function scheduleCheckoutAbandonFlow({ phone, name = 'Tudo bem?', leadId, source = 'manual' }) {
+  const canceled = cancelLeadAutomations(leadId);
 
   const jobs = [
     scheduleAutomation({
-      leadId: lead_id,
+      leadId,
       flow: 'checkout_abandon',
       step: '15m',
       phone,
       delayMs: 15 * 60 * 1000,
       text: `Oi ${name}, vi que você quase concluiu sua inscrição na FastFix.\nSe travou em algo (pagamento, acesso, dúvida), me chama que resolvo agora 👍`,
+      meta: { source },
     }),
     scheduleAutomation({
-      leadId: lead_id,
+      leadId,
       flow: 'checkout_abandon',
       step: '2h',
       phone,
       delayMs: 2 * 60 * 60 * 1000,
       text: `Passando para te lembrar da sua vaga na FastFix 🚀\nQuer que eu te envie o link direto para finalizar?`,
+      meta: { source },
     }),
     scheduleAutomation({
-      leadId: lead_id,
+      leadId,
       flow: 'checkout_abandon',
       step: '24h',
       phone,
       delayMs: 24 * 60 * 60 * 1000,
       text: `Último aviso por aqui: sua condição especial pode encerrar em breve ⏳\nSe quiser garantir agora, eu te mando o link em 1 clique.`,
+      meta: { source },
     }),
   ];
+
+  appendEventLog({
+    ts: new Date().toISOString(),
+    source: 'automation',
+    action: 'checkout_abandon_scheduled',
+    leadId,
+    phone: normalizePhone(phone),
+    canceled_previous_jobs: canceled,
+    jobs: jobs.map((j) => ({ id: j.id, step: j.step, executeAt: j.executeAt })),
+  }).catch(() => {});
+
+  return jobs;
+}
+
+app.post('/api/automation/checkout-abandon', async (req, res) => {
+  const { phone, name = 'Tudo bem?', lead_id } = req.body || {};
+  if (!phone || !lead_id) return res.status(400).json({ ok: false, error: 'phone e lead_id são obrigatórios' });
+
+  const jobs = scheduleCheckoutAbandonFlow({ phone, name, leadId: lead_id, source: 'manual_api' });
 
   return res.json({ ok: true, jobs: jobs.map((j) => ({ ...j, timeoutId: undefined })) });
 });
@@ -551,6 +796,70 @@ app.post('/api/evolution/inbound', async (req, res) => {
   }
 });
 
+app.post('/api/meta/payload-helper', async (req, res) => {
+  try {
+    const {
+      event_name,
+      event_time,
+      event_id,
+      event_source_url,
+      action_source = 'website',
+      custom_data = {},
+      user_data = {},
+      data_processing_options,
+      data_processing_options_country,
+      data_processing_options_state,
+      opt_out,
+      partner_agent,
+      test_event_code,
+    } = req.body || {};
+
+    const builderCtx = getBuilderContext(req, res);
+    const enrichedUserData = {
+      ...user_data,
+      fbc: pickFirst(user_data?.fbc, builderCtx.fbc),
+      fbp: pickFirst(user_data?.fbp, builderCtx.fbp),
+      client_ip_address: pickFirst(user_data?.client_ip_address, builderCtx.client_ip_address),
+    };
+
+    const clientMeta = getClientMeta(req, enrichedUserData, event_name);
+    const finalIp = pickFirst(clientMeta.ip, normalizeIp(enrichedUserData.client_ip_address));
+    const finalUa = pickFirst(req.headers['user-agent'], enrichedUserData.client_user_agent);
+
+    const payload = buildMetaPayload({
+      event_name,
+      event_time,
+      event_id,
+      event_source_url,
+      action_source,
+      custom_data,
+      user_data: enrichedUserData,
+      ip: finalIp,
+      ua: finalUa,
+      data_processing_options,
+      data_processing_options_country,
+      data_processing_options_state,
+      opt_out,
+      partner_agent,
+      test_event_code,
+    });
+
+    const validation = validatePayloadLikeMetaHelper(payload);
+
+    return res.json({
+      ok: true,
+      payload,
+      validation,
+      hints: {
+        ip_source: clientMeta.ip_source,
+        ua_source: clientMeta.ua_source,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: error.message });
+  }
+});
+
 app.post('/api/meta/events', async (req, res) => {
   try {
     const {
@@ -561,24 +870,46 @@ app.post('/api/meta/events', async (req, res) => {
       action_source = 'website',
       custom_data = {},
       user_data = {},
+      data_processing_options,
+      data_processing_options_country,
+      data_processing_options_state,
+      opt_out,
+      partner_agent,
+      test_event_code,
     } = req.body || {};
 
-    const { ip, ua } = getClientMeta(req, user_data, event_name);
+    const builderCtx = getBuilderContext(req, res);
+    const enrichedUserData = {
+      ...user_data,
+      fbc: pickFirst(user_data?.fbc, builderCtx.fbc),
+      fbp: pickFirst(user_data?.fbp, builderCtx.fbp),
+      client_ip_address: pickFirst(user_data?.client_ip_address, builderCtx.client_ip_address),
+    };
+
+    const clientMeta = getClientMeta(req, enrichedUserData, event_name);
+    const finalIp = pickFirst(clientMeta.ip, normalizeIp(enrichedUserData.client_ip_address));
+    const finalUa = pickFirst(req.headers['user-agent'], enrichedUserData.client_user_agent);
 
     if (!event_name) {
       return res.status(400).json({ ok: false, error: 'event_name é obrigatório' });
     }
 
-    const fbData = await sendMetaEvent({
+    const { fbData, payload, payloadValidation } = await sendMetaEvent({
       event_name,
       event_time,
       event_id,
       event_source_url,
       action_source,
       custom_data,
-      user_data,
-      ip,
-      ua,
+      user_data: enrichedUserData,
+      ip: finalIp,
+      ua: finalUa,
+      data_processing_options,
+      data_processing_options_country,
+      data_processing_options_state,
+      opt_out,
+      partner_agent,
+      test_event_code,
     });
 
     await appendEventLog({
@@ -586,18 +917,22 @@ app.post('/api/meta/events', async (req, res) => {
       source: 'site_capi',
       event_name,
       event_id,
-      has_em: Boolean(user_data?.email),
-      has_ph: Boolean(user_data?.phone),
-      has_fbc: Boolean(user_data?.fbc),
-      has_fbp: Boolean(user_data?.fbp),
-      has_external_id: Boolean(user_data?.external_id),
-      has_client_ip_address: Boolean(ip),
+      has_em: Boolean(enrichedUserData?.email),
+      has_ph: Boolean(enrichedUserData?.phone),
+      has_fbc: Boolean(enrichedUserData?.fbc),
+      has_fbp: Boolean(enrichedUserData?.fbp),
+      has_external_id: Boolean(enrichedUserData?.external_id),
+      has_client_ip_address: Boolean(finalIp),
+      ip_source: clientMeta.ip_source,
+      has_client_user_agent: Boolean(finalUa),
+      payload_validation_ok: payloadValidation.ok,
+      payload_validation_issues: payloadValidation.issues,
       meta: fbData,
     });
 
-    res.json({ ok: true, meta: fbData });
+    res.json({ ok: true, meta: fbData, payload_validation: payloadValidation, sent_payload_preview: payload });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.meta || error.message });
+    res.status(500).json({ ok: false, error: error.meta || error.message, payload_validation: error.payloadValidation });
   }
 });
 
@@ -607,19 +942,41 @@ app.post('/api/hotmart/webhook', async (req, res) => {
       return res.status(401).json({ ok: false, error: 'Token do webhook Hotmart inválido' });
     }
 
-    const { ip, ua } = getClientMeta(req);
+    const clientMeta = getClientMeta(req);
     const parsed = parseHotmartPayload(req.body || {});
+
+    lastHotmartWebhook = {
+      at: new Date().toISOString(),
+      statusRaw: parsed.statusRaw,
+      mappedEvent: parsed.mappedEvent,
+      eventId: parsed.eventId,
+      eventTime: parsed.eventTime,
+      value: parsed.value,
+      currency: parsed.currency,
+      orderId: parsed.orderId,
+      buyer: {
+        email: parsed.buyer?.email,
+        phone: parsed.buyer?.checkout_phone || parsed.buyer?.phone,
+        name: parsed.buyer?.name,
+      },
+      tracking: parsed.tracking,
+    };
 
     if (!parsed.mappedEvent) {
       await appendEventLog({ ts: new Date().toISOString(), source: 'hotmart_webhook', ignored: true, status: parsed.statusRaw });
       return res.json({ ok: true, ignored: true, reason: `status não mapeado: ${parsed.statusRaw}` });
     }
 
+    if (isDuplicateHotmartEvent(parsed.eventId)) {
+      await appendEventLog({ ts: new Date().toISOString(), source: 'hotmart_webhook', ignored: true, reason: 'duplicate_event_id', event_id: parsed.eventId });
+      return res.json({ ok: true, ignored: true, reason: 'duplicate_event_id', eventId: parsed.eventId });
+    }
+
     const externalId = pickFirst(parsed.tracking.external_id, parsed.orderId);
 
-    const fbData = await sendMetaEvent({
+    const { fbData, payloadValidation } = await sendMetaEvent({
       event_name: parsed.mappedEvent,
-      event_time: Math.floor(Date.now() / 1000),
+      event_time: parsed.eventTime || Math.floor(Date.now() / 1000),
       event_id: parsed.eventId,
       action_source: 'website',
       custom_data: {
@@ -637,13 +994,46 @@ app.post('/api/hotmart/webhook', async (req, res) => {
         fbc: parsed.tracking.fbc,
         fbp: parsed.tracking.fbp,
       },
-      ip,
-      ua,
+      ip: clientMeta.ip,
+      ua: clientMeta.ua,
     });
 
     if (parsed.mappedEvent === 'Purchase') {
       const canceled = cancelLeadAutomations(externalId);
       await appendEventLog({ ts: new Date().toISOString(), source: 'automation', action: 'cancel_on_purchase', leadId: externalId, canceled });
+    }
+
+    if (parsed.mappedEvent === 'AddPaymentInfo') {
+      const phone = parsed.buyer.checkout_phone || parsed.buyer.phone;
+      const name = parsed.buyer.name ? String(parsed.buyer.name).split(' ')[0] : 'Tudo bem?';
+
+      if (phone && externalId) {
+        const jobs = scheduleCheckoutAbandonFlow({
+          phone,
+          name,
+          leadId: externalId,
+          source: 'hotmart_add_payment_info',
+        });
+
+        await appendEventLog({
+          ts: new Date().toISOString(),
+          source: 'automation',
+          action: 'scheduled_from_hotmart',
+          leadId: externalId,
+          orderId: parsed.orderId,
+          jobs: jobs.map((j) => ({ id: j.id, step: j.step, executeAt: j.executeAt })),
+        });
+      } else {
+        await appendEventLog({
+          ts: new Date().toISOString(),
+          source: 'automation',
+          action: 'hotmart_add_payment_info_without_phone_or_lead',
+          leadId: externalId,
+          orderId: parsed.orderId,
+          hasPhone: Boolean(phone),
+          hasLeadId: Boolean(externalId),
+        });
+      }
     }
 
     await appendEventLog({
@@ -658,6 +1048,10 @@ app.post('/api/hotmart/webhook', async (req, res) => {
       has_fbc: Boolean(parsed.tracking?.fbc),
       has_fbp: Boolean(parsed.tracking?.fbp),
       has_external_id: Boolean(externalId),
+      has_client_ip_address: Boolean(clientMeta.ip),
+      ip_source: clientMeta.ip_source,
+      payload_validation_ok: payloadValidation.ok,
+      payload_validation_issues: payloadValidation.issues,
       meta: fbData,
     });
 

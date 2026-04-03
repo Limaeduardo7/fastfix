@@ -2,6 +2,7 @@ import { Clock, Unplug, HardDrive, SlidersHorizontal, AlertTriangle } from 'luci
 import { Reveal } from '../components/ScrollReveal'
 import { Card, CardContent } from '../components/ui/card'
 import { Badge } from '../components/ui/badge'
+import { trackEvent } from '../lib/metaTracking'
 
 const painPoints = [
   {
@@ -100,6 +101,14 @@ export default function PainSection() {
             O problema geralmente não está na ferramenta, mas na falta de{' '}
             <span className="text-gradient-cyan font-semibold">clareza operacional</span>.
           </p>
+        </Reveal>
+
+        <Reveal delay={700}>
+          <div className="mt-8 text-center">
+            <a href="#offer" onClick={() => trackEvent('InitiateCheckout', { currency: 'BRL', value: 47, placement: 'ebook_pain_cta' })} className="hero-cta inline-flex items-center justify-center bg-gradient-to-r from-primary via-orange-500 to-amber-500 text-white font-bold px-8 py-3 rounded-xl">
+              Garantir meu Ebook Agora
+            </a>
+          </div>
         </Reveal>
       </div>
     </section>

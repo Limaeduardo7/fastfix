@@ -1,5 +1,6 @@
 import { Reveal } from '../components/ScrollReveal';
 import { Badge } from '../components/ui/badge';
+import { trackEvent } from '../lib/metaTracking';
 
 const pages = [
   {
@@ -32,7 +33,7 @@ const pages = [
 function PageCard({ page, isFanout = false }) {
   return (
     <div
-      className="relative overflow-hidden rounded-lg border border-white/10 w-[160px] xs:w-[180px] sm:w-[210px] shrink-0"
+      className="relative overflow-hidden rounded-lg border border-white/10 w-[200px] xs:w-[230px] sm:w-[260px] md:w-[290px] shrink-0"
       style={{
         transform: isFanout ? `rotate(${page.rotation}deg)` : 'none',
         zIndex: page.badge ? 10 : 5,
@@ -43,6 +44,8 @@ function PageCard({ page, isFanout = false }) {
       <img
         src={page.src}
         alt={page.alt}
+        loading="lazy"
+        decoding="async"
         className="w-full h-full object-cover object-top"
       />
       <div
@@ -82,13 +85,6 @@ export default function ContentPreview() {
           <div className="flex gap-4 overflow-x-auto pb-4 px-2 snap-x snap-mandatory scrollbar-none">
             {pages.map((page, i) => (
               <div key={i} className="snap-center shrink-0 relative">
-                {page.badge && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                    <span className="inline-block px-3 py-1 rounded-full bg-primary/90 text-white text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-primary/30 whitespace-nowrap">
-                      Preview Real
-                    </span>
-                  </div>
-                )}
                 <PageCard page={page} />
               </div>
             ))}
@@ -109,13 +105,6 @@ export default function ContentPreview() {
                     : {}
                 }
               >
-                {page.badge && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                    <span className="inline-block px-3 py-1 rounded-full bg-primary/90 text-white text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-primary/30">
-                      Preview Real
-                    </span>
-                  </div>
-                )}
                 <PageCard page={page} isFanout />
               </div>
             ))}
@@ -126,6 +115,14 @@ export default function ContentPreview() {
           <p className="text-gray-500 text-xs text-center mt-6 sm:mt-8">
             Páginas reais do eBook — Chip Off (p.6), Parâmetros UFS (p.9), Aba eMMC (p.11).
           </p>
+        </Reveal>
+
+        <Reveal delay={500}>
+          <div className="mt-8 text-center">
+            <a href="#offer" onClick={() => trackEvent('InitiateCheckout', { currency: 'BRL', value: 47, placement: 'ebook_preview_cta' })} className="hero-cta inline-flex items-center justify-center bg-gradient-to-r from-primary via-orange-500 to-amber-500 text-white font-bold px-8 py-3 rounded-xl">
+              Garantir meu Ebook Agora
+            </a>
+          </div>
         </Reveal>
       </div>
     </section>

@@ -1,9 +1,11 @@
-import { Zap, ArrowDown, Check, FileText, BookOpen, Target } from 'lucide-react';
+import { Zap, ArrowDown, Check, FileText, BookOpen, Gift } from 'lucide-react';
 import { Reveal } from '../components/ScrollReveal';
 import { Badge } from '../components/ui/badge';
 import DecryptedText from '../components/reactbits/DecryptedText';
+import EbookUrgencyBar from './EbookUrgencyBar';
+import { trackEvent } from '../lib/metaTracking';
 
-const CHECKOUT_URL = '#checkout'; // Replace with actual checkout URL
+const CHECKOUT_URL = '#offer';
 
 function scrollToSection(id) {
   const el = document.getElementById(id);
@@ -16,7 +18,7 @@ function scrollToSection(id) {
 const trustItems = [
   { text: 'PDF imediato', Icon: FileText, color: 'text-cyan-400', bg: 'bg-cyan-500/15', border: 'border-cyan-500/25' },
   { text: 'Leitura objetiva', Icon: BookOpen, color: 'text-violet-400', bg: 'bg-violet-500/15', border: 'border-violet-500/25' },
-  { text: 'Sem enrolação', Icon: Target, color: 'text-emerald-400', bg: 'bg-emerald-500/15', border: 'border-emerald-500/25' },
+  { text: 'Bônus incluso', Icon: Gift, color: 'text-amber-400', bg: 'bg-amber-500/15', border: 'border-amber-500/25' },
 ];
 
 /* Floating particle positions */
@@ -33,8 +35,9 @@ export default function EbookHero() {
   return (
     <section
       id="hero"
-      className="relative min-h-[100dvh] pt-20 pb-12 px-4 sm:px-6 lg:px-20 flex items-center justify-center overflow-hidden"
+      className="relative min-h-[100dvh] pt-28 pb-12 px-4 sm:px-6 lg:px-20 flex items-center justify-center overflow-hidden"
     >
+      <EbookUrgencyBar />
       {/* ---- Ambient glow orbs (3) ---- */}
       <div className="ebook-glow-orange absolute -top-20 -right-32 w-[420px] h-[420px] pointer-events-none" />
       <div className="ebook-glow-cyan absolute -bottom-28 -left-28 w-[380px] h-[380px] pointer-events-none" />
@@ -96,28 +99,29 @@ export default function EbookHero() {
         }}
       />
 
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-[1fr_0.9fr] gap-8 lg:gap-16 items-center py-6 relative">
-        {/* Left: Copy */}
-        <Reveal className="space-y-6">
-          <Badge>
+      <div className="max-w-3xl mx-auto w-full py-6 relative">
+        <Reveal className="space-y-6 text-center flex flex-col items-center">
+          <Badge className="inline-flex">
             <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-            eBook Tecnico &middot; Flash64
+            eBook Técnico - Flash 64
           </Badge>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-6xl font-extrabold leading-[1.08] tracking-tight">
-            <DecryptedText
-              text="Flash 64"
-              speed={30}
-              maxIterations={15}
-              sequential={true}
-              revealDirection="start"
-              animateOn="view"
-              className="text-gradient-multi"
+          <div className="flex justify-center">
+            <img
+              src="/images/ebook-mockup.png"
+              alt="eBook Flash 64 na Prática - Mockup"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              className="w-[50vw] max-w-[220px] sm:max-w-[260px] lg:max-w-[280px] drop-shadow-2xl"
+              style={{ filter: 'drop-shadow(0 0 40px rgba(255,107,0,0.25)) drop-shadow(0 0 80px rgba(139,92,246,0.15))' }}
             />
-            <br />
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-6xl font-extrabold leading-[1.08] tracking-tight">
             <span className="text-gradient-fire">
               <DecryptedText
-                text="na Prática"
+                text="Flash 64 na Prática"
                 speed={30}
                 maxIterations={15}
                 sequential={true}
@@ -129,9 +133,9 @@ export default function EbookHero() {
           </h1>
 
           {/* Gradient line under headline */}
-          <div className="section-divider max-w-[200px]" />
+          <div className="section-divider max-w-[200px] mx-auto" />
 
-          <p className="text-gray-300 text-lg lg:text-xl max-w-lg leading-relaxed">
+          <p className="text-gray-300 text-lg lg:text-xl max-w-lg leading-relaxed mx-auto">
             Aprenda em horas o que muitos tecnicos demoram dias para descobrir sobre
             conexao{' '}
             <span className="text-cyan-400 font-bold">ISP</span>,{' '}
@@ -145,10 +149,11 @@ export default function EbookHero() {
           <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 pt-2">
             <a
               href={CHECKOUT_URL}
+              onClick={() => trackEvent('InitiateCheckout', { currency: 'BRL', value: 47, placement: 'ebook_hero_cta' })}
               className="hero-cta bg-gradient-to-r from-primary via-orange-500 to-amber-500 hover:brightness-110 text-white font-bold px-10 py-4 rounded-xl transition-all cursor-pointer hover:scale-[1.03] active:scale-[0.98] shadow-2xl shadow-primary/30 flex items-center justify-center gap-3 text-base"
             >
               <Zap className="w-5 h-5" />
-              Quero o eBook
+              Garantir meu Ebook Agora
             </a>
 
             <button
@@ -174,57 +179,10 @@ export default function EbookHero() {
           </div>
         </Reveal>
 
-        {/* ---- Decorative circuit line between columns (desktop only) ---- */}
-        <div className="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
-          <svg width="40" height="320" viewBox="0 0 40 320" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-20">
-            {/* Main vertical line */}
-            <line x1="20" y1="0" x2="20" y2="320" stroke="url(#circuitGrad)" strokeWidth="1" strokeDasharray="6 4" />
-            {/* Horizontal branches */}
-            <line x1="0" y1="60" x2="20" y2="60" stroke="#06B6D4" strokeWidth="0.8" />
-            <circle cx="0" cy="60" r="2.5" fill="#06B6D4" opacity="0.6" />
-            <line x1="20" y1="130" x2="40" y2="130" stroke="#8B5CF6" strokeWidth="0.8" />
-            <circle cx="40" cy="130" r="2.5" fill="#8B5CF6" opacity="0.6" />
-            <line x1="0" y1="200" x2="20" y2="200" stroke="#FF6B00" strokeWidth="0.8" />
-            <circle cx="0" cy="200" r="2.5" fill="#FF6B00" opacity="0.6" />
-            <line x1="20" y1="270" x2="40" y2="270" stroke="#10B981" strokeWidth="0.8" />
-            <circle cx="40" cy="270" r="2.5" fill="#10B981" opacity="0.6" />
-            {/* Node dots on main line */}
-            <circle cx="20" cy="60" r="3" fill="#06B6D4" opacity="0.5" />
-            <circle cx="20" cy="130" r="3" fill="#8B5CF6" opacity="0.5" />
-            <circle cx="20" cy="200" r="3" fill="#FF6B00" opacity="0.5" />
-            <circle cx="20" cy="270" r="3" fill="#10B981" opacity="0.5" />
-            <defs>
-              <linearGradient id="circuitGrad" x1="20" y1="0" x2="20" y2="320" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#06B6D4" stopOpacity="0.6" />
-                <stop offset="33%" stopColor="#8B5CF6" stopOpacity="0.6" />
-                <stop offset="66%" stopColor="#FF6B00" stopOpacity="0.6" />
-                <stop offset="100%" stopColor="#10B981" stopOpacity="0.6" />
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
-
-        {/* Right: Mockup */}
-        <Reveal delay={300} className="relative flex items-center justify-center">
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div
-              className="w-[260px] h-[260px] sm:w-[400px] sm:h-[400px] rounded-full blur-3xl"
-              style={{ background: 'radial-gradient(circle, rgba(255,107,0,0.12) 0%, rgba(139,92,246,0.06) 40%, transparent 70%)' }}
-            />
-          </div>
-          <div className="hero-image-wrapper relative w-full flex justify-center">
-            <img
-              src="/images/ebook-mockup.png"
-              alt="eBook Flash64 Na Prática - Mockup"
-              className="w-[70vw] max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] drop-shadow-2xl"
-              style={{ filter: 'drop-shadow(0 0 40px rgba(255,107,0,0.25)) drop-shadow(0 0 80px rgba(139,92,246,0.15))' }}
-            />
-          </div>
-        </Reveal>
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-500 text-xs">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 text-gray-500 text-xs">
         <span>Role para baixo</span>
         <div className="w-5 h-8 border-2 border-gray-600 rounded-full flex justify-center pt-1.5">
           <div className="w-1 h-2 bg-gray-500 rounded-full animate-bounce" />

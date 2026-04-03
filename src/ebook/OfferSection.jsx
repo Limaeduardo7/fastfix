@@ -1,8 +1,9 @@
-import { Check, Zap, Shield, Lock } from 'lucide-react';
+import { Check, Zap, Shield, Lock, Gift } from 'lucide-react';
 import { Reveal } from '../components/ScrollReveal';
 import { Badge } from '../components/ui/badge';
+import { buildCheckoutUrl, trackEvent } from '../lib/metaTracking';
 
-const CHECKOUT_URL = '#checkout'; // Replace with actual checkout URL
+const CHECKOUT_URL = 'https://pay.hotmart.com/B105126454X?checkoutMode=10';
 
 const features = [
   'Conexão ISP com critério técnico',
@@ -41,19 +42,11 @@ export default function OfferSection() {
         <Reveal>
           <div className="offer-card-glow gradient-border rounded-3xl relative overflow-hidden">
             <div className="bg-gradient-to-br from-white/[0.04] to-white/[0.01] rounded-3xl p-5 sm:p-8 md:p-12 relative">
-              {/* Best seller badge */}
-              <div className="absolute top-4 right-4 z-20">
-                <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-primary via-orange-500 to-amber-500 text-white shadow-lg shadow-primary/30">
-                  MAIS VENDIDO
-                </span>
-              </div>
-
               <div className="relative z-10 space-y-8">
                 <div className="text-center space-y-4">
                   <Badge className="mb-2">Oferta Especial</Badge>
                   <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white">
-                    <span className="text-gradient-multi">Flash 64</span>{' '}
-                    <span className="text-gradient-fire">na Prática</span>
+                    <span className="text-gradient-fire">Flash 64 na Prática</span>
                   </h2>
                   <p className="text-gray-300">
                     eBook técnico e objetivo para dominar a Flash64 de verdade.
@@ -63,7 +56,9 @@ export default function OfferSection() {
                   <div className="flex justify-center py-2">
                     <img
                       src="/images/ebook-mockup.png"
-                      alt="eBook Flash64 Na Prática"
+                      alt="eBook Flash 64 na Prática"
+                      loading="lazy"
+                      decoding="async"
                       className="w-48 md:w-56 drop-shadow-2xl"
                       style={{ filter: 'drop-shadow(0 0 24px rgba(255,107,0,0.3)) drop-shadow(0 0 48px rgba(139,92,246,0.15))' }}
                     />
@@ -79,6 +74,18 @@ export default function OfferSection() {
                   ))}
                 </ul>
 
+                {/* Bonus callout */}
+                <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.06] p-4 sm:p-5 flex items-center gap-4">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/15 shrink-0">
+                    <Gift className="w-5 h-5 text-amber-400" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-amber-400 text-xs font-bold uppercase tracking-wider mb-0.5">Bônus incluso</p>
+                    <p className="text-gray-200 text-sm font-semibold">eBook Troca de Memória Flash64</p>
+                    <p className="text-gray-400 text-xs mt-0.5">Guia essencial para dominar a troca de eMMC/UFS.</p>
+                  </div>
+                </div>
+
                 <div className="border-t border-white/10 pt-8 space-y-6 text-center">
                   {/* Price display */}
                   <div className="space-y-2">
@@ -88,12 +95,19 @@ export default function OfferSection() {
                     <p className="text-gray-400 text-sm">Acesso imediato após o pagamento</p>
                   </div>
 
-                  <a href={CHECKOUT_URL} className="block">
+                  <a
+                    href={buildCheckoutUrl(CHECKOUT_URL)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackEvent('InitiateCheckout', { currency: 'BRL', value: 47, placement: 'ebook_offer_cta' })}
+                    className="block"
+                  >
                     <button className="hero-cta w-full bg-gradient-to-r from-primary via-orange-500 to-amber-500 hover:from-orange-500 hover:to-primary text-white text-base sm:text-lg font-bold py-4 sm:py-5 px-6 sm:px-8 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-primary/30">
                       <Zap className="w-5 h-5" />
-                      Garantir meu eBook agora
+                      Garantir meu Ebook Agora
                     </button>
                   </a>
+
 
                   {/* Trust badges */}
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 pt-2">
