@@ -82,7 +82,6 @@ export default function EbookNotifications() {
             <div className="purchase-toast__content">
                 <div className="purchase-toast__eyebrow">
                     <span className="purchase-toast__badge">Nova compra</span>
-                    <span className="purchase-toast__region">eBook</span>
                 </div>
                 <p className="purchase-toast__title">
                     <strong>{item.name}</strong> de {item.city}, {item.state}

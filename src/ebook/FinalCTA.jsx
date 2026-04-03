@@ -63,12 +63,12 @@ export default function FinalCTA() {
               Garantir meu Ebook Agora
             </button>
           </a>
-          <p className="text-gray-500 text-sm mt-4 flex items-center justify-center gap-3">
+          <p className="text-gray-500 text-sm mt-4 flex flex-wrap items-center justify-center gap-3">
             <span>Acesso imediato</span>
             <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block" />
             <span>PDF completo</span>
             <span className="w-1.5 h-1.5 rounded-full bg-violet-500 inline-block" />
-            <span>Leitura objetiva</span>
+            <span className="text-amber-400 font-semibold">+ Bônus: Troca de Memória</span>
           </p>
         </Reveal>
       </div>
