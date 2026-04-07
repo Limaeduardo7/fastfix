@@ -187,13 +187,6 @@ export default function EbookHero() {
 
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 text-gray-500 text-xs">
-        <span>Role para baixo</span>
-        <div className="w-5 h-8 border-2 border-gray-600 rounded-full flex justify-center pt-1.5">
-          <div className="w-1 h-2 bg-gray-500 rounded-full animate-bounce" />
-        </div>
-      </div>
     </section>
   );
 }
