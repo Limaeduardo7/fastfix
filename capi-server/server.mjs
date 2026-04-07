@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import net from 'net';
 import { createRequire } from 'module';
+import nodemailer from 'nodemailer';
 
 const require = createRequire(import.meta.url);
 const { ParamBuilder } = require('capi-param-builder-nodejs');
@@ -27,6 +28,12 @@ const AUTOMATION_JOBS_PATH = process.env.AUTOMATION_JOBS_PATH || '/root/fastfixx
 const CONTACT_MEMORY_DIR = process.env.CONTACT_MEMORY_DIR || '/root/fastfixx/capi-server/data/contacts';
 const AGENT_ENABLED = String(process.env.WHATSAPP_AGENT_ENABLED || 'true') === 'true';
 const AGENT_NAME = process.env.WHATSAPP_AGENT_NAME || 'Assistente FastFix';
+
+const SMTP_HOST = process.env.SMTP_HOST;
+const SMTP_PORT = Number(process.env.SMTP_PORT || 587);
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const SMTP_FROM = process.env.SMTP_FROM || 'FastFix Academy <contato@fastfixcaxias.com>';
 const PARAM_BUILDER_DOMAINS = (process.env.PARAM_BUILDER_DOMAINS || '').split(',').map((d) => d.trim()).filter(Boolean);
 
 function createParamBuilder() {
@@ -343,6 +350,83 @@ async function sendWhatsAppText(phone, text) {
   }
 
   return data;
+}
+
+function getEmailTransport() {
+  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) return null;
+  return nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_PORT === 465,
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
+  });
+}
+
+const FLASH64_UPSELL_EMAILS = [
+  { dayOffset: 0, subject: 'Seu próximo passo depois do Flash64', body: 'Você já fez a parte mais importante: começou.\n\nO Flash64 te dá direção técnica. Agora, pra acelerar resultado de bancada e faturamento, o próximo passo é o FastFix Academy.\n\n👉 https://fastfixcaxias.com' },
+  { dayOffset: 1, subject: 'O erro que trava técnico bom', body: 'A maioria não trava por falta de vontade. Trava por falta de método completo.\n\nNo Academy você organiza diagnóstico, execução e tomada de decisão — sem depender de tentativa e erro.\n\n👉 https://fastfixcaxias.com' },
+  { dayOffset: 3, subject: 'Como aumentar ticket sem aumentar volume', body: 'Troca simples dá giro. Reparo avançado dá margem.\n\nO Academy foi desenhado pra te levar para serviços mais valorizados, com processo replicável na bancada.\n\n👉 https://fastfixcaxias.com' },
+  { dayOffset: 5, subject: '“Será que isso é pra mim?”', body: 'Se você já mexe com celular e quer evoluir no reparo de placas, sim — é pra você.\n\nFoco em prática, clareza de processo e aplicação real.\n\n👉 https://fastfixcaxias.com' },
+  { dayOffset: 7, subject: 'Sem tempo? leia isso em 30 segundos', body: 'Resumo direto:\n- conteúdo técnico aplicado\n- foco em resultado de bancada\n- caminho pra aumentar ticket com segurança\n\n👉 https://fastfixcaxias.com' },
+  { dayOffset: 10, subject: 'O que muda quando você profissionaliza o processo', body: 'Quando você tem método: reduz retrabalho, melhora confiança no diagnóstico e cresce faturamento com previsibilidade.\n\n👉 https://fastfixcaxias.com' },
+  { dayOffset: 14, subject: 'Último convite (por enquanto)', body: 'Se você quer dar o próximo passo depois do Flash64, esse é o momento.\n\n👉 https://fastfixcaxias.com' },
+];
+
+async function sendEmailNow({ to, subject, body }) {
+  const transport = getEmailTransport();
+  if (!transport) throw new Error('SMTP não configurado (SMTP_HOST/SMTP_USER/SMTP_PASS)');
+  return transport.sendMail({ from: SMTP_FROM, to, subject, text: body });
+}
+
+function scheduleFlash64UpsellEmails({ leadId, email, name = '' }) {
+  if (!email) return [];
+  const jobs = [];
+  for (const step of FLASH64_UPSELL_EMAILS) {
+    const id = crypto.randomUUID();
+    const delayMs = step.dayOffset * 24 * 60 * 60 * 1000;
+    const executeAt = Date.now() + delayMs;
+    const personalizedBody = `${name ? `Olá, ${name}!\n\n` : ''}${step.body}`;
+    const job = {
+      id,
+      leadId,
+      flow: 'flash64_email_upsell',
+      step: `d${step.dayOffset}`,
+      email,
+      subject: step.subject,
+      body: personalizedBody,
+      delayMs,
+      status: 'scheduled',
+      createdAt: new Date().toISOString(),
+      executeAt: new Date(executeAt).toISOString(),
+      meta: { channel: 'email' },
+    };
+
+    const timeoutId = setTimeout(async () => {
+      const current = scheduledJobs.get(id);
+      if (!current || current.status !== 'scheduled') return;
+      try {
+        const result = await sendEmailNow({ to: current.email, subject: current.subject, body: current.body });
+        current.status = 'sent';
+        current.sentAt = new Date().toISOString();
+        current.emailResult = { messageId: result?.messageId };
+        await appendEventLog({ ts: current.sentAt, source: 'automation_email', action: 'sent', leadId, email: current.email, step: current.step });
+      } catch (err) {
+        current.status = 'failed';
+        current.error = err.message;
+        current.failedAt = new Date().toISOString();
+        await appendEventLog({ ts: current.failedAt, source: 'automation_email', action: 'failed', leadId, email: current.email, step: current.step, error: err.message });
+      }
+      scheduledJobs.set(id, current);
+      await persistJobs();
+    }, delayMs);
+
+    job.timeoutId = timeoutId;
+    scheduledJobs.set(id, job);
+    jobs.push(job);
+  }
+
+  persistJobs().catch(() => {});
+  return jobs;
 }
 
 function scheduleAutomation({ leadId, flow, step, phone, text, delayMs, meta = {} }) {
@@ -807,6 +891,27 @@ app.post('/api/automation/checkout-abandon', async (req, res) => {
   return res.json({ ok: true, jobs: jobs.map((j) => ({ ...j, timeoutId: undefined })) });
 });
 
+app.post('/api/automation/email/flash64-upsell', async (req, res) => {
+  try {
+    const { lead_id, email, name } = req.body || {};
+    if (!lead_id || !email) return res.status(400).json({ ok: false, error: 'lead_id e email são obrigatórios' });
+
+    const jobs = scheduleFlash64UpsellEmails({ leadId: lead_id, email, name });
+    await appendEventLog({
+      ts: new Date().toISOString(),
+      source: 'automation_email',
+      action: 'scheduled_manual',
+      leadId: lead_id,
+      email,
+      jobs: jobs.map((j) => ({ id: j.id, step: j.step, executeAt: j.executeAt })),
+    });
+
+    return res.json({ ok: true, jobs: jobs.map((j) => ({ ...j, timeoutId: undefined, body: undefined })) });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: error.message });
+  }
+});
+
 app.post('/api/evolution/inbound', async (req, res) => {
   try {
     if (!AGENT_ENABLED) {
@@ -1099,6 +1204,29 @@ app.post('/api/hotmart/webhook', async (req, res) => {
     if (parsed.mappedEvent === 'Purchase') {
       const canceled = cancelLeadAutomations(externalId);
       await appendEventLog({ ts: new Date().toISOString(), source: 'automation', action: 'cancel_on_purchase', leadId: externalId, canceled });
+
+      const productName = String(parsed.productName || '').toLowerCase();
+      const isFlash64 = productName.includes('flash 64');
+      const buyerEmail = parsed.buyer?.email;
+      const buyerName = parsed.buyer?.name;
+
+      if (isFlash64 && buyerEmail && externalId) {
+        const emailJobs = scheduleFlash64UpsellEmails({
+          leadId: externalId,
+          email: buyerEmail,
+          name: buyerName ? String(buyerName).split(' ')[0] : '',
+        });
+
+        await appendEventLog({
+          ts: new Date().toISOString(),
+          source: 'automation_email',
+          action: 'scheduled_from_hotmart_purchase',
+          leadId: externalId,
+          orderId: parsed.orderId,
+          email: buyerEmail,
+          jobs: emailJobs.map((j) => ({ id: j.id, step: j.step, executeAt: j.executeAt })),
+        });
+      }
     }
 
     if (parsed.mappedEvent === 'AddPaymentInfo') {
