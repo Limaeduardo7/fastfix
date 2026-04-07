@@ -13,9 +13,13 @@ import FinalCTA from './ebook/FinalCTA'
 import EbookFooter from './ebook/EbookFooter'
 import EbookWhatsApp from './ebook/EbookWhatsApp'
 import EbookNotifications from './ebook/EbookNotifications'
+import ThankYouPage from './ebook/ThankYouPage'
 import { initMetaPixel, trackPageView } from './lib/metaTracking'
 
 export default function EbookApp() {
+  const pathname = (window.location.pathname || '').replace(/\/+$/, '')
+  const isThankYouPage = pathname === '/flash64/obrigado'
+
   useEffect(() => {
     initMetaPixel()
     if (!window.__ebookPageViewTracked) {
@@ -23,6 +27,11 @@ export default function EbookApp() {
       window.__ebookPageViewTracked = true
     }
   }, [])
+
+  if (isThankYouPage) {
+    return <ThankYouPage />
+  }
+
   return (
     <div className="overflow-x-hidden">
       <main className="overflow-x-hidden">
