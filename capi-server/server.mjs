@@ -446,7 +446,7 @@ function generateAgentReply(message = '', contactMemory = {}) {
   } else if (intent === 'objection_price') {
     reply = `Entendo. A ideia é o ${lastOffer} se pagar com os primeiros reparos de placa. Se você quiser, te mostro uma forma simples de começar sem se enrolar.`;
   } else if (intent === 'checkout') {
-    reply = 'Perfeito! Aqui está o link direto para finalizar sua inscrição: https://pay.hotmart.com/R103290726F?checkoutMode=10';
+    reply = 'Perfeito! Aqui está o link da página de vendas da FastFix Academy: https://fastfixcaxias.com';
   } else if (intent === 'human') {
     reply = 'Claro! Posso te encaminhar para atendimento humano agora. Me diz seu nome e sua principal dúvida em uma frase.';
   } else {
