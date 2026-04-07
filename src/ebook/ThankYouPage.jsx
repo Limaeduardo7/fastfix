@@ -1,4 +1,5 @@
 const ACADEMY_URL = 'https://fastfixcaxias.com';
+const AI_ASSISTANT_URL = 'https://chatgpt.com/g/g-69d510f8ad4c8191b4a6a3c19ea6b51b-assistente-fastfix';
 const SUPPORT_URL = 'https://wa.me/5554981673607?text=Ol%C3%A1!%20Comprei%20o%20eBook%20Flash%2064%20e%20quero%20saber%20sobre%20o%20FastFix%20Academy.';
 
 export default function ThankYouPage() {
@@ -29,10 +30,18 @@ export default function ThankYouPage() {
             Ver página do FastFix Academy
           </a>
           <a
+            href={AI_ASSISTANT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center rounded-xl border border-orange-400/40 bg-orange-500/10 px-6 py-3 font-semibold text-orange-100 hover:bg-orange-500/20 transition"
+          >
+            Acessar Assistente de IA
+          </a>
+          <a
             href={SUPPORT_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white hover:bg-white/10 transition"
+            className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white hover:bg-white/10 transition sm:col-span-2"
           >
             Falar com suporte
           </a>
