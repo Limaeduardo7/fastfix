@@ -12,11 +12,11 @@ export default function ThankYouPage() {
           o próximo passo é entrar no <strong className="text-white">FastFix Academy</strong>.
         </p>
 
-        <div className="mt-8 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+        <div className="mt-8 rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black/30 p-3 md:p-4">
           <img
             src="/images/01.jpg"
             alt="Técnico João Mattoso realizando reparo avançado em placa Android"
-            className="w-full h-[260px] md:h-[340px] object-cover object-top"
+            className="w-full h-[180px] md:h-[240px] object-contain"
             loading="eager"
           />
         </div>
