@@ -492,6 +492,29 @@ function cancelLeadAutomations(leadId) {
   return canceled;
 }
 
+function cancelFlash64UpsellEmailFlow({ leadId, email }) {
+  let canceled = 0;
+  const normalizedEmail = email ? String(email).trim().toLowerCase() : null;
+
+  for (const [id, job] of scheduledJobs.entries()) {
+    const sameLead = leadId && job.leadId === leadId;
+    const sameEmail = normalizedEmail && job.email && String(job.email).trim().toLowerCase() === normalizedEmail;
+    const isUpsellEmail = job.flow === 'flash64_email_upsell';
+
+    if (isUpsellEmail && job.status === 'scheduled' && (sameLead || sameEmail)) {
+      clearTimeout(job.timeoutId);
+      job.status = 'canceled';
+      job.canceledAt = new Date().toISOString();
+      job.cancelReason = 'upsell_purchased';
+      scheduledJobs.set(id, job);
+      canceled += 1;
+    }
+  }
+
+  persistJobs().catch(() => {});
+  return canceled;
+}
+
 function detectIntent(message = '') {
   const text = String(message || '').toLowerCase().trim();
 
@@ -1207,6 +1230,7 @@ app.post('/api/hotmart/webhook', async (req, res) => {
 
       const productName = String(parsed.productName || '').toLowerCase();
       const isFlash64 = productName.includes('flash 64');
+      const isFastFixUpsell = productName.includes('fastfix academy') || productName.includes('fastfix');
       const buyerEmail = parsed.buyer?.email;
       const buyerName = parsed.buyer?.name;
 
@@ -1225,6 +1249,19 @@ app.post('/api/hotmart/webhook', async (req, res) => {
           orderId: parsed.orderId,
           email: buyerEmail,
           jobs: emailJobs.map((j) => ({ id: j.id, step: j.step, executeAt: j.executeAt })),
+        });
+      }
+
+      if (isFastFixUpsell) {
+        const canceledEmailJobs = cancelFlash64UpsellEmailFlow({ leadId: externalId, email: buyerEmail });
+        await appendEventLog({
+          ts: new Date().toISOString(),
+          source: 'automation_email',
+          action: 'canceled_on_upsell_purchase',
+          leadId: externalId,
+          orderId: parsed.orderId,
+          email: buyerEmail,
+          canceled: canceledEmailJobs,
         });
       }
     }
