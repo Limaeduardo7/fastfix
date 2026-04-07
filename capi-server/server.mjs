@@ -814,7 +814,18 @@ app.post('/api/evolution/inbound', async (req, res) => {
     }
 
     const payload = req.body || {};
-    const data = payload.data || payload;
+    let data = payload.data || payload;
+
+    // Evolution may deliver base64 payloads depending on webhook settings
+    if (typeof data === 'string') {
+      try {
+        const decoded = Buffer.from(data, 'base64').toString('utf8');
+        const parsed = JSON.parse(decoded);
+        data = parsed?.data || parsed;
+      } catch {
+        // keep original data when decode fails
+      }
+    }
 
     const phone = normalizePhone(
       data.key?.remoteJid?.replace('@s.whatsapp.net', '') ||
