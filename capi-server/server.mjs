@@ -810,6 +810,7 @@ app.post('/api/automation/checkout-abandon', async (req, res) => {
 app.post('/api/evolution/inbound', async (req, res) => {
   try {
     if (!AGENT_ENABLED) {
+      await appendEventLog({ ts: new Date().toISOString(), source: 'whatsapp_agent', ignored: true, reason: 'agent_disabled' });
       return res.json({ ok: true, ignored: true, reason: 'agent desativado' });
     }
 
@@ -841,6 +842,14 @@ app.post('/api/evolution/inbound', async (req, res) => {
       '';
 
     if (!phone || !text) {
+      await appendEventLog({
+        ts: new Date().toISOString(),
+        source: 'whatsapp_agent',
+        ignored: true,
+        reason: 'missing_phone_or_text',
+        hasPhone: Boolean(phone),
+        hasText: Boolean(text),
+      });
       return res.json({ ok: true, ignored: true, reason: 'sem phone/text' });
     }
 
