@@ -108,7 +108,7 @@ export default function EbookHero() {
 
           <div className="flex justify-center">
             <img
-              src="/images/ebook-mockup.png"
+              src="/images/Conjunto-Ebooks-+-ROBO.png"
               alt="eBook Flash 64 na Prática - Mockup"
               loading="eager"
               fetchPriority="high"
