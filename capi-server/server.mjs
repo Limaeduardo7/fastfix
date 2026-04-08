@@ -40,6 +40,7 @@ const KIMI_ENABLED = String(process.env.WHATSAPP_KIMI_ENABLED || 'true') === 'tr
 const KIMI_API_URL = process.env.KIMI_API_URL || 'https://integrate.api.nvidia.com/v1/chat/completions';
 const KIMI_API_KEY = process.env.KIMI_API_KEY || process.env.NVIDIA_API_KEY || '';
 const KIMI_MODEL = process.env.KIMI_MODEL || 'moonshotai/kimi-k2.5';
+const AGENT_MEMORY_FILE = process.env.WHATSAPP_AGENT_MEMORY_FILE || '/root/fastfixx/capi-server/whatsapp-agent-memory.md';
 
 const SMTP_HOST = process.env.SMTP_HOST;
 const SMTP_PORT = Number(process.env.SMTP_PORT || 587);
@@ -59,6 +60,8 @@ if (!PIXEL_ID || !ACCESS_TOKEN) {
 const scheduledJobs = new Map();
 const processedHotmartEvents = new Map();
 let lastHotmartWebhook = null;
+let cachedAgentMemory = null;
+let cachedAgentMemoryAt = 0;
 
 function contactMemoryPath(phone) {
   return path.join(CONTACT_MEMORY_DIR, `${normalizePhone(phone)}.json`);
@@ -569,6 +572,25 @@ function detectIntent(message = '') {
   return 'fallback';
 }
 
+async function getAgentMemoryText() {
+  const now = Date.now();
+  if (cachedAgentMemory && now - cachedAgentMemoryAt < 60_000) {
+    return cachedAgentMemory;
+  }
+
+  try {
+    const text = await fs.readFile(AGENT_MEMORY_FILE, 'utf8');
+    cachedAgentMemory = text;
+    cachedAgentMemoryAt = now;
+    return text;
+  } catch {
+    const fallback = 'Atendimento consultivo para vender o FastFix Academy com tom humano, curto e focado em conversão.';
+    cachedAgentMemory = fallback;
+    cachedAgentMemoryAt = now;
+    return fallback;
+  }
+}
+
 async function generateAgentReply(message = '', contactMemory = {}) {
   const intent = detectIntent(message);
   const lastOffer = contactMemory?.offers?.[contactMemory.offers.length - 1]?.name || 'FastFix Academy';
@@ -594,6 +616,8 @@ async function generateAgentReply(message = '', contactMemory = {}) {
     .map((item) => `Cliente: ${item.inbound || ''}\nAssistente: ${item.reply || ''}`)
     .join('\n\n');
 
+  const agentMemory = await getAgentMemoryText();
+
   const systemPrompt = `Você é ${AGENT_NAME}, atendente comercial no WhatsApp da FastFix Academy.
 Responda em português do Brasil, tom humano, curto (máx. 3 frases), sem cara de robô.
 Não use mensagens prontas repetitivas.
@@ -601,9 +625,13 @@ Objetivo: entender a dúvida e avançar a conversa para conversão com naturalid
 Se o cliente pedir link/compra, use exatamente: https://fastfixcaxias.com
 Se pedirem para parar, confirme pausa e diga que pode voltar com "voltar".
 Não invente preços se não tiver certeza; ofereça enviar o link oficial para detalhes.
-Produto principal: ${lastOffer}.`;
+Produto principal: ${lastOffer}.
+
+MEMÓRIA E INSTRUÇÕES DO AGENTE (obrigatório seguir):
+${agentMemory}`;
 
   const userPrompt = `Último texto do cliente: ${String(message || '').trim()}
+Intent detectada: ${intent}
 
 Contexto recente (se houver):
 ${historyText || 'Sem histórico'}
