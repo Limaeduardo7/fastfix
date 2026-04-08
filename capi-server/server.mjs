@@ -24,6 +24,7 @@ const EVOLUTION_API_KEY = process.env.EVOLUTION_API_KEY;
 const EVOLUTION_INSTANCE = process.env.EVOLUTION_INSTANCE || 'default';
 const EVOLUTION_SEND_PATH = process.env.EVOLUTION_SEND_PATH || '/message/sendText/{instance}';
 const AUTOMATION_JOBS_PATH = process.env.AUTOMATION_JOBS_PATH || '/root/fastfixx/capi-server/data/automation-jobs.json';
+const CONTACT_MEMORY_DIR = process.env.CONTACT_MEMORY_DIR || '/root/fastfixx/capi-server/data/contacts';
 const AGENT_ENABLED = String(process.env.WHATSAPP_AGENT_ENABLED || 'true') === 'true';
 const AGENT_NAME = process.env.WHATSAPP_AGENT_NAME || 'Assistente FastFix';
 const PARAM_BUILDER_DOMAINS = (process.env.PARAM_BUILDER_DOMAINS || '').split(',').map((d) => d.trim()).filter(Boolean);
@@ -39,6 +40,33 @@ if (!PIXEL_ID || !ACCESS_TOKEN) {
 const scheduledJobs = new Map();
 const processedHotmartEvents = new Map();
 let lastHotmartWebhook = null;
+
+function contactMemoryPath(phone) {
+  return path.join(CONTACT_MEMORY_DIR, `${normalizePhone(phone)}.json`);
+}
+
+async function readContactMemory(phone) {
+  try {
+    const file = contactMemoryPath(phone);
+    const raw = await fs.readFile(file, 'utf8');
+    return JSON.parse(raw);
+  } catch {
+    return {
+      phone: normalizePhone(phone),
+      firstSeenAt: new Date().toISOString(),
+      offers: [],
+      history: [],
+      profile: {},
+      tags: [],
+    };
+  }
+}
+
+async function saveContactMemory(phone, memory) {
+  const file = contactMemoryPath(phone);
+  await fs.mkdir(path.dirname(file), { recursive: true });
+  await fs.writeFile(file, JSON.stringify(memory, null, 2), 'utf8');
+}
 
 function sha256(value) {
   if (!value) return undefined;
@@ -380,26 +408,52 @@ function cancelLeadAutomations(leadId) {
   return canceled;
 }
 
-function generateAgentReply(message = '') {
-  const text = String(message || '').toLowerCase();
+function detectIntent(message = '') {
+  const text = String(message || '').toLowerCase().trim();
 
-  if (/\b(oi|olá|ola|bom dia|boa tarde|boa noite)\b/.test(text)) {
-    return `Oi! 👋 Eu sou o ${AGENT_NAME}. Posso te ajudar com dúvidas sobre o treinamento FastFix, valores, formas de pagamento e matrícula.`;
+  if (/\b(sair|parar|cancelar|remover|descadastrar|não quero|nao quero|stop)\b/.test(text)) return 'opt_out';
+  if (/\b(voltar|retomar|quero voltar|ativar)\b/.test(text)) return 'resume';
+  if (/\b(link|comprar|checkout|inscri|matr[ií]cula|quero entrar|quero comprar|tenho interesse)\b/.test(text)) return 'checkout';
+  if (/\b(preço|preco|valor|quanto|custa|investimento)\b/.test(text)) return 'price';
+  if (/\b(parcela|parcelado|parcelamento|cart[aã]o|pix|boleto|pagamento)\b/.test(text)) return 'payment';
+  if (/\b(conte[uú]do|m[oó]dulo|aula|acesso|garantia|certificado|suporte)\b/.test(text)) return 'content';
+  if (/\b(n[aã]o confio|golpe|confi[aá]vel|funciona mesmo|vale a pena)\b/.test(text)) return 'trust';
+  if (/\b(caro|sem dinheiro|sem grana|depois|agora n[aã]o|to sem)\b/.test(text)) return 'objection_price';
+  if (/\b(atendente|humano|falar com pessoa|falar com vendedor)\b/.test(text)) return 'human';
+  if (/\b(oi|olá|ola|bom dia|boa tarde|boa noite)\b/.test(text)) return 'greeting';
+  return 'fallback';
+}
+
+function generateAgentReply(message = '', contactMemory = {}) {
+  const intent = detectIntent(message);
+  const lastOffer = contactMemory?.offers?.[contactMemory.offers.length - 1]?.name || 'FastFix Academy';
+  let reply;
+
+  if (intent === 'opt_out') {
+    reply = 'Perfeito, vou pausar as mensagens por aqui ✅ Se mudar de ideia, é só me chamar com "voltar".';
+  } else if (intent === 'resume') {
+    reply = `Fechado! Reativei seu atendimento por aqui 🙌 Eu sou o ${AGENT_NAME}. Posso te ajudar com preço, conteúdo e matrícula no ${lastOffer}.`;
+  } else if (intent === 'greeting') {
+    reply = `Oi! 👋 Eu sou o ${AGENT_NAME}. Posso te ajudar com dúvidas sobre o ${lastOffer} (valor, conteúdo, pagamento e matrícula).`;
+  } else if (intent === 'price') {
+    reply = `Hoje o ${lastOffer} está com condição promocional. Se quiser, te envio agora o link de inscrição pra garantir a vaga.`;
+  } else if (intent === 'payment') {
+    reply = 'Temos opções de pagamento no checkout (cartão, Pix e boleto). Se quiser, já te mando o link direto para finalizar com segurança.';
+  } else if (intent === 'content') {
+    reply = `O ${lastOffer} é completo e prático, com acesso ao conteúdo, suporte e garantia. Se quiser, te explico o que vem incluso e o melhor caminho para seu nível hoje.`;
+  } else if (intent === 'trust') {
+    reply = `Totalmente justo perguntar isso 👍 O ${lastOffer} foi feito para aplicação real de bancada, com foco em aumentar taxa de acerto e faturamento.`;
+  } else if (intent === 'objection_price') {
+    reply = `Entendo. A ideia é o ${lastOffer} se pagar com os primeiros reparos de placa. Se você quiser, te mostro uma forma simples de começar sem se enrolar.`;
+  } else if (intent === 'checkout') {
+    reply = 'Perfeito! Aqui está o link da página de vendas da FastFix Academy: https://fastfixcaxias.com';
+  } else if (intent === 'human') {
+    reply = 'Claro! Posso te encaminhar para atendimento humano agora. Me diz seu nome e sua principal dúvida em uma frase.';
+  } else {
+    reply = 'Fechado 🙌 Pra te responder direto, me diz em uma frase o que você quer agora: valor, conteúdo, pagamento ou link de inscrição.';
   }
 
-  if (/\b(preço|preco|valor|quanto|custa)\b/.test(text)) {
-    return 'Hoje a condição ativa é promocional. Se quiser, te envio agora o link direto para garantir sua vaga com segurança.';
-  }
-
-  if (/\b(link|comprar|checkout|inscri|matr[ií]cula)\b/.test(text)) {
-    return 'Perfeito! Aqui está o link direto para finalizar sua inscrição: https://pay.hotmart.com/R103290726F?checkoutMode=10';
-  }
-
-  if (/\b(suporte|ajuda|d[uú]vida|atendente|humano)\b/.test(text)) {
-    return 'Claro! Vou te ajudar por aqui. Se preferir atendimento humano, me diga seu nome e a dúvida principal que eu priorizo seu caso.';
-  }
-
-  return 'Entendi 🙌 Me diz em uma frase o que você precisa agora (valor, conteúdo, acesso, pagamento ou link de inscrição) que eu te respondo direto.';
+  return { intent, reply };
 }
 
 function compactObject(obj = {}) {
@@ -756,11 +810,23 @@ app.post('/api/automation/checkout-abandon', async (req, res) => {
 app.post('/api/evolution/inbound', async (req, res) => {
   try {
     if (!AGENT_ENABLED) {
+      await appendEventLog({ ts: new Date().toISOString(), source: 'whatsapp_agent', ignored: true, reason: 'agent_disabled' });
       return res.json({ ok: true, ignored: true, reason: 'agent desativado' });
     }
 
     const payload = req.body || {};
-    const data = payload.data || payload;
+    let data = payload.data || payload;
+
+    // Evolution may deliver base64 payloads depending on webhook settings
+    if (typeof data === 'string') {
+      try {
+        const decoded = Buffer.from(data, 'base64').toString('utf8');
+        const parsed = JSON.parse(decoded);
+        data = parsed?.data || parsed;
+      } catch {
+        // keep original data when decode fails
+      }
+    }
 
     const phone = normalizePhone(
       data.key?.remoteJid?.replace('@s.whatsapp.net', '') ||
@@ -776,21 +842,53 @@ app.post('/api/evolution/inbound', async (req, res) => {
       '';
 
     if (!phone || !text) {
+      await appendEventLog({
+        ts: new Date().toISOString(),
+        source: 'whatsapp_agent',
+        ignored: true,
+        reason: 'missing_phone_or_text',
+        hasPhone: Boolean(phone),
+        hasText: Boolean(text),
+      });
       return res.json({ ok: true, ignored: true, reason: 'sem phone/text' });
     }
 
-    const reply = generateAgentReply(text);
+    const contactMemory = await readContactMemory(phone);
+    const { intent, reply } = generateAgentReply(text, contactMemory);
     const evolution = await sendWhatsAppText(phone, reply);
 
+    const now = new Date().toISOString();
+    contactMemory.phone = phone;
+    contactMemory.lastIntent = intent;
+    contactMemory.lastInboundAt = now;
+    contactMemory.lastReplyAt = now;
+    contactMemory.updatedAt = now;
+    contactMemory.history = Array.isArray(contactMemory.history) ? contactMemory.history : [];
+    contactMemory.tags = Array.isArray(contactMemory.tags) ? contactMemory.tags : [];
+    contactMemory.offers = Array.isArray(contactMemory.offers) ? contactMemory.offers : [];
+    contactMemory.history.push({ at: now, inbound: text, intent, reply });
+    if (contactMemory.history.length > 50) contactMemory.history = contactMemory.history.slice(-50);
+
+    if (intent === 'opt_out') {
+      contactMemory.status = 'opted_out';
+      if (!contactMemory.tags.includes('opt_out')) contactMemory.tags.push('opt_out');
+    } else if (intent === 'resume') {
+      contactMemory.status = 'active';
+      contactMemory.tags = (contactMemory.tags || []).filter((t) => t !== 'opt_out');
+    }
+
+    await saveContactMemory(phone, contactMemory);
+
     await appendEventLog({
-      ts: new Date().toISOString(),
+      ts: now,
       source: 'whatsapp_agent',
       phone,
       inbound: text,
+      intent,
       reply,
     });
 
-    return res.json({ ok: true, phone, reply, evolution });
+    return res.json({ ok: true, phone, intent, reply, evolution });
   } catch (error) {
     return res.status(500).json({ ok: false, error: error.message });
   }
