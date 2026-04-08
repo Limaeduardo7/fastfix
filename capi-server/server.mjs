@@ -559,28 +559,32 @@ function generateAgentReply(message = '', contactMemory = {}) {
   const lastOffer = contactMemory?.offers?.[contactMemory.offers.length - 1]?.name || 'FastFix Academy';
   let reply;
 
+  if (contactMemory?.status === 'opted_out' && intent !== 'resume') {
+    return { intent: 'opted_out_silence', reply: null };
+  }
+
   if (intent === 'opt_out') {
-    reply = 'Perfeito, vou pausar as mensagens por aqui ✅ Se mudar de ideia, é só me chamar com "voltar".';
+    reply = 'Perfeito, vou pausar as mensagens por aqui ✅ Se quiser voltar, é só me mandar "voltar".';
   } else if (intent === 'resume') {
-    reply = `Fechado! Reativei seu atendimento por aqui 🙌 Eu sou o ${AGENT_NAME}. Posso te ajudar com preço, conteúdo e matrícula no ${lastOffer}.`;
+    reply = `Fechado! Reativei seu atendimento 🙌 Eu sou o ${AGENT_NAME}. Posso te ajudar a entender se o ${lastOffer} faz sentido para o seu momento.`;
   } else if (intent === 'greeting') {
-    reply = `Oi! 👋 Eu sou o ${AGENT_NAME}. Posso te ajudar com dúvidas sobre o ${lastOffer} (valor, conteúdo, pagamento e matrícula).`;
+    reply = `Oi! 👋 Eu sou o ${AGENT_NAME}. Posso te ajudar com o ${lastOffer}. Se quiser, te faço uma pergunta rápida para te indicar o melhor caminho.`;
   } else if (intent === 'price') {
-    reply = `Hoje o ${lastOffer} está com condição promocional. Se quiser, te envio agora o link de inscrição pra garantir a vaga.`;
+    reply = `Claro. Hoje o ${lastOffer} está em condição promocional. Se você quiser, te envio o link e te explico de forma objetiva se vale para o seu perfil.`;
   } else if (intent === 'payment') {
-    reply = 'Temos opções de pagamento no checkout (cartão, Pix e boleto). Se quiser, já te mando o link direto para finalizar com segurança.';
+    reply = 'Tem opções de pagamento no checkout (cartão, Pix e boleto). Se você quiser, te envio o link e te ajudo a escolher a melhor forma.';
   } else if (intent === 'content') {
-    reply = `O ${lastOffer} é completo e prático, com acesso ao conteúdo, suporte e garantia. Se quiser, te explico o que vem incluso e o melhor caminho para seu nível hoje.`;
+    reply = `No ${lastOffer} você tem método completo, aplicação prática e suporte. Se me disser seu nível atual, eu te explico exatamente o que mais vai te ajudar primeiro.`;
   } else if (intent === 'trust') {
-    reply = `Totalmente justo perguntar isso 👍 O ${lastOffer} foi feito para aplicação real de bancada, com foco em aumentar taxa de acerto e faturamento.`;
+    reply = `Pergunta super válida 👍 A proposta do ${lastOffer} é aplicação real de bancada, com foco em reduzir erro e aumentar resultado.`;
   } else if (intent === 'objection_price') {
-    reply = `Entendo. A ideia é o ${lastOffer} se pagar com os primeiros reparos de placa. Se você quiser, te mostro uma forma simples de começar sem se enrolar.`;
+    reply = `Te entendo. O foco é fazer o ${lastOffer} se pagar com os primeiros reparos. Se quiser, eu te mostro uma forma simples e sem pressa de começar.`;
   } else if (intent === 'checkout') {
-    reply = 'Perfeito! Aqui está o link da página de vendas da FastFix Academy: https://fastfixcaxias.com';
+    reply = 'Perfeito. Aqui está a página de vendas da FastFix Academy: https://fastfixcaxias.com';
   } else if (intent === 'human') {
-    reply = 'Claro! Posso te encaminhar para atendimento humano agora. Me diz seu nome e sua principal dúvida em uma frase.';
+    reply = 'Combinado. Posso te encaminhar para atendimento humano agora. Me diz seu nome e sua dúvida principal em uma frase.';
   } else {
-    reply = 'Fechado 🙌 Pra te responder direto, me diz em uma frase o que você quer agora: valor, conteúdo, pagamento ou link de inscrição.';
+    reply = 'Para te orientar melhor: hoje sua maior dificuldade está mais em diagnóstico, execução ou fechamento com cliente?';
   }
 
   return { intent, reply };
@@ -1046,6 +1050,10 @@ app.post('/api/evolution/inbound', async (req, res) => {
       }
     }
 
+    if (data.key?.fromMe === true || data.fromMe === true) {
+      return res.json({ ok: true, ignored: true, reason: 'from_me' });
+    }
+
     const phone = normalizePhone(
       data.key?.remoteJid?.replace('@s.whatsapp.net', '') ||
       data.from ||
@@ -1073,9 +1081,14 @@ app.post('/api/evolution/inbound', async (req, res) => {
 
     const contactMemory = await readContactMemory(phone);
     const { intent, reply } = generateAgentReply(text, contactMemory);
-    const evolution = await sendWhatsAppText(phone, reply);
 
     const now = new Date().toISOString();
+    if (!reply) {
+      await appendEventLog({ ts: now, source: 'whatsapp_agent', phone, inbound: text, intent, ignored: true, reason: 'no_reply' });
+      return res.json({ ok: true, phone, intent, ignored: true, reason: 'no_reply' });
+    }
+
+    const evolution = await sendWhatsAppText(phone, reply);
     contactMemory.phone = phone;
     contactMemory.lastIntent = intent;
     contactMemory.lastInboundAt = now;
