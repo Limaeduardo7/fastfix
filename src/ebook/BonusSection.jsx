@@ -53,7 +53,7 @@ const bonuses = [
     label: 'Planilha Bônus',
     title: 'Planilha de Precificação',
     price: 'R$ 27,00',
-    video: '/Video Planilha de Precificação.mp4',
+    video: '/video-planilha-precificacao.mp4',
     description: 'Pare de cobrar no achismo. Calcule o valor ideal de cada serviço com base em custos, tempo e margem de lucro.',
     features: [
       'Cálculo por tipo de serviço',
@@ -185,6 +185,11 @@ export default function BonusSection() {
                           loop
                           muted
                           playsInline
+                          preload="metadata"
+                          webkit-playsinline="true"
+                          disablePictureInPicture
+                          controls={false}
+                          onCanPlay={(e) => { e.currentTarget.play().catch(() => {}); }}
                           className="w-full h-auto object-cover"
                         />
                       </div>

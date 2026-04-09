@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import LoadingScreen from './ebook/LoadingScreen'
 import EbookHero from './ebook/EbookHero'
 import PainSection from './ebook/PainSection'
 import PromiseSection from './ebook/PromiseSection'
@@ -34,6 +35,7 @@ export default function EbookApp() {
 
   return (
     <div className="overflow-x-hidden">
+      <LoadingScreen />
       <main className="overflow-x-hidden">
         <EbookHero />
         <PainSection />
