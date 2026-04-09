@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import net from 'net';
 import { createRequire } from 'module';
+import nodemailer from 'nodemailer';
 
 const require = createRequire(import.meta.url);
 const { ParamBuilder } = require('capi-param-builder-nodejs');
@@ -11,6 +12,14 @@ const { ParamBuilder } = require('capi-param-builder-nodejs');
 const app = express();
 app.set('trust proxy', true);
 app.use(express.json({ limit: '512kb' }));
+
+// Evolution can call /api/evolution/inbound/<event> when webhookByEvents=true
+app.use((req, _res, next) => {
+  if (req.path.startsWith('/api/evolution/inbound/')) {
+    req.url = '/api/evolution/inbound';
+  }
+  next();
+});
 
 const PORT = process.env.PORT || 3100;
 const PIXEL_ID = process.env.META_PIXEL_ID;
@@ -27,6 +36,17 @@ const AUTOMATION_JOBS_PATH = process.env.AUTOMATION_JOBS_PATH || '/root/fastfixx
 const CONTACT_MEMORY_DIR = process.env.CONTACT_MEMORY_DIR || '/root/fastfixx/capi-server/data/contacts';
 const AGENT_ENABLED = String(process.env.WHATSAPP_AGENT_ENABLED || 'true') === 'true';
 const AGENT_NAME = process.env.WHATSAPP_AGENT_NAME || 'Assistente FastFix';
+const KIMI_ENABLED = String(process.env.WHATSAPP_KIMI_ENABLED || 'true') === 'true';
+const KIMI_API_URL = process.env.KIMI_API_URL || 'https://integrate.api.nvidia.com/v1/chat/completions';
+const KIMI_API_KEY = process.env.KIMI_API_KEY || process.env.NVIDIA_API_KEY || '';
+const KIMI_MODEL = process.env.KIMI_MODEL || 'moonshotai/kimi-k2.5';
+const AGENT_MEMORY_FILE = process.env.WHATSAPP_AGENT_MEMORY_FILE || '/root/fastfixx/capi-server/whatsapp-agent-memory.md';
+
+const SMTP_HOST = process.env.SMTP_HOST;
+const SMTP_PORT = Number(process.env.SMTP_PORT || 587);
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const SMTP_FROM = process.env.SMTP_FROM || 'FastFix Academy <contato@fastfixcaxias.com>';
 const PARAM_BUILDER_DOMAINS = (process.env.PARAM_BUILDER_DOMAINS || '').split(',').map((d) => d.trim()).filter(Boolean);
 
 function createParamBuilder() {
@@ -40,6 +60,8 @@ if (!PIXEL_ID || !ACCESS_TOKEN) {
 const scheduledJobs = new Map();
 const processedHotmartEvents = new Map();
 let lastHotmartWebhook = null;
+let cachedAgentMemory = null;
+let cachedAgentMemoryAt = 0;
 
 function contactMemoryPath(phone) {
   return path.join(CONTACT_MEMORY_DIR, `${normalizePhone(phone)}.json`);
@@ -345,6 +367,83 @@ async function sendWhatsAppText(phone, text) {
   return data;
 }
 
+function getEmailTransport() {
+  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) return null;
+  return nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_PORT === 465,
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
+  });
+}
+
+const FLASH64_UPSELL_EMAILS = [
+  { dayOffset: 0, subject: 'Seu próximo passo depois do Flash64', body: 'Você já fez a parte mais importante: começou.\n\nO Flash64 te dá direção técnica. Agora, pra acelerar resultado de bancada e faturamento, o próximo passo é o FastFix Academy.\n\n👉 https://fastfixcaxias.com' },
+  { dayOffset: 1, subject: 'O erro que trava técnico bom', body: 'A maioria não trava por falta de vontade. Trava por falta de método completo.\n\nNo Academy você organiza diagnóstico, execução e tomada de decisão — sem depender de tentativa e erro.\n\n👉 https://fastfixcaxias.com' },
+  { dayOffset: 3, subject: 'Como aumentar ticket sem aumentar volume', body: 'Troca simples dá giro. Reparo avançado dá margem.\n\nO Academy foi desenhado pra te levar para serviços mais valorizados, com processo replicável na bancada.\n\n👉 https://fastfixcaxias.com' },
+  { dayOffset: 5, subject: '“Será que isso é pra mim?”', body: 'Se você já mexe com celular e quer evoluir no reparo de placas, sim — é pra você.\n\nFoco em prática, clareza de processo e aplicação real.\n\n👉 https://fastfixcaxias.com' },
+  { dayOffset: 7, subject: 'Sem tempo? leia isso em 30 segundos', body: 'Resumo direto:\n- conteúdo técnico aplicado\n- foco em resultado de bancada\n- caminho pra aumentar ticket com segurança\n\n👉 https://fastfixcaxias.com' },
+  { dayOffset: 10, subject: 'O que muda quando você profissionaliza o processo', body: 'Quando você tem método: reduz retrabalho, melhora confiança no diagnóstico e cresce faturamento com previsibilidade.\n\n👉 https://fastfixcaxias.com' },
+  { dayOffset: 14, subject: 'Último convite (por enquanto)', body: 'Se você quer dar o próximo passo depois do Flash64, esse é o momento.\n\n👉 https://fastfixcaxias.com' },
+];
+
+async function sendEmailNow({ to, subject, body }) {
+  const transport = getEmailTransport();
+  if (!transport) throw new Error('SMTP não configurado (SMTP_HOST/SMTP_USER/SMTP_PASS)');
+  return transport.sendMail({ from: SMTP_FROM, to, subject, text: body });
+}
+
+function scheduleFlash64UpsellEmails({ leadId, email, name = '' }) {
+  if (!email) return [];
+  const jobs = [];
+  for (const step of FLASH64_UPSELL_EMAILS) {
+    const id = crypto.randomUUID();
+    const delayMs = step.dayOffset * 24 * 60 * 60 * 1000;
+    const executeAt = Date.now() + delayMs;
+    const personalizedBody = `${name ? `Olá, ${name}!\n\n` : ''}${step.body}`;
+    const job = {
+      id,
+      leadId,
+      flow: 'flash64_email_upsell',
+      step: `d${step.dayOffset}`,
+      email,
+      subject: step.subject,
+      body: personalizedBody,
+      delayMs,
+      status: 'scheduled',
+      createdAt: new Date().toISOString(),
+      executeAt: new Date(executeAt).toISOString(),
+      meta: { channel: 'email' },
+    };
+
+    const timeoutId = setTimeout(async () => {
+      const current = scheduledJobs.get(id);
+      if (!current || current.status !== 'scheduled') return;
+      try {
+        const result = await sendEmailNow({ to: current.email, subject: current.subject, body: current.body });
+        current.status = 'sent';
+        current.sentAt = new Date().toISOString();
+        current.emailResult = { messageId: result?.messageId };
+        await appendEventLog({ ts: current.sentAt, source: 'automation_email', action: 'sent', leadId, email: current.email, step: current.step });
+      } catch (err) {
+        current.status = 'failed';
+        current.error = err.message;
+        current.failedAt = new Date().toISOString();
+        await appendEventLog({ ts: current.failedAt, source: 'automation_email', action: 'failed', leadId, email: current.email, step: current.step, error: err.message });
+      }
+      scheduledJobs.set(id, current);
+      await persistJobs();
+    }, delayMs);
+
+    job.timeoutId = timeoutId;
+    scheduledJobs.set(id, job);
+    jobs.push(job);
+  }
+
+  persistJobs().catch(() => {});
+  return jobs;
+}
+
 function scheduleAutomation({ leadId, flow, step, phone, text, delayMs, meta = {} }) {
   const id = crypto.randomUUID();
   const executeAt = Date.now() + delayMs;
@@ -408,52 +507,177 @@ function cancelLeadAutomations(leadId) {
   return canceled;
 }
 
+function cancelFlash64UpsellEmailFlow({ leadId, email }) {
+  let canceled = 0;
+  const normalizedEmail = email ? String(email).trim().toLowerCase() : null;
+
+  for (const [id, job] of scheduledJobs.entries()) {
+    const sameLead = leadId && job.leadId === leadId;
+    const sameEmail = normalizedEmail && job.email && String(job.email).trim().toLowerCase() === normalizedEmail;
+    const isUpsellEmail = job.flow === 'flash64_email_upsell';
+
+    if (isUpsellEmail && job.status === 'scheduled' && (sameLead || sameEmail)) {
+      clearTimeout(job.timeoutId);
+      job.status = 'canceled';
+      job.canceledAt = new Date().toISOString();
+      job.cancelReason = 'upsell_purchased';
+      scheduledJobs.set(id, job);
+      canceled += 1;
+    }
+  }
+
+  persistJobs().catch(() => {});
+  return canceled;
+}
+
+function cancelFlash64UpsellWhatsAppFlow({ leadId, phone }) {
+  let canceled = 0;
+  const normalizedPhone = normalizePhone(phone);
+
+  for (const [id, job] of scheduledJobs.entries()) {
+    const sameLead = leadId && job.leadId === leadId;
+    const samePhone = normalizedPhone && job.phone && normalizePhone(job.phone) === normalizedPhone;
+    const isUpsellWhatsApp = job.flow === 'flash64_whatsapp_upsell';
+
+    if (isUpsellWhatsApp && job.status === 'scheduled' && (sameLead || samePhone)) {
+      clearTimeout(job.timeoutId);
+      job.status = 'canceled';
+      job.canceledAt = new Date().toISOString();
+      job.cancelReason = 'upsell_purchased';
+      scheduledJobs.set(id, job);
+      canceled += 1;
+    }
+  }
+
+  persistJobs().catch(() => {});
+  return canceled;
+}
+
 function detectIntent(message = '') {
   const text = String(message || '').toLowerCase().trim();
 
   if (/\b(sair|parar|cancelar|remover|descadastrar|não quero|nao quero|stop)\b/.test(text)) return 'opt_out';
   if (/\b(voltar|retomar|quero voltar|ativar)\b/.test(text)) return 'resume';
-  if (/\b(link|comprar|checkout|inscri|matr[ií]cula|quero entrar|quero comprar|tenho interesse)\b/.test(text)) return 'checkout';
+  if (/\b(link|comprar|checkout|inscri|matr[ií]cula|quero entrar|quero comprar|tenho interesse|manda o link)\b/.test(text)) return 'checkout';
   if (/\b(preço|preco|valor|quanto|custa|investimento)\b/.test(text)) return 'price';
   if (/\b(parcela|parcelado|parcelamento|cart[aã]o|pix|boleto|pagamento)\b/.test(text)) return 'payment';
   if (/\b(conte[uú]do|m[oó]dulo|aula|acesso|garantia|certificado|suporte)\b/.test(text)) return 'content';
   if (/\b(n[aã]o confio|golpe|confi[aá]vel|funciona mesmo|vale a pena)\b/.test(text)) return 'trust';
   if (/\b(caro|sem dinheiro|sem grana|depois|agora n[aã]o|to sem)\b/.test(text)) return 'objection_price';
   if (/\b(atendente|humano|falar com pessoa|falar com vendedor)\b/.test(text)) return 'human';
+  if (/\b(diagn[oó]stico|diagnostico|an[aá]lise|analise|defeito)\b/.test(text)) return 'need_diagnosis';
+  if (/\b(execu[cç][aã]o|execucao|bancada|procedimento|reparo)\b/.test(text)) return 'need_execution';
+  if (/\b(fechamento|or[cç]amento|orcamento|cliente|venda|aprova[cç][aã]o|aprovacao)\b/.test(text)) return 'need_closing';
   if (/\b(oi|olá|ola|bom dia|boa tarde|boa noite)\b/.test(text)) return 'greeting';
   return 'fallback';
 }
 
-function generateAgentReply(message = '', contactMemory = {}) {
-  const intent = detectIntent(message);
-  const lastOffer = contactMemory?.offers?.[contactMemory.offers.length - 1]?.name || 'FastFix Academy';
-  let reply;
-
-  if (intent === 'opt_out') {
-    reply = 'Perfeito, vou pausar as mensagens por aqui ✅ Se mudar de ideia, é só me chamar com "voltar".';
-  } else if (intent === 'resume') {
-    reply = `Fechado! Reativei seu atendimento por aqui 🙌 Eu sou o ${AGENT_NAME}. Posso te ajudar com preço, conteúdo e matrícula no ${lastOffer}.`;
-  } else if (intent === 'greeting') {
-    reply = `Oi! 👋 Eu sou o ${AGENT_NAME}. Posso te ajudar com dúvidas sobre o ${lastOffer} (valor, conteúdo, pagamento e matrícula).`;
-  } else if (intent === 'price') {
-    reply = `Hoje o ${lastOffer} está com condição promocional. Se quiser, te envio agora o link de inscrição pra garantir a vaga.`;
-  } else if (intent === 'payment') {
-    reply = 'Temos opções de pagamento no checkout (cartão, Pix e boleto). Se quiser, já te mando o link direto para finalizar com segurança.';
-  } else if (intent === 'content') {
-    reply = `O ${lastOffer} é completo e prático, com acesso ao conteúdo, suporte e garantia. Se quiser, te explico o que vem incluso e o melhor caminho para seu nível hoje.`;
-  } else if (intent === 'trust') {
-    reply = `Totalmente justo perguntar isso 👍 O ${lastOffer} foi feito para aplicação real de bancada, com foco em aumentar taxa de acerto e faturamento.`;
-  } else if (intent === 'objection_price') {
-    reply = `Entendo. A ideia é o ${lastOffer} se pagar com os primeiros reparos de placa. Se você quiser, te mostro uma forma simples de começar sem se enrolar.`;
-  } else if (intent === 'checkout') {
-    reply = 'Perfeito! Aqui está o link da página de vendas da FastFix Academy: https://fastfixcaxias.com';
-  } else if (intent === 'human') {
-    reply = 'Claro! Posso te encaminhar para atendimento humano agora. Me diz seu nome e sua principal dúvida em uma frase.';
-  } else {
-    reply = 'Fechado 🙌 Pra te responder direto, me diz em uma frase o que você quer agora: valor, conteúdo, pagamento ou link de inscrição.';
+async function getAgentMemoryText() {
+  const now = Date.now();
+  if (cachedAgentMemory && now - cachedAgentMemoryAt < 60_000) {
+    return cachedAgentMemory;
   }
 
-  return { intent, reply };
+  try {
+    const text = await fs.readFile(AGENT_MEMORY_FILE, 'utf8');
+    cachedAgentMemory = text;
+    cachedAgentMemoryAt = now;
+    return text;
+  } catch {
+    const fallback = 'Atendimento consultivo para vender o FastFix Academy com tom humano, curto e focado em conversão.';
+    cachedAgentMemory = fallback;
+    cachedAgentMemoryAt = now;
+    return fallback;
+  }
+}
+
+async function generateAgentReply(message = '', contactMemory = {}) {
+  const intent = detectIntent(message);
+  const lastOffer = contactMemory?.offers?.[contactMemory.offers.length - 1]?.name || 'FastFix Academy';
+
+  if (contactMemory?.status === 'opted_out' && intent !== 'resume') {
+    return { intent: 'opted_out_silence', reply: null };
+  }
+
+  if (intent === 'opt_out') {
+    return { intent, reply: 'Perfeito, vou pausar as mensagens por aqui ✅ Se quiser voltar, é só me mandar "voltar".' };
+  }
+
+  if (intent === 'resume') {
+    return { intent, reply: `Fechado! Reativei seu atendimento 🙌 Eu sou o ${AGENT_NAME}.` };
+  }
+
+  if (!KIMI_ENABLED || !KIMI_API_KEY) {
+    return { intent, reply: 'Posso te ajudar com valores, conteúdo, pagamento e link de inscrição. Me diz em uma frase o que você precisa agora.' };
+  }
+
+  const history = Array.isArray(contactMemory?.history) ? contactMemory.history.slice(-8) : [];
+  const historyText = history
+    .map((item) => `Cliente: ${item.inbound || ''}\nAssistente: ${item.reply || ''}`)
+    .join('\n\n');
+
+  const agentMemory = await getAgentMemoryText();
+
+  const systemPrompt = `Você é ${AGENT_NAME}, atendente comercial no WhatsApp da FastFix Academy.
+Responda em português do Brasil, tom humano, curto (máx. 3 frases), sem cara de robô.
+Não use mensagens prontas repetitivas.
+Objetivo: entender a dúvida e avançar a conversa para conversão com naturalidade.
+Se o cliente pedir link/compra, use exatamente: https://fastfixcaxias.com
+Se pedirem para parar, confirme pausa e diga que pode voltar com "voltar".
+Não invente preços se não tiver certeza; ofereça enviar o link oficial para detalhes.
+Produto principal: ${lastOffer}.
+
+MEMÓRIA E INSTRUÇÕES DO AGENTE (obrigatório seguir):
+${agentMemory}`;
+
+  const userPrompt = `Último texto do cliente: ${String(message || '').trim()}
+Intent detectada: ${intent}
+
+Contexto recente (se houver):
+${historyText || 'Sem histórico'}
+
+Gere apenas a resposta que será enviada no WhatsApp.`;
+
+  const payload = {
+    model: KIMI_MODEL,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    max_tokens: 800,
+    temperature: 0.7,
+    top_p: 1,
+    stream: false,
+    chat_template_kwargs: { thinking: true },
+  };
+
+  try {
+    const response = await fetch(KIMI_API_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${KIMI_API_KEY}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Kimi API falhou (${response.status})`);
+    }
+
+    const data = await response.json();
+    const reply = data?.choices?.[0]?.message?.content?.trim();
+
+    if (!reply) {
+      return { intent, reply: 'Perfeito. Me diz sua principal dúvida agora e eu te respondo direto.' };
+    }
+
+    return { intent, reply };
+  } catch (error) {
+    console.error('Erro Kimi WhatsApp agent:', error?.message || error);
+    return { intent, reply: 'Tive uma instabilidade rápida aqui. Me diz sua dúvida em uma frase que eu já te respondo.' };
+  }
 }
 
 function compactObject(obj = {}) {
@@ -798,6 +1022,61 @@ function scheduleCheckoutAbandonFlow({ phone, name = 'Tudo bem?', leadId, source
   return jobs;
 }
 
+function scheduleFlash64WhatsAppUpsellFlow({ phone, name = 'Tudo bem?', leadId, source = 'manual' }) {
+  const canceled = cancelFlash64UpsellWhatsAppFlow({ leadId, phone });
+
+  const jobs = [
+    scheduleAutomation({
+      leadId,
+      flow: 'flash64_whatsapp_upsell',
+      step: 'd0',
+      phone,
+      delayMs: 15 * 1000,
+      text: `Fala, ${name}! 👊 Vi que você adquiriu o Flash 64.\nSe quiser evoluir para reparo avançado e aumentar ticket de bancada, o próximo passo é o FastFix Academy.\nQuer que eu te envie o link?`,
+      meta: { source },
+    }),
+    scheduleAutomation({
+      leadId,
+      flow: 'flash64_whatsapp_upsell',
+      step: 'd1',
+      phone,
+      delayMs: 24 * 60 * 60 * 1000,
+      text: `Passando pra reforçar: o Academy é o caminho mais rápido pra transformar o conteúdo do Flash64 em resultado de bancada.\nQuer o link da página?`,
+      meta: { source },
+    }),
+    scheduleAutomation({
+      leadId,
+      flow: 'flash64_whatsapp_upsell',
+      step: 'd3',
+      phone,
+      delayMs: 3 * 24 * 60 * 60 * 1000,
+      text: `Sem pressão, ${name}. Mas se a ideia é subir faturamento com reparo avançado, vale muito conhecer o FastFix Academy.\nTe mando o link agora?`,
+      meta: { source },
+    }),
+    scheduleAutomation({
+      leadId,
+      flow: 'flash64_whatsapp_upsell',
+      step: 'd7',
+      phone,
+      delayMs: 7 * 24 * 60 * 60 * 1000,
+      text: `Último lembrete por aqui: se quiser entrar no FastFix Academy, eu te envio o link da página e te explico as condições atuais.`,
+      meta: { source },
+    }),
+  ];
+
+  appendEventLog({
+    ts: new Date().toISOString(),
+    source: 'automation',
+    action: 'flash64_whatsapp_upsell_scheduled',
+    leadId,
+    phone: normalizePhone(phone),
+    canceled_previous_jobs: canceled,
+    jobs: jobs.map((j) => ({ id: j.id, step: j.step, executeAt: j.executeAt })),
+  }).catch(() => {});
+
+  return jobs;
+}
+
 app.post('/api/automation/checkout-abandon', async (req, res) => {
   const { phone, name = 'Tudo bem?', lead_id } = req.body || {};
   if (!phone || !lead_id) return res.status(400).json({ ok: false, error: 'phone e lead_id são obrigatórios' });
@@ -805,6 +1084,39 @@ app.post('/api/automation/checkout-abandon', async (req, res) => {
   const jobs = scheduleCheckoutAbandonFlow({ phone, name, leadId: lead_id, source: 'manual_api' });
 
   return res.json({ ok: true, jobs: jobs.map((j) => ({ ...j, timeoutId: undefined })) });
+});
+
+app.post('/api/automation/whatsapp/flash64-upsell', async (req, res) => {
+  try {
+    const { lead_id, phone, name } = req.body || {};
+    if (!lead_id || !phone) return res.status(400).json({ ok: false, error: 'lead_id e phone são obrigatórios' });
+
+    const jobs = scheduleFlash64WhatsAppUpsellFlow({ leadId: lead_id, phone, name: name || 'Tudo bem?', source: 'manual_api' });
+    return res.json({ ok: true, jobs: jobs.map((j) => ({ ...j, timeoutId: undefined })) });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: error.message });
+  }
+});
+
+app.post('/api/automation/email/flash64-upsell', async (req, res) => {
+  try {
+    const { lead_id, email, name } = req.body || {};
+    if (!lead_id || !email) return res.status(400).json({ ok: false, error: 'lead_id e email são obrigatórios' });
+
+    const jobs = scheduleFlash64UpsellEmails({ leadId: lead_id, email, name });
+    await appendEventLog({
+      ts: new Date().toISOString(),
+      source: 'automation_email',
+      action: 'scheduled_manual',
+      leadId: lead_id,
+      email,
+      jobs: jobs.map((j) => ({ id: j.id, step: j.step, executeAt: j.executeAt })),
+    });
+
+    return res.json({ ok: true, jobs: jobs.map((j) => ({ ...j, timeoutId: undefined, body: undefined })) });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: error.message });
+  }
 });
 
 app.post('/api/evolution/inbound', async (req, res) => {
@@ -826,6 +1138,10 @@ app.post('/api/evolution/inbound', async (req, res) => {
       } catch {
         // keep original data when decode fails
       }
+    }
+
+    if (data.key?.fromMe === true || data.fromMe === true) {
+      return res.json({ ok: true, ignored: true, reason: 'from_me' });
     }
 
     const phone = normalizePhone(
@@ -854,10 +1170,15 @@ app.post('/api/evolution/inbound', async (req, res) => {
     }
 
     const contactMemory = await readContactMemory(phone);
-    const { intent, reply } = generateAgentReply(text, contactMemory);
-    const evolution = await sendWhatsAppText(phone, reply);
+    const { intent, reply } = await generateAgentReply(text, contactMemory);
 
     const now = new Date().toISOString();
+    if (!reply) {
+      await appendEventLog({ ts: now, source: 'whatsapp_agent', phone, inbound: text, intent, ignored: true, reason: 'no_reply' });
+      return res.json({ ok: true, phone, intent, ignored: true, reason: 'no_reply' });
+    }
+
+    const evolution = await sendWhatsAppText(phone, reply);
     contactMemory.phone = phone;
     contactMemory.lastIntent = intent;
     contactMemory.lastInboundAt = now;
@@ -1099,6 +1420,66 @@ app.post('/api/hotmart/webhook', async (req, res) => {
     if (parsed.mappedEvent === 'Purchase') {
       const canceled = cancelLeadAutomations(externalId);
       await appendEventLog({ ts: new Date().toISOString(), source: 'automation', action: 'cancel_on_purchase', leadId: externalId, canceled });
+
+      const productName = String(parsed.productName || '').toLowerCase();
+      const isFlash64 = productName.includes('flash 64');
+      const isFastFixUpsell = productName.includes('fastfix academy') || productName.includes('fastfix');
+      const buyerEmail = parsed.buyer?.email;
+      const buyerPhone = parsed.buyer?.checkout_phone || parsed.buyer?.phone;
+      const buyerName = parsed.buyer?.name;
+      const firstName = buyerName ? String(buyerName).split(' ')[0] : 'Tudo bem?';
+
+      if (isFlash64 && buyerEmail && externalId) {
+        const emailJobs = scheduleFlash64UpsellEmails({
+          leadId: externalId,
+          email: buyerEmail,
+          name: firstName,
+        });
+
+        await appendEventLog({
+          ts: new Date().toISOString(),
+          source: 'automation_email',
+          action: 'scheduled_from_hotmart_purchase',
+          leadId: externalId,
+          orderId: parsed.orderId,
+          email: buyerEmail,
+          jobs: emailJobs.map((j) => ({ id: j.id, step: j.step, executeAt: j.executeAt })),
+        });
+      }
+
+      if (isFlash64 && buyerPhone && externalId) {
+        const whatsappJobs = scheduleFlash64WhatsAppUpsellFlow({
+          leadId: externalId,
+          phone: buyerPhone,
+          name: firstName,
+          source: 'hotmart_flash64_purchase',
+        });
+
+        await appendEventLog({
+          ts: new Date().toISOString(),
+          source: 'automation',
+          action: 'scheduled_whatsapp_from_hotmart_purchase',
+          leadId: externalId,
+          orderId: parsed.orderId,
+          phone: normalizePhone(buyerPhone),
+          jobs: whatsappJobs.map((j) => ({ id: j.id, step: j.step, executeAt: j.executeAt })),
+        });
+      }
+
+      if (isFastFixUpsell) {
+        const canceledEmailJobs = cancelFlash64UpsellEmailFlow({ leadId: externalId, email: buyerEmail });
+        const canceledWhatsAppJobs = cancelFlash64UpsellWhatsAppFlow({ leadId: externalId, phone: buyerPhone });
+        await appendEventLog({
+          ts: new Date().toISOString(),
+          source: 'automation_email',
+          action: 'canceled_on_upsell_purchase',
+          leadId: externalId,
+          orderId: parsed.orderId,
+          email: buyerEmail,
+          canceledEmailJobs,
+          canceledWhatsAppJobs,
+        });
+      }
     }
 
     if (parsed.mappedEvent === 'AddPaymentInfo') {
