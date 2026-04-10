@@ -57,7 +57,7 @@ export default function UrgencyBar() {
                 <button
                     type="button"
                     onClick={() => {
-                        trackEvent('InitiateCheckout', { currency: 'BRL', value: 347, placement: 'urgency_bar' });
+                        trackEvent('InitiateCheckout', { currency: 'BRL', value: 497, placement: 'urgency_bar' });
                         scrollToOffer();
                     }}
                     className="ml-2 bg-white text-red-700 font-extrabold px-4 py-1 rounded-full text-xs hover:scale-105 transition-transform cursor-pointer"
