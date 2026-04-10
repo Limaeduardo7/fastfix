@@ -11,6 +11,7 @@ import AudienceSection from './ebook/AudienceSection'
 import OfferSection from './ebook/OfferSection'
 import EbookFAQ from './ebook/EbookFAQ'
 import FinalCTA from './ebook/FinalCTA'
+import AcademyPromoSection from './ebook/AcademyPromoSection'
 import EbookFooter from './ebook/EbookFooter'
 import EbookWhatsApp from './ebook/EbookWhatsApp'
 import EbookNotifications from './ebook/EbookNotifications'
@@ -48,6 +49,7 @@ export default function EbookApp() {
         <OfferSection />
         <EbookFAQ />
         <FinalCTA />
+        <AcademyPromoSection />
       </main>
       <EbookFooter />
       <EbookWhatsApp />
