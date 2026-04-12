@@ -6,9 +6,9 @@ import { trackEvent } from '../lib/metaTracking';
 const academyUrl = 'https://fastfixcaxias.com';
 
 const pillars = [
-  { icon: TrendingUp, color: 'text-orange-400', bg: 'bg-orange-500/10 border-orange-500/20', label: 'Diagnóstico rápido', desc: 'Método para fechar mais orçamentos com critério técnico' },
-  { icon: BookOpen, color: 'text-violet-400', bg: 'bg-violet-500/10 border-violet-500/20', label: 'Módulos completos', desc: 'Hardware, software, comunicação e bancada profissional' },
-  { icon: Users, color: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/20', label: 'Comunidade ativa', desc: 'Técnicos que trocam experiências e evoluem juntos' },
+  { icon: TrendingUp, color: 'text-orange-400', bg: 'bg-orange-500/10 border-orange-500/20', label: 'Feche mais orçamentos', desc: 'Diagnóstico mais rápido = mais clientes atendidos e mais faturamento' },
+  { icon: BookOpen, color: 'text-violet-400', bg: 'bg-violet-500/10 border-violet-500/20', label: 'Método completo', desc: 'Do hardware ao software — tudo o que você precisa para se tornar referência' },
+  { icon: Users, color: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/20', label: 'Comunidade de elite', desc: 'Técnicos sérios que compartilham casos reais e crescem juntos' },
 ];
 
 const stars = [1, 2, 3, 4, 5];
@@ -49,7 +49,7 @@ export default function AcademyPromoSection() {
           <div className="flex justify-center mb-6">
             <span className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/30 text-orange-300 text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full">
               <Zap className="w-3.5 h-3.5" />
-              Próximo passo
+              Sua evolução começa aqui
             </span>
           </div>
         </Reveal>
@@ -82,9 +82,9 @@ export default function AcademyPromoSection() {
               {/* Headline */}
               <div className="text-center space-y-4 mb-10">
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight">
-                  Quer evoluir{' '}
+                  O eBook abriu a porta.{' '}
                   <span className="relative inline-block">
-                    além do eBook?
+                    O Academy te leva até o topo.
                     <span
                       className="absolute bottom-0 left-0 right-0 h-[3px] rounded-full bg-gradient-to-r from-primary via-orange-500 to-amber-400"
                       style={{ animation: 'expandWidth 0.8s 0.5s ease-out both' }}
@@ -92,14 +92,15 @@ export default function AcademyPromoSection() {
                   </span>
                 </h2>
                 <ShinyText
-                  text="Conheça o FastFix Academy"
+                  text="FastFix Academy"
                   color="#f97316"
                   shineColor="#fbbf24"
                   speed={2.5}
                   className="text-2xl sm:text-3xl lg:text-4xl font-extrabold"
                 />
                 <p className="text-gray-300 max-w-2xl mx-auto leading-relaxed text-base sm:text-lg">
-                  Se o Flash64 te deu <span className="text-white font-semibold">direção</span>, o Academy te entrega o <span className="text-white font-semibold">método completo</span> para acelerar diagnóstico, aumentar ticket e ter mais previsibilidade na bancada.
+                  Técnicos medianos improvisam. <span className="text-white font-semibold">Técnicos de referência têm método.</span>{' '}
+                  O Academy é o treinamento completo para você <span className="text-white font-semibold">cobrar mais, errar menos</span> e construir uma bancada que funciona de verdade.
                 </p>
               </div>
 
@@ -129,7 +130,7 @@ export default function AcademyPromoSection() {
                     className="hero-cta inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary via-orange-500 to-amber-500 hover:from-orange-500 hover:to-primary text-white font-bold px-6 py-3.5 sm:px-9 sm:py-4 rounded-xl transition-all duration-300 shadow-lg shadow-primary/30 text-sm sm:text-base whitespace-nowrap"
                   >
                     <Zap className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-                    Ver FastFix Academy
+                    Quero ser referência
                     <ArrowRight className="w-4 h-4 shrink-0" />
                   </a>
                   <a
