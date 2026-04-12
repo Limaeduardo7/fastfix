@@ -113,7 +113,7 @@ export default function ContentPreview() {
 
         <Reveal delay={400}>
           <p className="text-gray-500 text-xs text-center mt-6 sm:mt-8">
-            Páginas reais do eBook — Chip Off (p.6), Parâmetros UFS (p.9), Aba eMMC (p.11).
+            Isso é o que você recebe. Sem surpresa. — Chip Off (p.6), Parâmetros UFS (p.9), Aba eMMC (p.11).
           </p>
         </Reveal>
 

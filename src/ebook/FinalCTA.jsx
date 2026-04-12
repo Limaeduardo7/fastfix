@@ -48,7 +48,7 @@ export default function FinalCTA() {
 
         <Reveal delay={150}>
           <ShinyText
-            text="A decisão mais inteligente que você toma hoje é investir no seu método."
+            text="Cada dia sem método é dinheiro perdido na bancada."
             color="#b5b5b5"
             shineColor="#06B6D4"
             speed={3}

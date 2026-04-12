@@ -90,7 +90,7 @@ export default function PromiseSection() {
           <div className="gradient-border rounded-2xl">
             <div className="bg-black/80 backdrop-blur-sm rounded-2xl p-6 sm:p-10 md:p-16 text-center">
               <ShinyText
-                text="Foi feito para você executar em horas o que muitos tentam aprender em dias."
+                text="Estruturado por quem já passou pelas mesmas dificuldades na bancada."
                 className="text-base sm:text-xl md:text-2xl italic font-medium"
                 shineColor="#06B6D4"
                 color="#8B5CF6"

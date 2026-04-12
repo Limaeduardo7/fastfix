@@ -130,7 +130,8 @@ export default function OfferSection() {
                     <p className="text-gray-500 line-through text-lg">De R$ 97,00</p>
                     <p className="text-gray-300">Por apenas</p>
                     <p className="text-4xl sm:text-5xl font-extrabold text-gradient-fire">R$ 47,00</p>
-                    <p className="text-gray-400 text-sm">Acesso imediato após o pagamento</p>
+                    <p className="text-gray-400 text-sm">Menos que o custo de uma peça perdida por diagnóstico errado.</p>
+                    <p className="text-gray-500 text-xs mt-1">Acesso imediato após o pagamento</p>
                   </div>
 
                   <a

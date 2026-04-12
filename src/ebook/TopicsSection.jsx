@@ -104,6 +104,7 @@ export default function TopicsSection() {
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               O que você vai <span className="text-gradient-cyan">aprender</span>
             </h2>
+            <p className="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-3">8 módulos. Zero enrolação.</p>
             <p className="text-gray-400 max-w-2xl mx-auto">
               Cada módulo foi pensado para resolver problemas reais da bancada, com clareza e aplicação imediata.
             </p>

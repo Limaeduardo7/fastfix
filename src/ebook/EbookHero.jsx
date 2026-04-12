@@ -136,13 +136,12 @@ export default function EbookHero() {
           <div className="section-divider max-w-[200px] mx-auto" />
 
           <p className="text-gray-300 text-lg lg:text-xl max-w-lg leading-relaxed mx-auto">
-            Aprenda em horas o que muitos tecnicos demoram dias para descobrir sobre
-            conexao{' '}
+            Pare de perder peças e tempo na bancada. Domine{' '}
             <span className="text-cyan-400 font-bold">ISP</span>,{' '}
             <span className="text-violet-400 font-bold">UFS</span>,{' '}
             <span className="text-blue-400 font-bold">eMMC</span>,{' '}
             <span className="text-emerald-400 font-bold">chip off</span> e
-            estabilidade de bancada.
+            estabilidade de comunicação com método.
           </p>
 
           {/* Buttons */}
@@ -162,7 +161,7 @@ export default function EbookHero() {
               className="flex items-center justify-center gap-3 text-base font-bold px-8 py-4 rounded-xl border border-cyan-500/30 bg-white/[0.03] backdrop-blur-sm text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-500/50 transition-all cursor-pointer"
             >
               <ArrowDown className="w-5 h-5" />
-              Ver o que voce vai aprender
+              Ver o que você vai aprender
             </button>
           </div>
 

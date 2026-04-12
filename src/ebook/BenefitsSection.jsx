@@ -2,7 +2,6 @@ import { TrendingDown, ShieldCheck, Clock, Wrench, Target, Zap } from 'lucide-re
 import { Reveal } from '../components/ScrollReveal';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import CountUp from '../components/reactbits/CountUp';
 import { trackEvent } from '../lib/metaTracking';
 
 const benefits = [
@@ -14,69 +13,51 @@ const benefits = [
     iconColor: 'text-cyan-400',
     accent: 'card-accent-cyan',
     titleColor: 'text-cyan-400',
-    statTarget: 90,
-    statSuffix: '%',
-    statSuffixColor: 'text-cyan-300',
   },
   {
     icon: ShieldCheck,
     title: 'Mais confiança técnica',
-    desc: 'Execute procedimentos com segurança e previsibilidade.',
+    desc: 'Execute procedimentos sabendo exatamente o que esperar em cada etapa.',
     iconBg: 'bg-violet-500/10',
     iconColor: 'text-violet-400',
     accent: 'card-accent-purple',
     titleColor: 'text-violet-400',
-    statTarget: 3,
-    statSuffix: 'x',
-    statSuffixColor: 'text-violet-300',
   },
   {
     icon: Clock,
     title: 'Economia de tempo',
-    desc: 'Aprenda em horas o que levaria dias de pesquisa dispersa.',
+    desc: 'Aprenda em horas o que levaria dias de pesquisa dispersa em fórum e YouTube.',
     iconBg: 'bg-emerald-500/10',
     iconColor: 'text-emerald-400',
     accent: 'card-accent-green',
     titleColor: 'text-emerald-400',
-    statTarget: 70,
-    statSuffix: '%',
-    statSuffixColor: 'text-emerald-300',
   },
   {
     icon: Wrench,
     title: 'Domínio da ferramenta',
-    desc: 'Entenda a Flash64 além do básico. Parâmetros que fazem diferença.',
+    desc: 'Entenda a Flash64 além do básico. Parâmetros que fazem diferença no resultado.',
     iconBg: 'bg-primary/10',
     iconColor: 'text-primary',
     accent: 'card-accent-orange',
     titleColor: 'text-primary',
-    statTarget: 100,
-    statSuffix: '%',
-    statSuffixColor: 'text-orange-300',
   },
   {
     icon: Target,
     title: 'Mais previsibilidade',
-    desc: 'Saiba o que esperar de cada procedimento antes de executar.',
+    desc: 'Saiba o que esperar de cada procedimento antes de executar — sem surpresas.',
     iconBg: 'bg-blue-500/10',
     iconColor: 'text-blue-400',
     accent: 'card-accent-blue',
     titleColor: 'text-blue-400',
-    statTarget: 85,
-    statSuffix: '%',
-    statSuffixColor: 'text-blue-300',
   },
   {
     icon: Zap,
     title: 'Diagnóstico mais rápido',
-    desc: 'Identifique falhas com mais velocidade e precisão.',
+    desc: 'Diagnóstico que antes levava horas, agora leva minutos com o método certo.',
     iconBg: 'bg-yellow-500/10',
     iconColor: 'text-yellow-400',
     accent: 'card-accent-yellow',
     titleColor: 'text-yellow-400',
-    statTarget: 5,
-    statSuffix: 'x',
-    statSuffixColor: 'text-yellow-300',
   },
 ];
 
@@ -106,14 +87,6 @@ export default function BenefitsSection() {
               <Reveal key={benefit.title} delay={i * 100}>
                 <Card hover className={`h-full ${benefit.accent}`}>
                   <CardContent>
-                    {/* Stat number */}
-                    <div className="mb-4">
-                      <span className={`text-3xl font-extrabold ${benefit.titleColor}`}>
-                        <CountUp target={benefit.statTarget} className={benefit.titleColor} />
-                        <span className={benefit.statSuffixColor}>{benefit.statSuffix}</span>
-                      </span>
-                    </div>
-
                     <div className={`w-12 h-12 rounded-xl ${benefit.iconBg} flex items-center justify-center mb-5`}>
                       <Icon className={`w-5 h-5 ${benefit.iconColor}`} />
                     </div>

@@ -39,8 +39,8 @@ const painPoints = [
   },
   {
     icon: AlertTriangle,
-    title: 'Desperdiçar tempo por falta de método',
-    description: 'A ausência de um fluxo claro transforma tarefas simples em horas perdidas.',
+    title: 'Perder dinheiro recomprando peças',
+    description: 'Diagnóstico errado significa peça queimada, retrabalho e prejuízo direto no caixa.',
     accent: 'card-accent-purple',
     iconBg: 'bg-violet-500/10',
     iconColor: 'text-violet-400',

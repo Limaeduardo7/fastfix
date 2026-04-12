@@ -34,6 +34,11 @@ const faqs = [
     answer:
       'Não. O material atende desde técnicos iniciantes até intermediários que querem mais critério. Se você já mexe com celular, vai aproveitar.',
   },
+  {
+    question: 'E se eu não gostar? Tem garantia?',
+    answer:
+      'Sim. Você tem 7 dias de garantia incondicional. Se por qualquer motivo o material não fizer sentido para você, basta solicitar o reembolso e devolvemos 100% do valor — sem burocracia.',
+  },
 ];
 
 const itemColors = [
@@ -43,6 +48,7 @@ const itemColors = [
   { accent: 'card-accent-blue', border: 'border-blue-500', bg: 'bg-blue-500', text: 'text-blue-500' },
   { accent: 'card-accent-emerald', border: 'border-emerald-500', bg: 'bg-emerald-500', text: 'text-emerald-500' },
   { accent: 'card-accent-pink', border: 'border-pink-500', bg: 'bg-pink-500', text: 'text-pink-500' },
+  { accent: 'card-accent-green', border: 'border-emerald-500', bg: 'bg-emerald-500', text: 'text-emerald-500' },
 ];
 
 export default function EbookFAQ() {

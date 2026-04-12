@@ -28,15 +28,15 @@ const positiveItems = [
 
 const negativeItems = [
   {
-    text: 'Quem busca atalhos sem base técnica',
+    text: 'Quem busca atalhos sem investir em base técnica',
     iconColor: 'text-red-400',
   },
   {
-    text: 'Quem prefere continuar no improviso',
+    text: 'Quem não está disposto a seguir um método estruturado',
     iconColor: 'text-orange-400',
   },
   {
-    text: 'Quem trata bancada técnica como adivinhação',
+    text: 'Quem ainda não está pronto para levar a bancada a sério',
     iconColor: 'text-pink-400',
   },
 ];
