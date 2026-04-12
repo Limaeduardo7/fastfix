@@ -48,8 +48,8 @@ export default function EbookApp() {
         <AudienceSection />
         <OfferSection />
         <EbookFAQ />
-        <FinalCTA />
         <AcademyPromoSection />
+        <FinalCTA />
       </main>
       <EbookFooter />
       <EbookWhatsApp />
