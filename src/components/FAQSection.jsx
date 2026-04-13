@@ -19,30 +19,30 @@ export default function FAQSection() {
     };
 
     return (
-        <section className="py-24 px-6 lg:px-20 bg-gray-50 text-gray-900 border-t border-gray-200">
+        <section className="py-24 px-6 lg:px-20 bg-background border-t border-white/5">
             <div className="max-w-3xl mx-auto">
                 <Reveal className="text-center mb-16">
                     <h2 className="text-3xl lg:text-4xl font-extrabold mb-4">
-                        Perguntas <span className="text-orange-600 italic">frequentes</span>
+                        Perguntas <span className="text-primary italic">frequentes</span>
                     </h2>
-                    <p className="text-gray-500">Ainda tem dúvidas? Veja as respostas abaixo.</p>
+                    <p className="text-gray-400">Ainda tem dúvidas? Veja as respostas abaixo.</p>
                 </Reveal>
 
                 <div className="space-y-4">
                     {faqs.map((faq, i) => (
-                        <Reveal key={i} delay={i * 50} className="faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <Reveal key={i} delay={i * 50} className="faq-item glass-card rounded-2xl border border-white/10 overflow-hidden">
                             <button
-                                className="faq-trigger w-full flex items-center justify-between p-6 text-left cursor-pointer hover:bg-gray-50 transition-colors"
+                                className="faq-trigger w-full flex items-center justify-between p-6 text-left cursor-pointer hover:bg-white/5 transition-colors"
                                 onClick={() => toggle(i)}
                             >
-                                <span className="font-bold text-lg pr-4">{faq.q}</span>
+                                <span className="font-bold text-lg pr-4 text-white">{faq.q}</span>
                                 <span className="faq-icon text-primary text-2xl font-bold shrink-0 transition-transform duration-300">
                                     {openIndex === i ? '×' : '+'}
                                 </span>
                             </button>
                             {openIndex === i && (
                                 <div className="faq-content px-6 pb-6">
-                                    <p className="text-gray-500 leading-relaxed">{faq.a}</p>
+                                    <p className="text-gray-400 leading-relaxed">{faq.a}</p>
                                 </div>
                             )}
                         </Reveal>

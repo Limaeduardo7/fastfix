@@ -1,4 +1,5 @@
 import UrgencyBar from './components/UrgencyBar'
+import Navbar from './components/Navbar'
 import HeroSection from './components/HeroSection'
 import BeforeAfterSection from './components/BeforeAfterSection'
 import StepsSection from './components/StepsSection'
@@ -19,14 +20,21 @@ function HomePage() {
     return (
         <>
             <UrgencyBar />
+            <Navbar />
             <main id="main-content">
                 <HeroSection />
                 <BeforeAfterSection />
+                <div className="transition-dark-to-light" />
                 <StepsSection />
+                <div className="transition-light-to-dark" />
                 <BenchSection />
+                <div className="transition-dark-to-light" />
                 <InstructorSection />
+                <div className="transition-light-to-dark" />
                 <AudienceSection />
+                <div className="transition-dark-to-light" />
                 <TestimonialsSection />
+                <div className="transition-light-to-dark" />
                 <BonusSection />
                 <FeaturesSection />
                 <GuaranteeSection />

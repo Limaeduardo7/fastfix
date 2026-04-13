@@ -67,27 +67,6 @@ body {
   }
 }
 
-.timer-critical {
-  animation: urgencyPulse 1s ease-in-out infinite;
-}
-
-@keyframes urgencyPulse {
-
-  0%,
-  100% {
-    background-image: linear-gradient(to right, #b91c1c, #dc2626, #ea580c);
-  }
-
-  50% {
-    background-image: linear-gradient(to right, #991b1b, #b91c1c, #c2410c);
-    box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
-  }
-}
-
-.timer-expired {
-  background-image: linear-gradient(to right, #374151, #4b5563, #374151) !important;
-  animation: none !important;
-}
 
 /* Hero Refinements */
 #hero {
@@ -281,7 +260,7 @@ body {
 @media (max-width: 768px) {
   .purchase-toast {
     left: 0.5rem;
-    bottom: 1.2rem;
+    bottom: 5rem;
     width: min(220px, calc(100vw - 5rem));
     padding: 0.55rem 0.65rem;
     gap: 0.5rem;
@@ -439,6 +418,19 @@ body {
   height: 1px;
   background: linear-gradient(90deg, transparent, #FF6B00, #8B5CF6, #06B6D4, transparent);
   opacity: 0.55;
+}
+
+/* Dark-to-light / light-to-dark section transitions */
+.transition-dark-to-light {
+  height: 80px;
+  background: linear-gradient(to bottom, #0B0E14, #ffffff);
+  pointer-events: none;
+}
+
+.transition-light-to-dark {
+  height: 80px;
+  background: linear-gradient(to bottom, #ffffff, #0B0E14);
+  pointer-events: none;
 }
 
 /* Card accent borders */
@@ -609,10 +601,6 @@ body {
     font-size: 0.75rem;
   }
 
-  #countdown-timer {
-    font-size: 1rem !important;
-  }
-
   /* Prevent hero overlap on mobile - more top padding */
   #hero {
     padding-top: 7.5rem !important;
@@ -629,12 +617,8 @@ body {
     gap: 0.25rem;
   }
 
-  /* Very small screens: keep timer visible and compact */
+  /* Very small screens */
   @media (max-width: 380px) {
-    #countdown-timer {
-      font-size: 0.95rem !important;
-    }
-
     #urgency-bar span:first-child {
       font-size: 0.7rem;
     }

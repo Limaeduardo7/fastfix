@@ -16,7 +16,10 @@ export default function Footer() {
 
                 <div className="grid md:grid-cols-3 gap-12 text-sm">
                     <Reveal>
-                        <img src="/images/Logo-Horizontal---Branco-e-Azul.png" alt="Fastfix Academy" className="h-10 w-auto mb-4" width="1080" height="313" />
+                        <div className="mb-4">
+                            <span className="text-2xl font-extrabold text-white">Fast<span className="text-primary">Fix</span></span>
+                            <span className="text-xs text-gray-400 ml-2 uppercase tracking-widest">Academy</span>
+                        </div>
                         <p>Formando os melhores especialistas em reparo de placas do Brasil.</p>
                     </Reveal>
                     <Reveal delay={100}>

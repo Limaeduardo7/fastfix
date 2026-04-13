@@ -1,39 +1,46 @@
 import { Reveal } from './ScrollReveal';
-import { Icon, CTAButton } from './shared';
+import { CTAButton } from './shared';
 import ShinyText from './reactbits/ShinyText';
 
 export default function FinalCTASection() {
     return (
-        <section id="pricing-anchor" className="py-24 px-6 lg:px-20 bg-background relative overflow-hidden">
+        <section className="py-24 px-6 lg:px-20 bg-background relative overflow-hidden">
             <div className="absolute inset-0 bg-primary/5 -z-10"></div>
-            <div className="max-w-4xl mx-auto text-center space-y-12">
+            <div className="max-w-3xl mx-auto text-center space-y-10">
                 <Reveal>
                     <h2 className="text-3xl lg:text-5xl font-extrabold mb-4">
                         <ShinyText text="A decisão é simples:" color="#ffffff" shineColor="#FF6B00" speed={3} className="text-3xl lg:text-5xl font-extrabold" />
                     </h2>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-                        Continuar devolvendo placas e perdendo dinheiro. ou dominar o reparo mais lucrativo da assistência técnica.{' '}
-                        <strong className="text-white">Que futuro você escolhe?</strong>
+                        Continuar devolvendo placas e perdendo dinheiro. Ou dominar o reparo mais lucrativo da assistência técnica.
                     </p>
-                    <p className="text-gray-500 text-sm mt-2 italic">
+                    <p className="text-gray-500 text-sm mt-3 italic">
                         Cada placa devolvida é dinheiro que fica na bancada do concorrente.
                     </p>
                 </Reveal>
 
-                <Reveal className="glass-card p-10 rounded-3xl grid sm:grid-cols-2 gap-6 items-center">
-                    {['Acesso Vitalício', 'Certificado de Conclusão', 'Suporte com o João', 'Garantia de 7 Dias', '3 Bônus Exclusivos', 'Lista de Fornecedores'].map(text => (
-                        <div key={text} className="flex items-center gap-4 text-left">
-                            <Icon name="checkCircle" className="text-primary" />
-                            <span className="font-semibold">{text}</span>
-                        </div>
-                    ))}
+                <Reveal>
+                    <div className="glass-card p-8 rounded-3xl border-primary/30 space-y-6">
+                        <p className="text-white text-xl font-bold">
+                            Daqui a 30 dias, você pode estar no mesmo lugar.<br />
+                            <span className="text-primary">Ou faturando com placas que antes você devolvia.</span>
+                        </p>
 
-                    <div className="sm:col-span-2 pt-6 space-y-4">
-                        <div className="flex items-center justify-center gap-4">
-                            <span className="text-gray-400 text-xl line-through">R$ 1.297,00</span>
-                            <span className="text-4xl font-extrabold text-primary">R$ 497,00</span>
+                        <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-300">
+                            {['Acesso vitalício', 'Garantia 7 dias', '3 bônus inclusos', 'Suporte direto'].map(text => (
+                                <span key={text} className="flex items-center gap-1.5">
+                                    <span className="text-green-400">✓</span> {text}
+                                </span>
+                            ))}
                         </div>
-                        <CTAButton className="w-full shadow-2xl shadow-primary/40 uppercase tracking-widest text-lg py-5 font-extrabold hover:scale-[1.02] active:scale-[0.98]">
+
+                        <div className="pt-2">
+                            <p className="text-gray-400 text-sm mb-1">Por apenas</p>
+                            <p className="text-4xl font-extrabold text-primary">R$ 497,00</p>
+                            <p className="text-gray-500 text-xs mt-1">ou 12x de R$ 41,42</p>
+                        </div>
+
+                        <CTAButton action="checkout" placement="final_cta" className="w-full max-w-md mx-auto shadow-2xl shadow-primary/40 uppercase tracking-widest text-lg py-5 font-extrabold hover:scale-[1.02] active:scale-[0.98]">
                             Entrar agora. acesso imediato →
                         </CTAButton>
                         <p className="text-gray-500 text-xs text-center">

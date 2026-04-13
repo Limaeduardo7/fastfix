@@ -1,13 +1,4 @@
 import { Reveal } from './ScrollReveal';
-import ShinyText from './reactbits/ShinyText';
-import CountUp from './reactbits/CountUp';
-
-const stats = [
-    { target: 1247, suffix: '+', label: 'Técnicos treinados' },
-    { value: '4.9', label: '⭐ Nota média' },
-    { target: 98, suffix: '%', label: 'Indicariam a um amigo' },
-    { value: 'R$ 8k+', label: 'Faturamento médio/mês' },
-];
 
 const testimonials = [
     {
@@ -46,22 +37,6 @@ export default function TestimonialsSection() {
                         Não acredite em mim. <span className="text-orange-600 italic">veja os números</span>
                     </h2>
                     <p className="text-gray-500 text-lg">Quem passa pelo treinamento não volta ao serviço básico. Os resultados falam.</p>
-                </Reveal>
-
-                {/* Stats Bar with ShinyText */}
-                <Reveal className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-                    {stats.map((stat) => (
-                        <div key={stat.label} className="text-center p-6 bg-primary/5 rounded-2xl border border-primary/10">
-                            <p className="text-4xl font-extrabold text-orange-600">
-                                {stat.target ? (
-                                    <><CountUp target={stat.target} duration={2500} />{stat.suffix}</>
-                                ) : (
-                                    <ShinyText text={stat.value} color="#ea580c" shineColor="#fbbf24" speed={3} />
-                                )}
-                            </p>
-                            <p className="text-gray-500 text-sm font-semibold mt-1">{stat.label}</p>
-                        </div>
-                    ))}
                 </Reveal>
 
                 {/* Testimonial Cards */}

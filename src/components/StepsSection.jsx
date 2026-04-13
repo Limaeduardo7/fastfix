@@ -62,7 +62,7 @@ export default function StepsSection() {
                         <img
                             src="/images/04.jpeg"
                             alt="Bancada de ferramentas e multímetro para reparo de smartphones"
-                            className="rounded-3xl shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border-8 border-white"
+                            className="rounded-3xl shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border-8 border-white max-h-[500px] object-cover"
                             loading="lazy"
                             width="6000"
                             height="4000"
