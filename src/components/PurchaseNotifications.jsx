@@ -59,7 +59,7 @@ export default function PurchaseNotifications() {
             setIsVisible(true);
 
             const visibleFor = 4200 + Math.floor(Math.random() * 2400);
-            const nextDelay = 9000 + Math.floor(Math.random() * 10000);
+            const nextDelay = 18000 + Math.floor(Math.random() * 12000);
 
             hideTimeout = window.setTimeout(() => {
                 setIsVisible(false);
@@ -72,7 +72,7 @@ export default function PurchaseNotifications() {
             }, visibleFor);
         };
 
-        nextTimeout = window.setTimeout(runCycle, 2500);
+        nextTimeout = window.setTimeout(runCycle, 10000);
 
         return () => {
             window.clearTimeout(hideTimeout);

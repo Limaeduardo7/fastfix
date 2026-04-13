@@ -2,9 +2,9 @@ import { Reveal } from './ScrollReveal';
 import { Icon } from './shared';
 
 const cards = [
-    { icon: 'users', title: 'Destrave seu progresso', desc: 'Já faz reparo mas está travado no progresso de bancada? Aprenda a interpretar uma placa de um aparelho defeituoso independente da marca ou modelo.' },
-    { icon: 'trendingUp', title: 'Já trabalha mas quer lucrar mais', desc: 'Você troca tela e conector, mas devolve placa. Aprenda o reparo que a maioria das assistências não faz. e cobre 5x mais.' },
-    { icon: 'briefcase', title: 'Quer montar seu lab', desc: 'Quer sair do emprego e ser dono do próprio negócio? Reparo de placas tem margem alta e demanda crescente. O curso te prepara pra isso.' },
+    { icon: 'users', title: 'Técnico básico querendo evoluir', desc: 'Já faz reparo mas está travado no diagnóstico avançado? Aprenda a interpretar qualquer placa defeituosa, independente da marca ou modelo.' },
+    { icon: 'trendingUp', title: 'Técnico que faz troca mas não repara placa', desc: 'Você troca tela e conector, mas devolve placa. Aprenda o reparo que a maioria das assistências não faz — e cobre 5x mais por ele.' },
+    { icon: 'briefcase', title: 'Quer abrir seu próprio lab', desc: 'Quer sair do emprego e ser dono do seu negócio? Reparo de placa tem margem alta e demanda crescente. O curso te prepara pra isso.' },
 ];
 
 export default function AudienceSection() {

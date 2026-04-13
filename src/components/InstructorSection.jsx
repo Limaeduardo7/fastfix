@@ -1,6 +1,5 @@
 import { Reveal } from './ScrollReveal';
 import { CTAButton } from './shared';
-import CountUp from './reactbits/CountUp';
 
 export default function InstructorSection() {
     return (
@@ -35,15 +34,11 @@ export default function InstructorSection() {
 
                     <div className="grid grid-cols-2 gap-4 py-4">
                         {[
-                            { target: 10, suffix: '+', label: 'Anos na bancada' },
-                            { target: 5000, suffix: '+', label: 'Aparelhos reparados' },
-                            { target: 1247, suffix: '+', label: 'Alunos treinados' },
-                            { target: 98, suffix: '%', label: 'Aprovação dos alunos' },
+                            { value: '10+', label: 'Anos na bancada' },
+                            { value: '5.000+', label: 'Aparelhos reparados' },
                         ].map((stat) => (
                             <div key={stat.label} className="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center">
-                                <p className="text-3xl font-extrabold text-orange-600">
-                                    <CountUp target={stat.target} duration={2000} />{stat.suffix}
-                                </p>
+                                <p className="text-3xl font-extrabold text-orange-600">{stat.value}</p>
                                 <p className="text-gray-500 text-sm font-semibold">{stat.label}</p>
                             </div>
                         ))}

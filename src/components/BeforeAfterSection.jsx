@@ -27,6 +27,7 @@ export default function BeforeAfterSection() {
                         </div>
                         <div className="space-y-4 text-gray-400 text-sm">
                             {[
+                                'Sente frustração e insegurança toda vez que chega uma placa difícil',
                                 'Devolve placas "sem conserto" e perde o lucro mais alto da bancada',
                                 'Cobra R$ 50~80 por troca de tela e vive espremido no preço',
                                 'Depende de emprego CLT ou loja com salário fixo baixo',
@@ -50,6 +51,7 @@ export default function BeforeAfterSection() {
                         </div>
                         <div className="space-y-4 text-gray-300 text-sm">
                             {[
+                                ['Tem ', 'confiança e clareza', ' para encarar qualquer placa que chegar na bancada'],
                                 ['Repara placas que ', 'outros técnicos recusaram', ' e cobra caro por isso'],
                                 ['Cobra ', 'R$ 300 a R$ 800 por reparo', ' de placa com margem altíssima'],
                                 ['Tem seu próprio lab lucrativo ou ', 'dobra o faturamento', ' da loja'],

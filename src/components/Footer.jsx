@@ -22,9 +22,9 @@ export default function Footer() {
                     <Reveal delay={100}>
                         <h3 className="text-white font-bold mb-4 italic">Links Úteis</h3>
                         <ul className="space-y-2">
-                            <li><a href="#" className="hover:text-primary transition-colors">Política de Privacidade</a></li>
-                            <li><a href="#" className="hover:text-primary transition-colors">Termos de Uso</a></li>
-                            <li><a href="#" className="hover:text-primary transition-colors">Página de Suporte</a></li>
+                            <li><a href="#hero" className="hover:text-primary transition-colors">Início</a></li>
+                            <li><a href="#steps" className="hover:text-primary transition-colors">Módulos</a></li>
+                            <li><a href="https://wa.me/5554981673607?text=Ol%C3%A1!%20Preciso%20de%20suporte%20com%20o%20FastFix%20Academy." target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Suporte via WhatsApp</a></li>
                         </ul>
                     </Reveal>
                     <Reveal delay={200}>

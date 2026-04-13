@@ -4,7 +4,7 @@ import ShinyText from './reactbits/ShinyText';
 
 export default function FinalCTASection() {
     return (
-        <section className="py-24 px-6 lg:px-20 bg-background relative overflow-hidden">
+        <section id="pricing-anchor" className="py-24 px-6 lg:px-20 bg-background relative overflow-hidden">
             <div className="absolute inset-0 bg-primary/5 -z-10"></div>
             <div className="max-w-4xl mx-auto text-center space-y-12">
                 <Reveal>
@@ -14,6 +14,9 @@ export default function FinalCTASection() {
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto">
                         Continuar devolvendo placas e perdendo dinheiro. ou dominar o reparo mais lucrativo da assistência técnica.{' '}
                         <strong className="text-white">Que futuro você escolhe?</strong>
+                    </p>
+                    <p className="text-gray-500 text-sm mt-2 italic">
+                        Cada placa devolvida é dinheiro que fica na bancada do concorrente.
                     </p>
                 </Reveal>
 

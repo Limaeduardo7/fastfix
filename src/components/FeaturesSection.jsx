@@ -2,9 +2,9 @@ import { Reveal } from './ScrollReveal';
 import { Icon } from './shared';
 
 const features = [
-    { icon: 'headset', title: 'Suporte direto', desc: 'Suporte direto com o João através do WhatsApp ou grupo no Discord com encontros semanais para garantir sua evolução.' },
-    { icon: 'refreshCw', title: 'Atualizações vitalícias', desc: 'Novos celulares, novas placas, novas aulas. Você tem acesso a todas as atualizações. pra sempre, sem pagar mais.' },
-    { icon: 'users', title: 'Comunidade ativa', desc: 'Comunidade de técnicos trocando diagnósticos, dicas e oportunidades. Networking que gera dinheiro real.' },
+    { icon: 'headset', title: 'Suporte direto', desc: 'Tira dúvidas direto com o João — sem chatbot, sem espera. Mais encontros ao vivo toda semana no Discord para revisar casos reais com a turma.' },
+    { icon: 'refreshCw', title: 'Atualizações vitalícias', desc: 'Novo modelo de placa, nova técnica, nova aula. Você acessa tudo isso sem pagar nada a mais — para sempre, enquanto o curso existir.' },
+    { icon: 'users', title: 'Comunidade ativa', desc: 'Grupo de técnicos compartilhando diagnósticos difíceis, dicas de fornecedor e oportunidades de serviço. Networking que gera receita real.' },
 ];
 
 export default function FeaturesSection() {

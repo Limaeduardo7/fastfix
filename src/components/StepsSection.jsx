@@ -31,7 +31,7 @@ const steps = [
 
 export default function StepsSection() {
     return (
-        <section className="py-24 px-6 lg:px-20 bg-white text-gray-900">
+        <section id="steps" className="py-24 px-6 lg:px-20 bg-white text-gray-900">
             <div className="max-w-7xl mx-auto">
                 <Reveal className="text-center mb-20">
                     <h2 className="text-3xl lg:text-5xl font-extrabold mb-4">
@@ -46,8 +46,11 @@ export default function StepsSection() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {steps.map((step, i) => (
                             <Reveal key={step.num} delay={i * 100} className="space-y-3">
-                                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
-                                    <span className="text-primary font-bold text-xl">{step.num}</span>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20 shrink-0">
+                                        <span className="text-primary font-bold text-xl">{step.num}</span>
+                                    </div>
+                                    <span className="text-xs text-primary/60 font-semibold uppercase tracking-widest">Módulo {step.num}</span>
                                 </div>
                                 <h3 className="font-bold text-xl">{step.title}</h3>
                                 <p className="text-gray-500 text-sm">{step.desc}</p>
