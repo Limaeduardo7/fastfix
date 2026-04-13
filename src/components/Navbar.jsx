@@ -2,6 +2,13 @@ import { useState, useEffect } from 'react';
 import { scrollToOffer } from './shared';
 import { trackEvent } from '../lib/metaTracking';
 
+const navLinks = [
+    { label: 'O Curso', href: '#steps' },
+    { label: 'Instrutor', href: '#instructor' },
+    { label: 'Bônus', href: '#bonus' },
+    { label: 'Preço', href: '#pricing-anchor' },
+];
+
 export default function Navbar() {
     const [visible, setVisible] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -21,6 +28,8 @@ export default function Navbar() {
         scrollToOffer();
     };
 
+    const closeMenu = () => setMenuOpen(false);
+
     return (
         <nav
             className={`fixed top-0 left-0 right-0 z-[998] transition-all duration-300 ${
@@ -32,15 +41,25 @@ export default function Navbar() {
         >
             {/* Main bar */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">
-                <span className="text-lg font-extrabold text-white">
+                <a href="#hero" className="text-lg font-extrabold text-white">
                     Fast<span className="text-primary">Fix</span>
                     <span className="text-[10px] text-gray-400 ml-1.5 uppercase tracking-widest font-semibold hidden sm:inline">Academy</span>
-                </span>
+                </a>
 
                 {/* Desktop links */}
-                <div className="hidden sm:flex items-center gap-6 text-sm">
-                    <a href="#steps" className="text-gray-400 hover:text-white transition-colors">Módulos</a>
-                    <a href="#pricing-anchor" className="text-gray-400 hover:text-white transition-colors">Preço</a>
+                <div className="hidden lg:flex items-center gap-5 text-sm">
+                    {navLinks.map(link => (
+                        <a key={link.href} href={link.href} className="text-gray-400 hover:text-white transition-colors">
+                            {link.label}
+                        </a>
+                    ))}
+                    <a
+                        href="/flash64"
+                        className="flex items-center gap-1.5 text-orange-400 hover:text-orange-300 transition-colors font-semibold"
+                    >
+                        Flash64
+                        <span className="text-[9px] bg-orange-500/20 text-orange-400 border border-orange-500/30 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wide">eBook</span>
+                    </a>
                     <button
                         type="button"
                         onClick={handleCTA}
@@ -51,7 +70,7 @@ export default function Navbar() {
                 </div>
 
                 {/* Mobile: CTA + hamburger */}
-                <div className="flex sm:hidden items-center gap-2">
+                <div className="flex lg:hidden items-center gap-2">
                     <button
                         type="button"
                         onClick={handleCTA}
@@ -83,20 +102,25 @@ export default function Navbar() {
 
             {/* Mobile dropdown */}
             {menuOpen && (
-                <div className="sm:hidden border-t border-white/10 px-4 py-4 flex flex-col gap-4" style={{ background: 'rgba(11, 14, 20, 0.97)' }}>
+                <div className="lg:hidden border-t border-white/10 px-4 py-4 flex flex-col gap-1" style={{ background: 'rgba(11, 14, 20, 0.97)' }}>
+                    {navLinks.map(link => (
+                        <a
+                            key={link.href}
+                            href={link.href}
+                            onClick={closeMenu}
+                            className="text-gray-300 hover:text-white hover:bg-white/5 transition-colors text-sm font-semibold px-3 py-2.5 rounded-lg"
+                        >
+                            {link.label}
+                        </a>
+                    ))}
+                    <div className="my-1 border-t border-white/10" />
                     <a
-                        href="#steps"
-                        onClick={() => setMenuOpen(false)}
-                        className="text-gray-300 hover:text-white transition-colors text-sm font-semibold"
+                        href="/flash64"
+                        onClick={closeMenu}
+                        className="flex items-center gap-2 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 transition-colors text-sm font-bold px-3 py-2.5 rounded-lg"
                     >
-                        Módulos
-                    </a>
-                    <a
-                        href="#pricing-anchor"
-                        onClick={() => setMenuOpen(false)}
-                        className="text-gray-300 hover:text-white transition-colors text-sm font-semibold"
-                    >
-                        Preço
+                        Flash64 — eBook
+                        <span className="text-[9px] bg-orange-500/20 border border-orange-500/30 px-1.5 py-0.5 rounded-full uppercase tracking-wide">novo</span>
                     </a>
                 </div>
             )}

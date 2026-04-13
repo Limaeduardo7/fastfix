@@ -3,7 +3,7 @@ import { CTAButton } from './shared';
 
 export default function InstructorSection() {
     return (
-        <section className="py-24 px-6 lg:px-20 bg-white text-gray-900">
+        <section id="instructor" className="py-24 px-6 lg:px-20 bg-white text-gray-900">
             <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
                 <Reveal>
                     <div className="relative">

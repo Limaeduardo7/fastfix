@@ -10,7 +10,7 @@ const bonuses = [
 
 export default function BonusSection() {
     return (
-        <section className="py-24 px-6 lg:px-20 bg-background">
+        <section id="bonus" className="py-24 px-6 lg:px-20 bg-background">
             <div className="max-w-4xl mx-auto">
                 <Reveal className="text-center mb-16">
                     <span className="text-primary font-bold text-sm uppercase tracking-widest">Tudo que está incluso</span>
