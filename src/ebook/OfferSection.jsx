@@ -129,7 +129,7 @@ export default function OfferSection() {
                   <div className="space-y-2">
                     <p className="text-gray-500 line-through text-lg">De R$ 97,00</p>
                     <p className="text-gray-300">Por apenas</p>
-                    <p className="text-4xl sm:text-5xl font-extrabold text-gradient-fire">R$ 47,00</p>
+                    <p className="text-4xl sm:text-5xl font-extrabold text-gradient-fire">R$ 67,00</p>
                     <p className="text-gray-400 text-sm">Menos que o custo de uma peça perdida por diagnóstico errado.</p>
                     <p className="text-gray-500 text-xs mt-1">Acesso imediato após o pagamento</p>
                   </div>
@@ -138,7 +138,7 @@ export default function OfferSection() {
                     href={buildCheckoutUrl(CHECKOUT_URL)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() => trackEvent('InitiateCheckout', { currency: 'BRL', value: 47, placement: 'ebook_offer_cta' })}
+                    onClick={() => trackEvent('InitiateCheckout', { currency: 'BRL', value: 67, placement: 'ebook_offer_cta' })}
                     className="block"
                   >
                     <button className="hero-cta w-full bg-gradient-to-r from-primary via-orange-500 to-amber-500 hover:from-orange-500 hover:to-primary text-white text-base sm:text-lg font-bold py-4 sm:py-5 px-6 sm:px-8 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-primary/30">

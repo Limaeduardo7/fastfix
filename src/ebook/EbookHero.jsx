@@ -148,7 +148,7 @@ export default function EbookHero() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 w-full sm:w-auto">
             <a
               href={CHECKOUT_URL}
-              onClick={() => trackEvent('InitiateCheckout', { currency: 'BRL', value: 47, placement: 'ebook_hero_cta' })}
+              onClick={() => trackEvent('InitiateCheckout', { currency: 'BRL', value: 67, placement: 'ebook_hero_cta' })}
               className="hero-cta bg-gradient-to-r from-primary via-orange-500 to-amber-500 hover:brightness-110 text-white font-bold px-10 py-4 rounded-xl transition-all cursor-pointer hover:scale-[1.03] active:scale-[0.98] shadow-2xl shadow-primary/30 flex items-center justify-center gap-3 text-base"
             >
               <Zap className="w-5 h-5" />

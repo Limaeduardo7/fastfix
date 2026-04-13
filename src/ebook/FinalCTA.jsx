@@ -57,7 +57,7 @@ export default function FinalCTA() {
         </Reveal>
 
         <Reveal delay={300}>
-          <a href={buildCheckoutUrl(CHECKOUT_URL)} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('InitiateCheckout', { currency: 'BRL', value: 47, placement: 'ebook_final_cta' })}>
+          <a href={buildCheckoutUrl(CHECKOUT_URL)} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('InitiateCheckout', { currency: 'BRL', value: 67, placement: 'ebook_final_cta' })}>
             <button className="hero-cta bg-gradient-to-r from-primary via-orange-500 to-amber-500 hover:from-orange-500 hover:to-primary text-white text-base sm:text-lg font-bold py-4 sm:py-5 px-7 sm:px-10 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 mx-auto shadow-lg shadow-primary/30 w-full sm:w-auto">
               <Zap className="w-5 h-5" />
               Garantir meu Ebook Agora
