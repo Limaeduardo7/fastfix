@@ -15,6 +15,7 @@ import FinalCTASection from './components/FinalCTASection'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
 import PurchaseNotifications from './components/PurchaseNotifications'
+import TrackingTable from './components/TrackingTable'
 
 function HomePage() {
     return (
@@ -105,6 +106,7 @@ export default function App() {
     const routes = {
         '/': <HomePage />,
         '/flash64': <Flash64Page />,
+        '/tracking': <TrackingTable />,
     }
 
     return routes[path] ?? <NotFoundPage />
