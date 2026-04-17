@@ -4,7 +4,7 @@ import { Icon, CTAButton } from './shared';
 const bonuses = [
     { icon: 'cpu', title: 'Treinamento Completo. 6 Módulos Práticos', desc: 'Do esquema elétrico ao reballing. Tudo filmado na bancada real em alta definição.', price: 'R$ 297,00', isBonus: false },
     { icon: 'gift', title: 'Kit Montagem de Lab', desc: 'A lista exata de ferramentas + fornecedores com desconto que o João usa no lab dele', price: 'R$ 47,00', isBonus: true, num: 1, iconBg: 'bg-green-600' },
-    { icon: 'gift', title: 'Rede de Técnicos FastFix (Telegram VIP)', desc: 'Tire dúvidas ao vivo com +500 profissionais ativos. Nunca fique travado numa placa.', price: 'R$ 97,00', isBonus: true, num: 2, iconBg: 'bg-green-600' },
+    { icon: 'gift', title: 'Rede de Técnicos FastFix (Grupo no WhatsApp e Discord)', desc: 'Tire dúvidas ao vivo com +500 profissionais ativos. Nunca fique travado numa placa.', price: 'R$ 97,00', isBonus: true, num: 2, iconBg: 'bg-green-600' },
     { icon: 'gift', title: 'Módulo Extra: Diagnóstico por Software', desc: 'Debug via software que complementa o hardware. encontre defeitos invisíveis ao multímetro', price: 'R$ 97,00', isBonus: true, num: 3, iconBg: 'bg-green-600' },
 ];
 
