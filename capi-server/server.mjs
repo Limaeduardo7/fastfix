@@ -26,6 +26,9 @@ const PIXEL_ID = process.env.META_PIXEL_ID;
 const ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
 const TEST_EVENT_CODE = process.env.META_TEST_EVENT_CODE;
 const HOTMART_WEBHOOK_TOKEN = process.env.HOTMART_WEBHOOK_TOKEN;
+const HOTMART_BASIC_AUTH = process.env.HOTMART_BASIC_AUTH;
+const HOTMART_CLIENT_ID = process.env.HOTMART_CLIENT_ID;
+const HOTMART_CLIENT_SECRET = process.env.HOTMART_CLIENT_SECRET;
 const EVENTS_LOG_PATH = process.env.EVENTS_LOG_PATH || '/root/fastfixx/capi-server/logs/events.log';
 
 const EVOLUTION_BASE_URL = process.env.EVOLUTION_BASE_URL || 'http://127.0.0.1:8082';
@@ -66,6 +69,10 @@ const processedHotmartPurchases = new Map();
 let lastHotmartWebhook = null;
 let cachedAgentMemory = null;
 let cachedAgentMemoryAt = 0;
+let hotmartAccessTokenCache = {
+  token: null,
+  expiresAt: 0,
+};
 
 function contactMemoryPath(phone) {
   return path.join(CONTACT_MEMORY_DIR, `${normalizePhone(phone)}.json`);
@@ -1085,6 +1092,85 @@ function parseHotmartPayload(payload = {}) {
   };
 }
 
+function getHotmartBasicAuthHeader() {
+  if (HOTMART_BASIC_AUTH) return HOTMART_BASIC_AUTH;
+  if (!HOTMART_CLIENT_ID || !HOTMART_CLIENT_SECRET) return null;
+  return `Basic ${Buffer.from(`${HOTMART_CLIENT_ID}:${HOTMART_CLIENT_SECRET}`).toString('base64')}`;
+}
+
+async function getHotmartAccessToken() {
+  if (hotmartAccessTokenCache.token && Date.now() < hotmartAccessTokenCache.expiresAt - 30_000) {
+    return hotmartAccessTokenCache.token;
+  }
+
+  const basicAuthHeader = getHotmartBasicAuthHeader();
+  if (!basicAuthHeader) return null;
+
+  const tokenRes = await fetch('https://api-sec-vlc.hotmart.com/security/oauth/token?grant_type=client_credentials', {
+    method: 'POST',
+    headers: { Authorization: basicAuthHeader },
+  });
+
+  if (!tokenRes.ok) {
+    return null;
+  }
+
+  const tokenData = await tokenRes.json().catch(() => ({}));
+  const accessToken = tokenData?.access_token;
+  const expiresIn = Number(tokenData?.expires_in || 3600);
+
+  if (!accessToken) return null;
+
+  hotmartAccessTokenCache = {
+    token: accessToken,
+    expiresAt: Date.now() + expiresIn * 1000,
+  };
+
+  return accessToken;
+}
+
+async function fetchBuyerPhoneFromSalesUsers(transactionId) {
+  if (!transactionId) return null;
+
+  const accessToken = await getHotmartAccessToken();
+  if (!accessToken) return null;
+
+  const url = `https://developers.hotmart.com/payments/api/v1/sales/users?transaction=${encodeURIComponent(transactionId)}`;
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  if (!response.ok) return null;
+
+  const data = await response.json().catch(() => ({}));
+  const items = Array.isArray(data?.items) ? data.items : [];
+
+  for (const item of items) {
+    const users = Array.isArray(item?.users) ? item.users : [];
+    for (const userEntry of users) {
+      if (String(userEntry?.role || '').toUpperCase() !== 'BUYER') continue;
+      const user = userEntry?.user || {};
+      const phone = normalizePhone(user?.cellphone || user?.phone);
+      if (phone) return phone;
+    }
+  }
+
+  return null;
+}
+
+async function resolveBuyerPhone(parsed = {}) {
+  const primary = normalizePhone(parsed?.buyer?.checkout_phone || parsed?.buyer?.phone);
+  if (primary) return { phone: primary, source: 'webhook' };
+
+  const txId = pickFirst(parsed?.transactionId, parsed?.orderId);
+  if (!txId) return { phone: null, source: 'none' };
+
+  const fallback = await fetchBuyerPhoneFromSalesUsers(txId);
+  if (fallback) return { phone: fallback, source: 'sales_users' };
+
+  return { phone: null, source: 'none' };
+}
+
 function validateHotmartToken(req) {
   if (!HOTMART_WEBHOOK_TOKEN) return false;
   const token = req.headers['x-hotmart-hottok'] || req.headers['hottok'] || req.query?.hottok || req.body?.hottok || req.body?.token;
@@ -1753,7 +1839,8 @@ app.post('/api/hotmart/webhook', async (req, res) => {
       const isFlash64 = productName.includes('flash 64');
       const isFastFixUpsell = productName.includes('fastfix academy') || productName.includes('fastfix');
       const buyerEmail = parsed.buyer?.email;
-      const buyerPhone = parsed.buyer?.checkout_phone || parsed.buyer?.phone;
+      const buyerPhoneResolved = await resolveBuyerPhone(parsed);
+      const buyerPhone = buyerPhoneResolved.phone;
       const buyerName = parsed.buyer?.name;
       const firstName = buyerName ? String(buyerName).split(' ')[0] : 'Tudo bem?';
 
@@ -1790,6 +1877,7 @@ app.post('/api/hotmart/webhook', async (req, res) => {
           leadId: externalId,
           orderId: parsed.orderId,
           phone: normalizePhone(buyerPhone),
+          phone_source: buyerPhoneResolved.source,
           jobs: whatsappJobs.map((j) => ({ id: j.id, step: j.step, executeAt: j.executeAt })),
         });
       }
@@ -1817,7 +1905,8 @@ app.post('/api/hotmart/webhook', async (req, res) => {
     }
 
     if (parsed.mappedEvent === 'AddPaymentInfo') {
-      const phone = parsed.buyer.checkout_phone || parsed.buyer.phone;
+      const phoneResolved = await resolveBuyerPhone(parsed);
+      const phone = phoneResolved.phone;
       const name = parsed.buyer.name ? String(parsed.buyer.name).split(' ')[0] : 'Tudo bem?';
 
       if (phone && externalId) {
@@ -1834,6 +1923,7 @@ app.post('/api/hotmart/webhook', async (req, res) => {
           action: 'scheduled_from_hotmart',
           leadId: externalId,
           orderId: parsed.orderId,
+          phone_source: phoneResolved.source,
           jobs: jobs.map((j) => ({ id: j.id, step: j.step, executeAt: j.executeAt })),
         });
       } else {
