@@ -4,17 +4,17 @@ import DecryptedText from './reactbits/DecryptedText';
 
 export default function HeroSection() {
     return (
-        <section id="hero" className="relative min-h-screen pt-10 pb-16 px-6 lg:px-20 flex items-center justify-center overflow-hidden">
+        <section id="hero" className="relative min-h-screen pt-4 sm:pt-10 pb-16 px-5 lg:px-20 flex items-center justify-center overflow-hidden">
             <div className="hero-glow hero-glow--1"></div>
             <div className="hero-glow hero-glow--2"></div>
 
-            <div className="max-w-7xl mx-auto w-full py-8">
-                <div className="flex flex-col lg:grid lg:grid-cols-[1fr_0.9fr] lg:gap-16 lg:items-center gap-6">
+            <div className="max-w-7xl mx-auto w-full py-4 sm:py-8">
+                <div className="flex flex-col lg:grid lg:grid-cols-[1fr_0.9fr] lg:gap-16 lg:items-center gap-4">
 
                     {/* 1 — Badge (mobile: first, desktop: col-1 row-1) */}
                     <Reveal className="lg:col-start-1 lg:row-start-1">
-                        <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/25 text-orange-300 text-xs font-bold px-4 py-2 rounded-full uppercase tracking-widest">
-                            <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+                        <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/25 text-orange-300 text-[11px] sm:text-xs font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full uppercase tracking-widest">
+                            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full animate-pulse shrink-0"></span>
                             Formação Profissional em Reparo de Placas
                         </div>
                     </Reveal>
@@ -26,22 +26,22 @@ export default function HeroSection() {
                             <img
                                 src="/images/01.jpg"
                                 alt="Técnico João Mattoso realizando reparo avançado em placa Android"
-                                className="w-full max-h-[420px] sm:max-h-[500px] lg:max-h-[640px] object-cover object-top rounded-2xl shadow-2xl relative z-10"
+                                className="w-full max-h-[280px] sm:max-h-[420px] lg:max-h-[640px] object-cover object-top rounded-2xl shadow-2xl relative z-10"
                                 fetchPriority="high"
                                 width="1600"
                                 height="2400"
                             />
                         </div>
-                        <div className="absolute bottom-4 left-4 bg-surface border border-white/10 rounded-2xl p-4 shadow-2xl z-20">
-                            <p className="text-gray-400 text-[10px] uppercase tracking-wider font-bold mb-1">Faturamento médio</p>
-                            <p className="text-xl font-extrabold text-white leading-none">R$ 8.000<span className="text-primary">+</span></p>
-                            <p className="text-gray-400 text-xs mt-1">/mês após o treinamento</p>
+                        <div className="absolute bottom-3 left-3 bg-surface/95 border border-white/10 rounded-xl p-3 shadow-2xl z-20">
+                            <p className="text-gray-400 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold mb-0.5">Faturamento médio</p>
+                            <p className="text-base sm:text-xl font-extrabold text-white leading-none">R$ 8.000<span className="text-primary">+</span></p>
+                            <p className="text-gray-400 text-[10px] sm:text-xs mt-0.5">/mês após o treinamento</p>
                         </div>
                     </Reveal>
 
                     {/* 3 — Copy: headline, paragraph, CTA, social proof (mobile: third, desktop: col-1 row-2) */}
-                    <Reveal className="space-y-6 lg:col-start-1 lg:row-start-2">
-                        <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] xl:text-[3.75rem] font-extrabold leading-[1.08] tracking-tight">
+                    <Reveal className="space-y-4 sm:space-y-6 lg:col-start-1 lg:row-start-2">
+                        <h1 className="text-3xl sm:text-5xl lg:text-[3.25rem] xl:text-[3.75rem] font-extrabold leading-[1.1] tracking-tight">
                             <DecryptedText
                                 text="Pare de devolver placas que você"
                                 speed={30}
@@ -65,13 +65,13 @@ export default function HeroSection() {
                             </span>
                         </h1>
 
-                        <p className="text-gray-300 text-lg lg:text-xl max-w-lg leading-relaxed">
+                        <p className="text-gray-300 text-base sm:text-lg lg:text-xl max-w-lg leading-relaxed">
                             Aprenda a reparar placas que outros técnicos recusam e comece a faturar{' '}
                             <strong className="text-white font-bold">R$ 8.000+/mês</strong> com o serviço mais lucrativo da assistência técnica.
                         </p>
 
-                        <div className="flex flex-col gap-4 pt-2">
-                            <CTAButton className="hero-cta w-full sm:w-auto sm:self-start shadow-2xl shadow-primary/30 flex items-center justify-center gap-3 text-base hover:scale-[1.03] active:scale-[0.98] font-bold px-10 py-4">
+                        <div className="flex flex-col gap-3 sm:gap-4 pt-1 sm:pt-2">
+                            <CTAButton className="hero-cta w-full sm:w-auto sm:self-start shadow-2xl shadow-primary/30 flex items-center justify-center gap-3 text-base hover:scale-[1.03] active:scale-[0.98] font-bold px-8 sm:px-10 py-4">
                                 <Icon name="zap" className="[&_svg]:w-5 [&_svg]:h-5" />
                                 Quero começar agora
                             </CTAButton>
@@ -115,12 +115,6 @@ export default function HeroSection() {
                 </div>
             </div>
 
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-500 text-xs">
-                <span>Role para baixo</span>
-                <div className="w-5 h-8 border-2 border-gray-600 rounded-full flex justify-center pt-1.5">
-                    <div className="w-1 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                </div>
-            </div>
         </section>
     );
 }
