@@ -285,6 +285,46 @@ body {
   transition: width 0.05s linear;
 }
 
+/* ROI Calculator slider */
+.roi-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(to right, #FF6B00 0%, #FF6B00 var(--fill, 14%), rgba(255,255,255,0.08) var(--fill, 14%), rgba(255,255,255,0.08) 100%);
+  outline: none;
+  cursor: pointer;
+}
+.roi-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid #FF6B00;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
+  transition: transform 0.15s ease;
+}
+.roi-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+.roi-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid #FF6B00;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
+}
+.roi-slider::-moz-range-track {
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(to right, #FF6B00 0%, #FF6B00 var(--fill, 14%), rgba(255,255,255,0.08) var(--fill, 14%), rgba(255,255,255,0.08) 100%);
+}
+
 @media (max-width: 768px) {
   .purchase-toast {
     left: 0.75rem;

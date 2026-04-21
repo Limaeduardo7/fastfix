@@ -65,7 +65,7 @@ export default function Navbar() {
                         onClick={handleCTA}
                         className="bg-primary hover:bg-primary-hover text-white font-bold px-4 py-1.5 rounded-lg transition-all cursor-pointer text-sm"
                     >
-                        Garantir vaga
+                        Comprar agora
                     </button>
                 </div>
 
@@ -76,7 +76,7 @@ export default function Navbar() {
                         onClick={handleCTA}
                         className="bg-primary hover:bg-primary-hover text-white font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer text-xs"
                     >
-                        Garantir vaga
+                        Comprar agora
                     </button>
                     <button
                         type="button"

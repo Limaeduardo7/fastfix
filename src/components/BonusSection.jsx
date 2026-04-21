@@ -40,17 +40,59 @@ export default function BonusSection() {
                         </Reveal>
                     ))}
 
-                    {/* Total value */}
-                    <Reveal delay={400} id="pricing-anchor" className="glass-card p-8 rounded-2xl text-center space-y-4 border-2 border-primary/40">
-                        <p className="text-gray-400 text-sm uppercase font-bold tracking-wide">Valor total de tudo:</p>
-                        <p className="text-3xl font-extrabold text-gray-400 line-through">R$ 1.297,00</p>
-                        <p className="text-gray-400">Hoje, você leva tudo por apenas:</p>
-                        <p className="text-5xl font-extrabold text-primary">R$ 497,00</p>
-                        <p className="text-gray-500 text-sm">ou 12x de R$ 41,42</p>
+                    {/* Pricing card with anchor comparison */}
+                    <Reveal delay={400} id="pricing-anchor" className="glass-card p-6 sm:p-8 rounded-2xl space-y-6 border-2 border-primary/40">
+                        {/* Anchor pricing comparison */}
+                        <div>
+                            <p className="text-gray-400 text-xs uppercase font-bold tracking-widest text-center mb-4">
+                                Compare antes de decidir
+                            </p>
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02] border border-white/5">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xl">🏫</span>
+                                        <div>
+                                            <p className="text-white text-sm font-semibold">Curso presencial</p>
+                                            <p className="text-gray-500 text-xs">Mesmo conteúdo, agenda fixa</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-gray-400 font-bold text-sm sm:text-base line-through">R$ 4.997</span>
+                                </div>
+                                <div className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02] border border-white/5">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xl">👤</span>
+                                        <div>
+                                            <p className="text-white text-sm font-semibold">Mentoria 1:1</p>
+                                            <p className="text-gray-500 text-xs">Aulas individuais com o João</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-gray-400 font-bold text-sm sm:text-base line-through">R$ 2.997</span>
+                                </div>
+                                <div className="flex items-center justify-between p-3 sm:p-4 rounded-lg bg-primary/10 border-2 border-primary/40 relative">
+                                    <span className="absolute -top-2.5 left-3 bg-primary text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">Esta oferta</span>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xl">⚡</span>
+                                        <div>
+                                            <p className="text-white text-sm sm:text-base font-extrabold">FastFix Academy</p>
+                                            <p className="text-orange-300/80 text-xs">Online + vitalício + 3 bônus</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-primary font-extrabold text-base sm:text-lg">R$ 497</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Main offer */}
+                        <div className="text-center pt-4 border-t border-white/10 space-y-2">
+                            <p className="text-gray-400 text-sm">Hoje, você leva <strong className="text-white">tudo</strong> por:</p>
+                            <p className="text-5xl font-extrabold text-primary">R$ 497<span className="text-3xl">,00</span></p>
+                            <p className="text-gray-500 text-sm">ou 12x de R$ 41,42 sem juros</p>
+                        </div>
+
                         <CTAButton action="checkout" placement="offer_checkout" className="w-full max-w-md mx-auto shadow-2xl shadow-primary/40 uppercase tracking-wider text-lg py-5 font-extrabold">
-                            Comprar Agora
+                            Comprar agora
                         </CTAButton>
-                        <p className="text-gray-500 text-xs">Um único reparo de placa já paga o curso inteiro.</p>
+                        <p className="text-gray-500 text-xs text-center">Um único reparo de placa já paga o curso inteiro.</p>
                     </Reveal>
                 </div>
             </div>

@@ -73,7 +73,7 @@ export default function HeroSection() {
                         <div className="flex flex-col gap-3 sm:gap-4 pt-1 sm:pt-2">
                             <CTAButton className="hero-cta w-full sm:w-auto sm:self-start shadow-2xl shadow-primary/30 flex items-center justify-center gap-3 text-base hover:scale-[1.03] active:scale-[0.98] font-bold px-8 sm:px-10 py-4">
                                 <Icon name="zap" className="[&_svg]:w-5 [&_svg]:h-5" />
-                                Quero começar agora
+                                Comprar agora
                             </CTAButton>
 
                             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">

@@ -11,6 +11,8 @@ import BonusSection from './components/BonusSection'
 import FeaturesSection from './components/FeaturesSection'
 import GuaranteeSection from './components/GuaranteeSection'
 import FAQSection from './components/FAQSection'
+import ROICalculator from './components/ROICalculator'
+import ObjectionsSection from './components/ObjectionsSection'
 import FinalCTASection from './components/FinalCTASection'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
@@ -36,10 +38,12 @@ function HomePage() {
                 <div className="transition-dark-to-light" />
                 <TestimonialsSection />
                 <div className="transition-light-to-dark" />
+                <ROICalculator />
                 <BonusSection />
                 <FeaturesSection />
                 <GuaranteeSection />
                 <FAQSection />
+                <ObjectionsSection />
                 <FinalCTASection />
             </main>
             <Footer />

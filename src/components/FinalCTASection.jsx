@@ -41,7 +41,7 @@ export default function FinalCTASection() {
                         </div>
 
                         <CTAButton action="checkout" placement="final_cta" className="w-full max-w-md mx-auto shadow-2xl shadow-primary/40 uppercase tracking-widest text-lg py-5 font-extrabold hover:scale-[1.02] active:scale-[0.98]">
-                            Entrar agora. acesso imediato →
+                            Comprar agora
                         </CTAButton>
                         <p className="text-gray-500 text-xs text-center">
                             🔒 Pagamento 100% seguro • Acesso imediato após a confirmação
