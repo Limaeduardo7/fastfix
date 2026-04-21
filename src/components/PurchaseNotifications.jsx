@@ -1,104 +1,132 @@
 import { useEffect, useState } from 'react';
-import { Icon } from './shared';
 
 const notifications = [
-    { name: 'Marcos', city: 'Campinas', state: 'SP', region: 'Sudeste' },
-    { name: 'Patricia', city: 'Recife', state: 'PE', region: 'Nordeste' },
-    { name: 'Andre', city: 'Goiania', state: 'GO', region: 'Centro-Oeste' },
-    { name: 'Leandro', city: 'Curitiba', state: 'PR', region: 'Sul' },
-    { name: 'Bruna', city: 'Manaus', state: 'AM', region: 'Norte' },
-    { name: 'Felipe', city: 'Belo Horizonte', state: 'MG', region: 'Sudeste' },
-    { name: 'Camila', city: 'Fortaleza', state: 'CE', region: 'Nordeste' },
-    { name: 'Joao', city: 'Cuiaba', state: 'MT', region: 'Centro-Oeste' },
-    { name: 'Rafael', city: 'Porto Alegre', state: 'RS', region: 'Sul' },
-    { name: 'Vanessa', city: 'Belem', state: 'PA', region: 'Norte' },
-    { name: 'Gustavo', city: 'Santos', state: 'SP', region: 'Sudeste' },
-    { name: 'Aline', city: 'Salvador', state: 'BA', region: 'Nordeste' },
-    { name: 'Diego', city: 'Campo Grande', state: 'MS', region: 'Centro-Oeste' },
-    { name: 'Mateus', city: 'Joinville', state: 'SC', region: 'Sul' },
-    { name: 'Erica', city: 'Palmas', state: 'TO', region: 'Norte' },
-    { name: 'Tiago', city: 'Ribeirao Preto', state: 'SP', region: 'Sudeste' },
-    { name: 'Luciana', city: 'Natal', state: 'RN', region: 'Nordeste' },
-    { name: 'Caio', city: 'Brasilia', state: 'DF', region: 'Centro-Oeste' },
-    { name: 'Renata', city: 'Londrina', state: 'PR', region: 'Sul' },
-    { name: 'Wesley', city: 'Rio Branco', state: 'AC', region: 'Norte' },
-    { name: 'Douglas', city: 'Sao Jose dos Campos', state: 'SP', region: 'Sudeste' },
-    { name: 'Juliana', city: 'Maceio', state: 'AL', region: 'Nordeste' },
-    { name: 'Robson', city: 'Anapolis', state: 'GO', region: 'Centro-Oeste' },
-    { name: 'Fernanda', city: 'Florianopolis', state: 'SC', region: 'Sul' },
-    { name: 'Igor', city: 'Macapa', state: 'AP', region: 'Norte' },
-    { name: 'Henrique', city: 'Rio de Janeiro', state: 'RJ', region: 'Sudeste' },
-    { name: 'Tatiane', city: 'Aracaju', state: 'SE', region: 'Nordeste' },
-    { name: 'Vinicius', city: 'Dourados', state: 'MS', region: 'Centro-Oeste' },
-    { name: 'Samuel', city: 'Caxias do Sul', state: 'RS', region: 'Sul' },
-    { name: 'Nayara', city: 'Porto Velho', state: 'RO', region: 'Norte' },
+    { name: 'Marcos', city: 'Campinas', state: 'SP' },
+    { name: 'Patricia', city: 'Recife', state: 'PE' },
+    { name: 'Andre', city: 'Goiania', state: 'GO' },
+    { name: 'Leandro', city: 'Curitiba', state: 'PR' },
+    { name: 'Bruna', city: 'Manaus', state: 'AM' },
+    { name: 'Felipe', city: 'Belo Horizonte', state: 'MG' },
+    { name: 'Camila', city: 'Fortaleza', state: 'CE' },
+    { name: 'Joao', city: 'Cuiaba', state: 'MT' },
+    { name: 'Rafael', city: 'Porto Alegre', state: 'RS' },
+    { name: 'Vanessa', city: 'Belem', state: 'PA' },
+    { name: 'Gustavo', city: 'Santos', state: 'SP' },
+    { name: 'Aline', city: 'Salvador', state: 'BA' },
+    { name: 'Diego', city: 'Campo Grande', state: 'MS' },
+    { name: 'Mateus', city: 'Joinville', state: 'SC' },
+    { name: 'Erica', city: 'Palmas', state: 'TO' },
+    { name: 'Tiago', city: 'Ribeirao Preto', state: 'SP' },
+    { name: 'Luciana', city: 'Natal', state: 'RN' },
+    { name: 'Caio', city: 'Brasilia', state: 'DF' },
+    { name: 'Renata', city: 'Londrina', state: 'PR' },
+    { name: 'Wesley', city: 'Rio Branco', state: 'AC' },
+    { name: 'Douglas', city: 'Sao Jose dos Campos', state: 'SP' },
+    { name: 'Juliana', city: 'Maceio', state: 'AL' },
+    { name: 'Robson', city: 'Anapolis', state: 'GO' },
+    { name: 'Fernanda', city: 'Florianopolis', state: 'SC' },
+    { name: 'Igor', city: 'Macapa', state: 'AP' },
+    { name: 'Henrique', city: 'Rio de Janeiro', state: 'RJ' },
+    { name: 'Tatiane', city: 'Aracaju', state: 'SE' },
+    { name: 'Vinicius', city: 'Dourados', state: 'MS' },
+    { name: 'Samuel', city: 'Caxias do Sul', state: 'RS' },
+    { name: 'Nayara', city: 'Porto Velho', state: 'RO' },
 ];
 
-function getNextIndex(currentIndex) {
+const avatarColors = [
+    ['#FF6B00', '#FF8C42'],
+    ['#7C3AED', '#A78BFA'],
+    ['#059669', '#34D399'],
+    ['#2563EB', '#60A5FA'],
+    ['#DC2626', '#F87171'],
+    ['#D97706', '#FCD34D'],
+];
+
+function getNextIndex(current) {
     if (notifications.length <= 1) return 0;
-
-    let nextIndex = currentIndex;
-
-    while (nextIndex === currentIndex) {
-        nextIndex = Math.floor(Math.random() * notifications.length);
-    }
-
-    return nextIndex;
+    let next = current;
+    while (next === current) next = Math.floor(Math.random() * notifications.length);
+    return next;
 }
 
 export default function PurchaseNotifications() {
     const [currentIndex, setCurrentIndex] = useState(() => Math.floor(Math.random() * notifications.length));
     const [isVisible, setIsVisible] = useState(false);
+    const [progress, setProgress] = useState(100);
+
+    const VISIBLE_MS = 5000;
 
     useEffect(() => {
-        let hideTimeout;
-        let nextTimeout;
+        let hideTimeout, nextTimeout, progressInterval;
         let current = currentIndex;
 
         const runCycle = () => {
+            setProgress(100);
             setIsVisible(true);
 
-            const visibleFor = 4200 + Math.floor(Math.random() * 2400);
+            const start = Date.now();
+            progressInterval = window.setInterval(() => {
+                const elapsed = Date.now() - start;
+                setProgress(Math.max(0, 100 - (elapsed / VISIBLE_MS) * 100));
+            }, 50);
+
             const nextDelay = 18000 + Math.floor(Math.random() * 12000);
 
             hideTimeout = window.setTimeout(() => {
+                clearInterval(progressInterval);
                 setIsVisible(false);
-
                 nextTimeout = window.setTimeout(() => {
                     current = getNextIndex(current);
                     setCurrentIndex(current);
                     runCycle();
                 }, nextDelay);
-            }, visibleFor);
+            }, VISIBLE_MS);
         };
 
         nextTimeout = window.setTimeout(runCycle, 10000);
 
         return () => {
-            window.clearTimeout(hideTimeout);
-            window.clearTimeout(nextTimeout);
+            clearTimeout(hideTimeout);
+            clearTimeout(nextTimeout);
+            clearInterval(progressInterval);
         };
     }, []);
 
     const item = notifications[currentIndex];
+    const initial = item.name[0].toUpperCase();
+    const colorIndex = item.name.charCodeAt(0) % avatarColors.length;
+    const [from, to] = avatarColors[colorIndex];
 
     return (
-        <aside
-            aria-live="polite"
-            className={`purchase-toast ${isVisible ? 'is-visible' : ''}`}
-        >
-            <div className="purchase-toast__icon" aria-hidden="true">
-                <Icon name="shoppingCart" />
-            </div>
-            <div className="purchase-toast__content">
-                <div className="purchase-toast__eyebrow">
-                    <span className="purchase-toast__badge">Nova matrícula</span>
-                    <span className="purchase-toast__region">{item.region}</span>
+        <aside aria-live="polite" className={`purchase-toast ${isVisible ? 'is-visible' : ''}`}>
+            {/* Top accent line */}
+            <div className="purchase-toast__accent" />
+
+            <div className="purchase-toast__body">
+                {/* Avatar */}
+                <div
+                    className="purchase-toast__avatar"
+                    style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}
+                    aria-hidden="true"
+                >
+                    {initial}
+                    <span className="purchase-toast__live-dot" />
                 </div>
-                <p className="purchase-toast__title">
-                    <strong>{item.name}</strong> de {item.city}, {item.state}
-                </p>
-                <p className="purchase-toast__text">acabou de garantir o FastFix Academy.</p>
+
+                {/* Content */}
+                <div className="purchase-toast__content">
+                    <p className="purchase-toast__label">Nova matrícula</p>
+                    <p className="purchase-toast__name">
+                        <strong>{item.name}</strong>
+                        <span className="purchase-toast__location"> · {item.city}, {item.state}</span>
+                    </p>
+                    <p className="purchase-toast__sub">acabou de garantir o FastFix Academy ✓</p>
+                </div>
+            </div>
+
+            {/* Progress bar */}
+            <div className="purchase-toast__progress-track">
+                <div className="purchase-toast__progress-bar" style={{ width: `${progress}%` }} />
             </div>
         </aside>
     );
