@@ -7,6 +7,7 @@ import TopicsSection from './ebook/TopicsSection'
 import BenefitsSection from './ebook/BenefitsSection'
 import BonusSection from './ebook/BonusSection'
 import ContentPreview from './ebook/ContentPreview'
+import TestimonialsSection from './components/TestimonialsSection'
 import AudienceSection from './ebook/AudienceSection'
 import OfferSection from './ebook/OfferSection'
 import EbookFAQ from './ebook/EbookFAQ'
@@ -43,6 +44,7 @@ export default function EbookApp() {
         <PromiseSection />
         <TopicsSection />
         <BenefitsSection />
+        <TestimonialsSection />
         <BonusSection />
         <ContentPreview />
         <AudienceSection />
