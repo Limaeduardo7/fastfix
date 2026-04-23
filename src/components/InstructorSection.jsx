@@ -9,12 +9,12 @@ export default function InstructorSection() {
                     <div className="relative">
                         <div className="absolute -inset-4 bg-primary/10 blur-3xl rounded-full -z-10"></div>
                         <img
-                            src="/images/02.jpg"
+                            src="/instrutor-image.webp"
                             alt="João Mattoso, instrutor da FastFix Academy"
                             className="rounded-3xl shadow-2xl border-4 border-gray-100 w-full"
                             loading="lazy"
-                            width="1600"
-                            height="2400"
+                            width="1254"
+                            height="1254"
                         />
                     </div>
                 </Reveal>

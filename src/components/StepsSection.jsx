@@ -60,12 +60,12 @@ export default function StepsSection() {
 
                     <Reveal delay={300}>
                         <img
-                            src="/images/04.jpeg"
+                            src="/secao3-image.webp"
                             alt="Bancada de ferramentas e multímetro para reparo de smartphones"
                             className="rounded-3xl shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border-8 border-white max-h-[500px] object-cover"
                             loading="lazy"
-                            width="6000"
-                            height="4000"
+                            width="1254"
+                            height="1254"
                         />
                     </Reveal>
                 </div>

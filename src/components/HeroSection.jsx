@@ -24,12 +24,12 @@ export default function HeroSection() {
                         <div className="hero-image-wrapper relative">
                             <div className="absolute -inset-4 bg-gradient-to-br from-primary/25 via-transparent to-primary/10 rounded-3xl blur-2xl -z-10"></div>
                             <img
-                                src="/images/01.jpg"
+                                src="/hero-image.webp"
                                 alt="Técnico João Mattoso realizando reparo avançado em placa Android"
-                                className="w-full max-h-[280px] sm:max-h-[420px] lg:max-h-[640px] object-cover object-top rounded-2xl shadow-2xl relative z-10"
+                                className="w-full max-h-[280px] sm:max-h-[420px] lg:max-h-[640px] object-cover object-center rounded-2xl shadow-2xl relative z-10"
                                 fetchPriority="high"
-                                width="1600"
-                                height="2400"
+                                width="1254"
+                                height="1254"
                             />
                         </div>
                         <div className="absolute bottom-3 left-3 bg-surface/95 border border-white/10 rounded-xl p-3 shadow-2xl z-20">

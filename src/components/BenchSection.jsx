@@ -7,10 +7,12 @@ export default function BenchSection() {
             <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
                 <Reveal>
                     <img
-                        src="/images/Imagem-Bancada.png"
+                        src="/bancada-image.webp"
                         alt="Processo prático de micro soldagem em placa de celular"
-                        className="rounded-3xl shadow-2xl border-2 border-surface"
+                        className="rounded-3xl shadow-2xl border-2 border-surface w-full"
                         loading="lazy"
+                        width="1254"
+                        height="1254"
                     />
                 </Reveal>
 
