@@ -157,18 +157,18 @@ body {
   bottom: 1.25rem;
   z-index: 1105;
   width: min(320px, calc(100vw - 2rem));
+  max-width: calc(100vw - 2rem);
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1rem;
-  background: rgba(10, 13, 20, 0.92);
+  background: rgba(10, 13, 20, 0.97);
   box-shadow:
     0 0 0 1px rgba(255, 107, 0, 0.12),
     0 20px 40px rgba(0, 0, 0, 0.5),
     0 0 60px rgba(255, 107, 0, 0.06);
-  backdrop-filter: blur(20px);
   pointer-events: none;
   opacity: 0;
-  transform: translate3d(-12px, 12px, 0) scale(0.97);
+  transform: translateY(16px) scale(0.97);
   transition:
     opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -176,7 +176,7 @@ body {
 
 .purchase-toast.is-visible {
   opacity: 1;
-  transform: translate3d(0, 0, 0) scale(1);
+  transform: translateY(0) scale(1);
 }
 
 /* Orange accent line at top */
@@ -328,9 +328,10 @@ body {
 @media (max-width: 768px) {
   .purchase-toast {
     left: 0.75rem;
-    bottom: 5rem;
+    bottom: 5.5rem;
     width: min(280px, calc(100vw - 1.5rem));
-    z-index: 900;
+    max-width: calc(100vw - 1.5rem);
+    z-index: 1105;
   }
 
   .purchase-toast__body {
@@ -361,10 +362,10 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .purchase-toast {
     transition: opacity 0.2s ease;
-    transform: none;
+    transform: translateY(0) scale(1);
   }
   .purchase-toast.is-visible {
-    transform: none;
+    transform: translateY(0) scale(1);
   }
   .purchase-toast__live-dot::after {
     animation: none;

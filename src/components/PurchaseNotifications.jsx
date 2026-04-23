@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 const notifications = [
     { name: 'Marcos', city: 'Campinas', state: 'SP' },
@@ -97,7 +98,7 @@ export default function PurchaseNotifications() {
     const colorIndex = item.name.charCodeAt(0) % avatarColors.length;
     const [from, to] = avatarColors[colorIndex];
 
-    return (
+    const toast = (
         <aside aria-live="polite" className={`purchase-toast ${isVisible ? 'is-visible' : ''}`}>
             {/* Top accent line */}
             <div className="purchase-toast__accent" />
@@ -130,4 +131,6 @@ export default function PurchaseNotifications() {
             </div>
         </aside>
     );
+
+    return createPortal(toast, document.body);
 }
