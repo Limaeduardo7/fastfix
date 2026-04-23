@@ -66,9 +66,53 @@ if (!PIXEL_ID || !ACCESS_TOKEN) {
 const scheduledJobs = new Map();
 const processedHotmartEvents = new Map();
 const processedHotmartPurchases = new Map();
+const DEDUP_CACHE_PATH = process.env.DEDUP_CACHE_PATH || '/root/fastfixx/capi-server/data/hotmart-dedup-cache.json';
+let dedupCacheWriteTimer = null;
 let lastHotmartWebhook = null;
 let cachedAgentMemory = null;
 let cachedAgentMemoryAt = 0;
+
+async function loadHotmartDedupCache() {
+  try {
+    const raw = await fs.readFile(DEDUP_CACHE_PATH, 'utf8');
+    const parsed = JSON.parse(raw || '{}');
+
+    for (const [eventId, ts] of Object.entries(parsed.events || {})) {
+      if (eventId && Number.isFinite(ts)) processedHotmartEvents.set(eventId, ts);
+    }
+
+    for (const [key, ts] of Object.entries(parsed.purchases || {})) {
+      if (key && Number.isFinite(ts)) processedHotmartPurchases.set(key, ts);
+    }
+  } catch {
+    // Cache ainda não existe ou está inválido: segue sem travar o servidor.
+  }
+}
+
+function schedulePersistHotmartDedupCache() {
+  if (dedupCacheWriteTimer) return;
+
+  dedupCacheWriteTimer = setTimeout(async () => {
+    dedupCacheWriteTimer = null;
+    try {
+      await fs.mkdir(path.dirname(DEDUP_CACHE_PATH), { recursive: true });
+      await fs.writeFile(
+        DEDUP_CACHE_PATH,
+        JSON.stringify(
+          {
+            updated_at: new Date().toISOString(),
+            events: Object.fromEntries(processedHotmartEvents),
+            purchases: Object.fromEntries(processedHotmartPurchases),
+          },
+          null,
+          2
+        )
+      );
+    } catch (error) {
+      console.error('Falha ao persistir cache de deduplicação Hotmart:', error?.message || error);
+    }
+  }, 250);
+}
 let hotmartAccessTokenCache = {
   token: null,
   expiresAt: 0,
@@ -1021,10 +1065,13 @@ function parseHotmartPayload(payload = {}) {
   const rawEventName = (payload.event_name || payload.event || data.event || '').toString().toLowerCase();
 
   let mappedEvent = null;
-  const isApproved = statusRaw.includes('purchase_approved') || statusRaw === 'approved' || statusRaw.includes('_approved');
-  const isPurchaseCompleted = rawEventName.includes('purchase') && statusRaw.includes('completed');
+  const ignoredNonPurchaseStatuses = ['club_module_completed'];
+  const purchaseStatuses = ['purchase_approved', 'approved', 'order_approved', 'transaction_approved'];
+  const isApprovedPurchase = purchaseStatuses.some((s) => statusRaw === s || statusRaw.includes(s));
 
-  if (isApproved || isPurchaseCompleted) {
+  if (ignoredNonPurchaseStatuses.some((s) => statusRaw.includes(s))) {
+    mappedEvent = null;
+  } else if (isApprovedPurchase) {
     mappedEvent = 'Purchase';
   } else if (statusRaw.includes('billet') || statusRaw.includes('pix') || statusRaw.includes('generated') || statusRaw.includes('printed')) {
     mappedEvent = 'AddPaymentInfo';
@@ -1187,6 +1234,7 @@ function isDuplicateHotmartEvent(eventId) {
 
   if (processedHotmartEvents.has(eventId)) return true;
   processedHotmartEvents.set(eventId, now);
+  schedulePersistHotmartDedupCache();
   return false;
 }
 
@@ -1211,6 +1259,7 @@ function isDuplicateHotmartPurchase(parsed = {}) {
 
   if (processedHotmartPurchases.has(dedupKey)) return true;
   processedHotmartPurchases.set(dedupKey, now);
+  schedulePersistHotmartDedupCache();
   return false;
 }
 
@@ -2031,6 +2080,12 @@ app.post('/api/hotmart/webhook', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Meta CAPI server rodando na porta ${PORT}`);
-});
+loadHotmartDedupCache()
+  .catch((error) => {
+    console.error('Falha ao carregar cache de deduplicação Hotmart:', error?.message || error);
+  })
+  .finally(() => {
+    app.listen(PORT, () => {
+      console.log(`Meta CAPI server rodando na porta ${PORT}`);
+    });
+  });
