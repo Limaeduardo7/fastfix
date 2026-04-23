@@ -1,62 +1,113 @@
-import { Check, X } from 'lucide-react';
+import { CheckCircle, XCircle } from 'lucide-react';
 import { Reveal } from '../components/ScrollReveal';
+import { Card, CardContent } from '../components/ui/card';
+import { Badge } from '../components/ui/badge';
 
 const positiveItems = [
-  { text: 'Técnicos iniciantes que querem acelerar o aprendizado',       desc: 'Fundamentos sólidos para começar com o pé direito.' },
-  { text: 'Técnicos intermediários que buscam mais critério operacional', desc: 'Eleve seu nível com fluxos estruturados e parâmetros reais.' },
-  { text: 'Profissionais que usam Flash64 e querem reduzir erro',         desc: 'Domine cada configuração e elimine diagnósticos incorretos.' },
-  { text: 'Quem quer entender a lógica por trás do procedimento',         desc: 'Não apenas o "como", mas o "por quê" de cada passo.' },
+  {
+    text: 'Técnicos iniciantes que querem acelerar o aprendizado',
+    desc: 'Fundamentos sólidos para começar com o pé direito.',
+    iconColor: 'text-emerald-400',
+  },
+  {
+    text: 'Técnicos intermediários que buscam mais critério operacional',
+    desc: 'Eleve seu nível com fluxos estruturados e parâmetros reais.',
+    iconColor: 'text-cyan-400',
+  },
+  {
+    text: 'Profissionais que usam Flash64 e querem reduzir erro',
+    desc: 'Domine cada configuração e elimine diagnósticos incorretos.',
+    iconColor: 'text-violet-400',
+  },
+  {
+    text: 'Quem quer entender a lógica por trás do procedimento',
+    desc: 'Não apenas o "como", mas o "por quê" de cada passo.',
+    iconColor: 'text-blue-400',
+  },
 ];
 
 const negativeItems = [
-  'Quem busca atalhos sem investir em base técnica',
-  'Quem não está disposto a seguir um método estruturado',
-  'Quem ainda não está pronto para levar a bancada a sério',
+  {
+    text: 'Quem busca atalhos sem investir em base técnica',
+    iconColor: 'text-red-400',
+  },
+  {
+    text: 'Quem não está disposto a seguir um método estruturado',
+    iconColor: 'text-orange-400',
+  },
+  {
+    text: 'Quem ainda não está pronto para levar a bancada a sério',
+    iconColor: 'text-pink-400',
+  },
 ];
 
 export default function AudienceSection() {
   return (
-    <section className="py-28 px-6 lg:px-20 bg-black border-t border-white/[0.06]">
-      <div className="max-w-6xl mx-auto">
+    <section className="py-16 px-6 lg:px-20 border-t border-white/5 relative overflow-hidden">
+      {/* Section divider */}
+      <div className="section-divider" />
+
+      {/* Glow orb */}
+      <div className="ebook-glow-cyan absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10" />
+
+      <div className="max-w-7xl mx-auto">
+        {/* Centered header */}
         <Reveal>
           <div className="text-center mb-16">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/40 mb-4">Público</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[-0.03em] text-white">
-              Para quem foi feito
+            <Badge className="mb-4">Público</Badge>
+            <h2 className="text-3xl lg:text-4xl font-extrabold text-white">
+              Para quem foi <span className="text-gradient-multi">feito</span>
             </h2>
           </div>
         </Reveal>
 
-        <div className="grid lg:grid-cols-2 gap-4">
-          {/* For */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 relative">
+          {/* Positive side */}
           <Reveal>
-            <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-7 sm:p-8 h-full">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#FF6B00] mb-6">Para quem é</p>
-              <h3 className="text-xl font-semibold text-white mb-7">Este eBook foi feito para você se…</h3>
-              <div className="flex flex-col gap-5">
-                {positiveItems.map((item, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <Check className="w-4 h-4 text-[#FF6B00] shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-white/75 text-[15px] leading-snug">{item.text}</p>
-                      <p className="text-white/35 text-xs mt-1">{item.desc}</p>
+            <div className="h-full rounded-2xl border border-white/10 bg-white/[0.03]">
+              <div className="p-5 sm:p-8">
+                <Badge variant="success" className="mb-6">Para quem é</Badge>
+                <h3 className="text-2xl font-bold text-white mb-8">
+                  Este eBook foi feito para você se...
+                </h3>
+                <div className="flex flex-col gap-6">
+                  {positiveItems.map((item, i) => (
+                    <div key={item.text || i} className="flex items-start gap-3">
+                      <CheckCircle className={`w-5 h-5 ${item.iconColor} shrink-0 mt-0.5`} />
+                      <div>
+                        <p className="text-gray-300 text-sm leading-relaxed">
+                          {item.text || 'Técnicos iniciantes que querem acelerar o aprendizado'}
+                        </p>
+                        <p className="text-gray-500 text-xs mt-1">
+                          {item.desc || 'Fundamentos sólidos para começar com o pé direito.'}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </Reveal>
 
-          {/* Not for */}
-          <Reveal delay={120}>
-            <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-7 sm:p-8 h-full flex flex-col justify-center">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/30 mb-6">Para quem não é</p>
-              <p className="text-white/35 text-sm mb-5">Este material pode não ser ideal se você ainda não está pronto para:</p>
-              <ul className="flex flex-col gap-4">
+          {/* Bridging gradient line */}
+          <div className="hidden lg:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+            <div className="w-[2px] h-32 bg-gradient-to-b from-emerald-500/60 via-primary/60 to-red-500/60 rounded-full" />
+          </div>
+          {/* Horizontal bridging line on mobile */}
+          <div className="flex lg:hidden justify-center -my-4">
+            <div className="h-[2px] w-32 bg-gradient-to-r from-emerald-500/60 via-primary/60 to-red-500/60 rounded-full" />
+          </div>
+
+          {/* Negative side — compact */}
+          <Reveal delay={150}>
+            <div className="rounded-2xl border border-red-500/10 bg-gradient-to-br from-red-500/5 to-transparent p-5 sm:p-6 h-full flex flex-col justify-center">
+              <Badge variant="destructive" className="mb-4 self-start">Para quem NÃO é</Badge>
+              <p className="text-gray-400 text-sm mb-4">Este material pode não ser ideal se você ainda não está pronto para:</p>
+              <ul className="flex flex-col gap-3">
                 {negativeItems.map((item, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <X className="w-4 h-4 text-white/20 shrink-0" />
-                    <span className="text-white/45 text-[15px]">{item}</span>
+                  <li key={i} className="flex items-center gap-2.5">
+                    <XCircle className={`w-4 h-4 ${item.iconColor} shrink-0`} />
+                    <span className="text-gray-300 text-sm">{item.text}</span>
                   </li>
                 ))}
               </ul>
