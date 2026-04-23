@@ -73,7 +73,7 @@ export default function AcademyPromoSection() {
 
             <div className="relative bg-black border border-orange-500/20 rounded-3xl p-7 sm:p-10 md:p-14">
               {/* Banner */}
-              <div className="rounded overflow-hidden mb-8 -mx-1">
+              <div className="rounded overflow-hidden mb-8 -mx-7 sm:-mx-10 md:-mx-14 -mt-7 sm:-mt-10 md:-mt-14">
                 <img
                   src="/academy-banner.webp"
                   alt="FastFix Academy"
