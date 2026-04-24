@@ -19,11 +19,12 @@ export default function BenchSection() {
                 <div className="space-y-10">
                     <Reveal>
                         <h2 className="text-3xl lg:text-5xl font-extrabold mb-4">
-                            Não é teoria. é <span className="text-primary italic">prática de bancada real</span>
+                            Não é teoria. é <span className="text-primary italic">decisão na bancada, com a placa na sua frente</span>
                         </h2>
                         <p className="text-gray-400 text-base leading-relaxed">
-                            O tipo de conteúdo que assistências técnicas cobram{' '}
-                            <strong className="text-white">R$ 3.000+ em treinamentos presenciais</strong>. Aqui você tem por uma fração e pode rever quantas vezes quiser.
+                            Você vê o método sendo aplicado em casos reais, com a leitura aparecendo no multímetro, o consumo travando, o defeito sendo isolado.
+                            É o tipo de conteúdo que assistências técnicas cobram{' '}
+                            <strong className="text-white">R$ 3.000+ em treinamentos presenciais</strong>.
                         </p>
                     </Reveal>
 

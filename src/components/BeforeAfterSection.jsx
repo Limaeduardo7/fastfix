@@ -9,9 +9,9 @@ export default function BeforeAfterSection() {
                 <Reveal className="text-center mb-16">
                     <span className="text-primary font-bold text-sm uppercase tracking-widest">A transformação</span>
                     <h2 className="text-3xl lg:text-5xl font-extrabold mt-2 mb-4">
-                        O que muda quando você domina{' '}
+                        O que muda quando você tem{' '}
                         <span className="text-primary italic">
-                            <DecryptedText text="reparo de placas" speed={40} maxIterations={12} sequential animateOn="view" className="text-primary" />
+                            <DecryptedText text="método de diagnóstico" speed={40} maxIterations={12} sequential animateOn="view" className="text-primary" />
                         </span>
                     </h2>
                 </Reveal>
@@ -27,11 +27,11 @@ export default function BeforeAfterSection() {
                         </div>
                         <div className="space-y-4 text-gray-400 text-sm">
                             {[
-                                'Sente frustração e insegurança toda vez que chega uma placa difícil',
-                                'Devolve placas "sem conserto" e perde o lucro mais alto da bancada',
-                                'Cobra R$ 50~80 por troca de tela e vive espremido no preço',
-                                'Depende de emprego CLT ou loja com salário fixo baixo',
-                                'Fica para trás enquanto o mercado exige cada vez mais especialização'
+                                'Mede sem saber exatamente o que está procurando',
+                                'Troca peça no chute e ainda fica na dúvida se resolveu',
+                                'Fica preso em consumo travado sem conseguir achar a linha do defeito',
+                                'Devolve a placa porque não chegou na causa real',
+                                'Vive cobrando barato em troca de tela enquanto o reparo de placa passa direto'
                             ].map((text, i) => (
                                 <div key={i} className="flex items-start gap-3">
                                     <span className="text-red-400/60 mt-0.5">✕</span>
@@ -51,11 +51,11 @@ export default function BeforeAfterSection() {
                         </div>
                         <div className="space-y-4 text-gray-300 text-sm">
                             {[
-                                ['Tem ', 'confiança e clareza', ' para encarar qualquer placa que chegar na bancada'],
-                                ['Repara placas que ', 'outros técnicos recusaram', ' e cobra caro por isso'],
-                                ['Cobra ', 'R$ 300 a R$ 800 por reparo', ' de placa com margem altíssima'],
-                                ['Tem seu próprio lab lucrativo ou ', 'dobra o faturamento', ' da loja'],
-                                ['Vira a ', 'referência da região', '. clientes e lojas te procuram']
+                                ['Sabe ', 'o que medir e por que medir', ' em cada situação que aparece'],
+                                ['Encontra a ', 'linha real do defeito', ' em vez de trocar peça por achismo'],
+                                ['Resolve ', 'curtos, falhas de boot e consumo travado', ' com critério, não com sorte'],
+                                ['Conserta placas que ', 'outros técnicos recusaram', ' e cobra de R$ 300 a R$ 800 por reparo'],
+                                ['Vira a ', 'referência da região', '. clientes e até outras lojas te procuram']
                             ].map((parts, i) => (
                                 <div key={i} className="flex items-start gap-3">
                                     <span className="text-green-400 mt-0.5">✓</span>
@@ -67,7 +67,7 @@ export default function BeforeAfterSection() {
                 </Reveal>
 
                 <Reveal className="text-center mt-12">
-                    <CTAButton>Quero essa transformação →</CTAButton>
+                    <CTAButton>Quero ter esse método →</CTAButton>
                 </Reveal>
             </div>
         </section>

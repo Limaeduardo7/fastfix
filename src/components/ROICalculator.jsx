@@ -27,7 +27,7 @@ export default function ROICalculator() {
                         <span className="text-primary italic">na mesa</span> todo mês?
                     </h2>
                     <p className="text-gray-400 mt-4 max-w-xl mx-auto">
-                        Cada placa devolvida é dinheiro indo direto pro técnico do lado. Veja o tamanho real do prejuízo.
+                        Cada placa que você devolve por falta de método é um reparo de R$ 300 a R$ 800 que vai parar na bancada do concorrente. Olha o tamanho disso.
                     </p>
                 </Reveal>
 

@@ -12,18 +12,18 @@ export default function FinalCTASection() {
                         <ShinyText text="A decisão é simples:" color="#ffffff" shineColor="#FF6B00" speed={3} className="text-3xl lg:text-5xl font-extrabold" />
                     </h2>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-                        Continuar devolvendo placas e perdendo dinheiro. Ou dominar o reparo mais lucrativo da assistência técnica.
+                        Continuar trocando peça no chute e devolvendo placa que poderia ter virado lucro. Ou ter um método claro para chegar na causa real do defeito.
                     </p>
                     <p className="text-gray-500 text-sm mt-3 italic">
-                        Cada placa devolvida é dinheiro que fica na bancada do concorrente.
+                        A placa não está sem conserto. Você só precisa de um método.
                     </p>
                 </Reveal>
 
                 <Reveal>
                     <div className="glass-card p-8 rounded-3xl border-primary/30 space-y-6">
                         <p className="text-white text-xl font-bold">
-                            Daqui a 30 dias, você pode estar no mesmo lugar.<br />
-                            <span className="text-primary">Ou faturando com placas que antes você devolvia.</span>
+                            Daqui a 30 dias, você pode estar trocando peça no chute do mesmo jeito.<br />
+                            <span className="text-primary">Ou diagnosticando placas que antes você devolvia.</span>
                         </p>
 
                         <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-300">

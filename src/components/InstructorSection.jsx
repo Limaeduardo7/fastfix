@@ -26,10 +26,10 @@ export default function InstructorSection() {
                     </h2>
                     <p className="text-gray-500 text-lg leading-relaxed">
                         São mais de <strong className="text-gray-900">10 anos vivendo de bancada</strong>. Mais de{' '}
-                        <strong className="text-gray-900">5.000 aparelhos</strong> passaram pelas mãos dele. incluindo os que chegaram como "sem conserto" de outras assistências.
+                        <strong className="text-gray-900">5.000 aparelhos</strong> passaram pelas mãos dele, incluindo os que chegaram como "sem conserto" de outras assistências e voltaram funcionando.
                     </p>
                     <p className="text-gray-500 text-base leading-relaxed">
-                        O João não é professor de cursinho. Ele <strong className="text-gray-900">vive de reparo de placas até hoje</strong>. E decidiu abrir o jogo sobre tudo que aprendeu nesses anos. sem guardar segredo.
+                        O João não é professor de cursinho. Ele <strong className="text-gray-900">vive de reparo de placas até hoje</strong> e ensina exatamente o método que usa todo dia na bancada para chegar na causa real do defeito.
                     </p>
 
                     <div className="grid grid-cols-2 gap-4 py-4">

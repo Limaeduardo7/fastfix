@@ -2,9 +2,9 @@ import { Reveal } from './ScrollReveal';
 import { Icon } from './shared';
 
 const cards = [
-    { icon: 'users', title: 'Técnico básico querendo evoluir', desc: 'Já faz reparo mas está travado no diagnóstico avançado? Aprenda a interpretar qualquer placa defeituosa, independente da marca ou modelo.' },
-    { icon: 'trendingUp', title: 'Técnico que faz troca mas não repara placa', desc: 'Você troca tela e conector, mas devolve placa. Aprenda o reparo que a maioria das assistências não faz — e cobre 5x mais por ele.' },
-    { icon: 'briefcase', title: 'Quer abrir seu próprio lab', desc: 'Quer sair do emprego e ser dono do seu negócio? Reparo de placa tem margem alta e demanda crescente. O curso te prepara pra isso.' },
+    { icon: 'users', title: 'Técnico que sabe medir, mas não sabe interpretar', desc: 'Você até pega o multímetro, mas na hora de decidir o próximo passo trava. Aqui você aprende a ler o que o aparelho está mostrando e tirar uma conclusão.' },
+    { icon: 'trendingUp', title: 'Técnico que faz troca mas devolve placa', desc: 'Você resolve tela, bateria e conector, mas quando chega placa complicada manda embora. Esse é o reparo de maior margem da bancada e ele se aprende.' },
+    { icon: 'briefcase', title: 'Quer parar de chutar e construir um lab sério', desc: 'Quem só troca peça vive cobrando barato. Quem diagnostica vira referência. O curso te prepara para esse outro lado.' },
 ];
 
 export default function AudienceSection() {
@@ -12,10 +12,10 @@ export default function AudienceSection() {
         <section className="py-24 px-6 lg:px-20 bg-background">
             <div className="max-w-7xl mx-auto">
                 <Reveal>
-                    <h2 className="text-3xl lg:text-4xl font-extrabold text-center mb-4">Isso é pra você se…</h2>
+                    <h2 className="text-3xl lg:text-4xl font-extrabold text-center mb-4">Você se reconhece em alguma dessas situações?</h2>
                 </Reveal>
                 <Reveal>
-                    <p className="text-gray-500 text-center text-lg mb-16">Se você se identifica com algum desses perfis, o FastFix foi feito sob medida.</p>
+                    <p className="text-gray-500 text-center text-lg mb-16">Se alguma dessas frases descreve a sua bancada hoje, o FastFix foi feito pensando em você.</p>
                 </Reveal>
 
                 <div className="grid md:grid-cols-3 gap-8">

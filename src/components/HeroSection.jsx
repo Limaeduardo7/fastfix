@@ -15,7 +15,7 @@ export default function HeroSection() {
                     <Reveal className="lg:col-start-1 lg:row-start-1">
                         <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/25 text-orange-300 text-[11px] sm:text-xs font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full uppercase tracking-widest">
                             <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full animate-pulse shrink-0"></span>
-                            Formação Profissional em Reparo de Placas
+                            Método de Diagnóstico Avançado
                         </div>
                     </Reveal>
 
@@ -33,9 +33,9 @@ export default function HeroSection() {
                             />
                         </div>
                         <div className="absolute bottom-3 left-3 bg-surface/95 border border-white/10 rounded-xl p-3 shadow-2xl z-20">
-                            <p className="text-gray-400 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold mb-0.5">Faturamento médio</p>
-                            <p className="text-base sm:text-xl font-extrabold text-white leading-none">R$ 8.000<span className="text-primary">+</span></p>
-                            <p className="text-gray-400 text-[10px] sm:text-xs mt-0.5">/mês após o treinamento</p>
+                            <p className="text-gray-400 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold mb-0.5">Por reparo de placa</p>
+                            <p className="text-base sm:text-xl font-extrabold text-white leading-none">R$ 300 a R$ 800<span className="text-primary">+</span></p>
+                            <p className="text-gray-400 text-[10px] sm:text-xs mt-0.5">o que outros técnicos recusam</p>
                         </div>
                     </Reveal>
 
@@ -43,7 +43,7 @@ export default function HeroSection() {
                     <Reveal className="space-y-4 sm:space-y-6 lg:col-start-1 lg:row-start-2">
                         <h1 className="text-3xl sm:text-5xl lg:text-[3.25rem] xl:text-[3.75rem] font-extrabold leading-[1.1] tracking-tight">
                             <DecryptedText
-                                text="Pare de devolver placas que você"
+                                text="A placa não está"
                                 speed={30}
                                 maxIterations={15}
                                 sequential={true}
@@ -54,7 +54,7 @@ export default function HeroSection() {
                             <br />
                             <span className="text-primary">
                                 <DecryptedText
-                                    text="poderia lucrar."
+                                    text="sem conserto."
                                     speed={30}
                                     maxIterations={15}
                                     sequential={true}
@@ -66,8 +66,9 @@ export default function HeroSection() {
                         </h1>
 
                         <p className="text-gray-300 text-base sm:text-lg lg:text-xl max-w-lg leading-relaxed">
-                            Aprenda a reparar placas que outros técnicos recusam e comece a faturar{' '}
-                            <strong className="text-white font-bold">R$ 8.000+/mês</strong> com o serviço mais lucrativo da assistência técnica.
+                            Você só precisa de um método para encontrar o defeito. Aprenda a diagnosticar{' '}
+                            <strong className="text-white font-bold">curtos, falhas de boot, consumo travado</strong>{' '}
+                            e defeitos em CPU e memória, mesmo nas placas que outros técnicos já desistiram.
                         </p>
 
                         <div className="flex flex-col gap-3 sm:gap-4 pt-1 sm:pt-2">

@@ -35,10 +35,10 @@ export default function StepsSection() {
             <div className="max-w-7xl mx-auto">
                 <Reveal className="text-center mb-20">
                     <h2 className="text-3xl lg:text-5xl font-extrabold mb-4">
-                        Em 5 módulos, você aprende a resolver placas com <span className="text-orange-600">consumo travado</span>
+                        Um método em 5 módulos para parar de adivinhar e começar a <span className="text-orange-600">diagnosticar de verdade</span>
                     </h2>
                     <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-                        Um treinamento desenhado para quem já tem noção básica de bancada e quer dominar diagnósticos avançados de forma prática e direta.
+                        Cada módulo é um passo prático para você sair do chute e construir um critério próprio para cada tipo de defeito que aparece na bancada.
                     </p>
                 </Reveal>
 
