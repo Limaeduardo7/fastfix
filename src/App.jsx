@@ -26,6 +26,7 @@ function HomePage() {
             <Navbar />
             <main id="main-content">
                 <HeroSection />
+                <AudienceSection />
                 <BeforeAfterSection />
                 <div className="transition-dark-to-light" />
                 <StepsSection />
@@ -34,8 +35,6 @@ function HomePage() {
                 <div className="transition-dark-to-light" />
                 <InstructorSection />
                 <div className="transition-light-to-dark" />
-                <AudienceSection />
-                <div className="transition-dark-to-light" />
                 <TestimonialsSection />
                 <div className="transition-light-to-dark" />
                 <ROICalculator />
