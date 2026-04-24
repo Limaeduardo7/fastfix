@@ -40,17 +40,17 @@ export default function EbookApp() {
       <main className="overflow-x-hidden">
         <EbookHero />
         <PainSection />
+        <AudienceSection />
         <PromiseSection />
         <TopicsSection />
+        <ContentPreview />
         <BenefitsSection />
         <TestimonialsSection />
         <BonusSection />
-        <ContentPreview />
-        <AudienceSection />
         <OfferSection />
-        <AcademyPromoSection />
         <EbookFAQ />
         <FinalCTA />
+        <AcademyPromoSection />
       </main>
       <EbookFooter />
       <EbookWhatsApp />
